@@ -3157,3 +3157,177 @@ body {
         transform: translateY(0);
     }
 }
+
+
+
+
+/* --- Section Qualités personnelles --- */
+.education-highlights {
+  margin-top: 60px;
+}
+
+.education-highlights .section-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+/* --- Grille principale --- */
+.highlights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 25px;
+  justify-content: center;
+  align-items: start;
+}
+
+/* --- Bloc générique --- */
+.highlight-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: 100%;
+}
+
+.highlight-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.12);
+}
+
+/* --- Icônes --- */
+.highlight-icon {
+  font-size: 1.8rem;
+  color: #0077b6;
+  flex-shrink: 0;
+}
+
+.highlight-content h4 {
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.highlight-content p {
+  margin: 0 0 8px;
+  color: #444;
+  font-size: 0.95rem;
+}
+
+.highlight-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.highlight-content ul li {
+  position: relative;
+  margin-bottom: 6px;
+  padding-left: 20px;
+}
+
+.highlight-content ul li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #0077b6;
+  font-weight: bold;
+}
+
+/* --- Carte Vie associative (centrée et mise en avant) --- */
+.club-card {
+  border: 2px solid #0077b6;
+  background: #f9fbff;
+  border-radius: 18px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0, 119, 182, 0.15);
+  transition: all 0.3s ease;
+  width: 80%;
+  max-width: 720px;
+  justify-self: center; /* ✅ centre le bloc horizontalement */
+  grid-column: 1 / -1;   /* ✅ le fait s’étendre sur toute la largeur de la grille */
+}
+
+.club-card:hover {
+  background: #eef6ff;
+  box-shadow: 0 8px 20px rgba(0, 119, 182, 0.25);
+  transform: translateY(-6px);
+}
+
+/* --- Liste des clubs --- */
+.club-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0 0;
+}
+
+.club-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-size: 0.96rem;
+  color: #333;
+  transition: transform 0.2s ease;
+}
+
+.club-list li:last-child {
+  margin-bottom: 0;
+}
+
+.club-list li:hover {
+  transform: translateX(6px);
+}
+
+/* --- Liens et logos --- */
+.club-link {
+  display: inline-block;
+  text-decoration: none;
+  position: relative;
+}
+
+.club-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #0077b6;
+  background-color: #fff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.club-link:hover .club-logo {
+  transform: scale(1.5);
+  box-shadow: 0 0 12px rgba(0, 119, 182, 0.5);
+  z-index: 10;
+}
+
+/* --- Texte à droite du logo --- */
+.club-list span {
+  flex: 1;
+  line-height: 1.4;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .club-card {
+    width: 95%;
+  }
+
+  .highlight-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .highlight-icon {
+    margin-bottom: 10px;
+  }
+}
