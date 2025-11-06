@@ -1,17 +1,29 @@
 :root {
-    --primary-blue: #2563eb;
-    --warm-blue: #3b82f6;
-    --light-blue: #dbeafe;
-    --dark-blue: #1d4ed8;
-    --white: #ffffff;
-    --gray-50: #f9fafb;
-    --gray-100: #f3f4f6;
-    --gray-600: #4b5563;
-    --gray-800: #1f2937;
-    --gray-900: #111827;
-    --shadow: rgba(0, 0, 0, 0.1);
-    --transition: all 0.3s ease;
+  /* --- Couleurs principales --- */
+  --primary-blue: #1e40af;    /* Bleu principal profond et pro */
+  --warm-blue: #2563eb;       /* Bleu vif pour les accents et liens */
+  --light-blue: #e0f2fe;      /* Bleu très clair, fond doux */
+  --dark-blue: #0f172a;       /* Bleu nuit, idéal pour titres sombres */
+
+  /* --- Couleurs neutres --- */
+  --white: #ffffff;
+  --gray-50: #f8fafc;         /* Fond clair neutre */
+  --gray-100: #f1f5f9;        /* Lignes et cartes claires */
+  --gray-300: #d1d5db;
+  --gray-600: #475569;        /* Texte secondaire */
+  --gray-800: #1e293b;        /* Texte principal */
+  --gray-900: #0f172a;        /* Très foncé, contrasté */
+
+  /* --- Accents complémentaires --- */
+  --accent-green: #10b981;    /* Pour validation, réussite */
+  --accent-orange: #f59e0b;   /* Pour mise en valeur douce */
+  --accent-red: #ef4444;      /* Pour erreurs ou attention */
+
+  /* --- Ombres et transitions --- */
+  --shadow: rgba(15, 23, 42, 0.1);
+  --transition: all 0.3s ease;
 }
+
 
 * {
     margin: 0;
@@ -3331,3 +3343,80 @@ body {
     margin-bottom: 10px;
   }
 }
+
+
+
+
+
+/* --- Section Centres d’intérêt --- */
+.interest-section {
+  margin-top: 60px;
+  text-align: center;
+}
+
+.interest-section .section-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #0a0a0a;
+}
+
+/* --- Grille des centres d’intérêt --- */
+.interest-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 25px;
+}
+
+/* --- Carte individuelle --- */
+.interest-item {
+  background: #f9fbff;
+  border: 2px solid #0077b6;
+  border-radius: 14px;
+  padding: 18px 28px;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.interest-item:hover {
+  background: #eef6ff;
+  transform: translateY(-6px);
+  box-shadow: 0 8px 20px rgba(0, 119, 182, 0.25);
+}
+
+/* --- Icônes --- */
+.interest-item i {
+  font-size: 1.8rem;
+  color: #0077b6;
+  margin-bottom: 10px;
+}
+
+/* --- Texte --- */
+.interest-item span {
+  font-size: 1rem;
+  color: #333;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .interest-item {
+    min-width: 130px;
+    padding: 15px 22px;
+  }
+
+  .interest-item i {
+    font-size: 1.5rem;
+  }
+}
+
+
