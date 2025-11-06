@@ -42,11 +42,22 @@ Un site web portfolio moderne et responsive présentant mes compétences en Inte
 - **Gestion de téléchargements** avec feedback utilisateur
 - **Cartes interactives** avec états expand/collapse
 
-## 📄 Licence
 
-Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de détails.
+# 🌐 MyWebSite — Portfolio personnel
+
+Bienvenue sur mon site web personnel hébergé via **GitHub Pages**.  
+Ce site présente mon **parcours académique**, mes **projets techniques et de recherche**, ainsi que mes **compétences professionnelles** dans les domaines de l’ingénierie, des systèmes embarqués et de l’intelligence artificielle.
 
 ---
 
-*Portfolio développé avec passion et expertise en technologies web modernes.*
+## 🚀 Lien du site en ligne
+
+🔗 **[Visiter le site](https://dassoundo.github.io/MyWebSite/)**  
+*(Déployé automatiquement depuis la branche `web_1` via GitHub Pages)*
+
+---
+
+## 🧩 Structure du projet
+
+
 

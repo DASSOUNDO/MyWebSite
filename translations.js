@@ -49,7 +49,7 @@ const extendedTranslations = {
         // Section Skills
         'skills-title': 'My Skills',
         'main-skills': 'Core Skills',
-        'certifications': 'Certifications (10)',
+        'certifications': 'Certifications (6)',
         'programming-languages': 'Main Programming Languages',
         
         // Other sections
