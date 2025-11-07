@@ -3420,3 +3420,70 @@ body {
 }
 
 
+
+/* Ajout pour la partie de du téléchargement des recommendation */
+.hero-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.hero-buttons button {
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 8px 18px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+/* --- Boutons principaux --- */
+.btn-primary {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}
+
+/* --- Boutons secondaires --- */
+.btn-secondary {
+  background: #f9fafb;
+  color: #1f2937;
+  border: 1px solid #d1d5db;
+}
+
+.btn-secondary:hover {
+  background: #f3f4f6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Icônes --- */
+.hero-buttons i {
+  font-size: 1rem;
+}
+
+/* --- Responsive --- */
+@media (max-width: 600px) {
+  .hero-buttons {
+    gap: 8px;
+  }
+
+  .hero-buttons button {
+    font-size: 0.85rem;
+    padding: 7px 14px;
+  }
+}

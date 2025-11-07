@@ -198,6 +198,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 case 'projets':
                     downloadProjets();
                     break;
+                case 'recommandations':
+                    downloadRecommendation(); 
+                      break;  
             }
         }, 1000);
     }
@@ -218,6 +221,23 @@ document.addEventListener('DOMContentLoaded', function() {
             window.open('cv/CV_Adébayo_DASSOUNDO.pdf', '_blank');
         }
     }
+
+function downloadRecommendation() {
+    try {
+            // Télécharger le fichier PDF directement
+            const link = document.createElement('a');
+            link.href = 'Recommendation/Recommendation_Adébayo_DASSOUNDO.pdf'; // Changé de 'documents/' à 'resume/'
+            link.download = 'Recommendation_Adébayo_DASSOUNDO.pdf';
+            link.target = '_blank'; // Ouvre dans un nouvel onglet si le téléchargement échoue
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error('Erreur lors du téléchargement du CV:', error);
+            // Fallback: essayer d'ouvrir le fichier dans un nouvel onglet
+            window.open('Recommendation/Recommendation_Adébayo_DASSOUNDO.pdf', '_blank');
+        }
+}
 
 
     function downloadCompetences() {
