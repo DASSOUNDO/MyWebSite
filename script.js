@@ -206,8 +206,8 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             // Télécharger le fichier PDF directement
             const link = document.createElement('a');
-            link.href = 'resume/resume_doctoral_Sanogo_Kassoum.pdf'; // Changé de 'documents/' à 'resume/'
-            link.download = 'Kassoum_Sanogo_CV.pdf';
+            link.href = 'cv/CV_Adébayo_DASSOUNDO.pdf'; // Changé de 'documents/' à 'resume/'
+            link.download = 'CV_Adébayo_DASSOUNDO.pdf';
             link.target = '_blank'; // Ouvre dans un nouvel onglet si le téléchargement échoue
             document.body.appendChild(link);
             link.click();
@@ -215,7 +215,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (error) {
             console.error('Erreur lors du téléchargement du CV:', error);
             // Fallback: essayer d'ouvrir le fichier dans un nouvel onglet
-            window.open('resume/resume_doctoral_Sanogo_Kassoum.pdf', '_blank');
+            window.open('cv/CV_Adébayo_DASSOUNDO.pdf', '_blank');
         }
     }
 
@@ -224,8 +224,8 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             // Télécharger le fichier PDF directement
             const link = document.createElement('a');
-            link.href = 'documents/Kassoum_Sanogo_Competences.pdf';
-            link.download = 'Kassoum_Sanogo_Competences.pdf';
+            link.href = 'documents/Adébayo_DASSOUNDO_Competences.pdf';
+            link.download = 'Adébayo_DASSOUNDO_Competences.pdf';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -249,14 +249,14 @@ document.addEventListener('DOMContentLoaded', function() {
             'nav-research': 'Recherche',
             'nav-education': 'Formation',
             'nav-contact': 'Contact',
-            'hero-title': 'AI & Data Engineer',
-            'hero-description': 'Ingénieur, chercheur et gestionnaire avec des compétences académiques et industrielles en Intelligence Artificielle, machine learning, deep learning, data science et systèmes embarqués.',
+            'hero-title': 'Logiciel Embarqué, Cybersécurité et IA.',
+            'hero-description': 'Ingénieur et chercheur alliant compétences académiques et industrielles en logiciel embarqué, cybersécurité, intelligence artificielle, développement logiciel et innovation technologique.',
             'btn-download-cv': 'Télécharger CV (PDF)',
             'btn-download-skills': 'Dossier Compétences (PDF)',
             'btn-location': '🇫🇷 France & 🇨🇦 Canada',
             'skills-title': 'Mes Compétences',
             'main-skills': 'Grandes Compétences',
-            'certifications': 'Certifications (10)',
+            'certifications': 'Certifications (6)',
             'programming-languages': 'Langages de programmation principaux',
             'experience-title': 'Expérience Professionnelle',
             'projects-title': 'Mes Projets',
@@ -271,14 +271,14 @@ document.addEventListener('DOMContentLoaded', function() {
             'nav-research': 'Research',
             'nav-education': 'Education',
             'nav-contact': 'Contact',
-            'hero-title': 'Artificial Intelligence, Machine Learning & Data Engineer',
-            'hero-description': 'Engineer, researcher and manager with academic and industrial skills in Artificial Intelligence, machine learning, deep learning, data science and embedded systems.',
+            'hero-title': 'Embedded Software, Cybersecurity, and AI.',
+            'hero-description': 'Engineer and researcher combining academic and industrial expertise in embedded software, cybersecurity, artificial intelligence, software development, and technological innovation.',
             'btn-download-cv': 'Download CV (PDF)',
             'btn-download-skills': 'Skills Portfolio (PDF)',
             'btn-location': '🇫🇷 France & 🇨🇦 Canada',
             'skills-title': 'My Skills',
             'main-skills': 'Core Skills',
-            'certifications': 'Certifications (10)',
+            'certifications': 'Certifications (6)',
             'programming-languages': 'Main Programming Languages',
             'experience-title': 'Professional Experience',
             'projects-title': 'My Projects',

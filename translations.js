@@ -9,8 +9,8 @@ const extendedTranslations = {
         'nav-contact': 'Contact',
         
         // Section Hero
-        'hero-title': 'Logiciel Embarqué, Cybersécurité et IA.',
-        'hero-description': 'Ingénieur et chercheur alliant compétences académiques et industrielles en logiciel embarqué, cybersécurité, intelligence artificielle, développement logiciel et innovation technologique.',
+        'hero-title': 'AI & Data Engineer',
+        'hero-description': 'Ingénieur, chercheur et gestionnaire avec des compétences académiques et industrielles en Intelligence Artificielle, machine learning, deep learning, data science et systèmes embarqués.',
         'btn-download-cv': 'Télécharger CV (PDF)',
         'btn-download-skills': 'Dossier Compétences (PDF)',
         'btn-download-projects': 'Liste Projets (LaTeX)',
@@ -18,7 +18,7 @@ const extendedTranslations = {
         // Section Compétences
         'skills-title': 'Mes Compétences',
         'main-skills': 'Grandes Compétences',
-        'certifications': 'Certifications (6)',
+        'certifications': 'Certifications (10)',
         'programming-languages': 'Langages de programmation principaux',
         
         // Autres sections
@@ -40,8 +40,8 @@ const extendedTranslations = {
         'nav-contact': 'Contact',
         
         // Section Hero
-        'hero-title': 'Embedded Software, Cybersecurity, and AI.',
-        'hero-description': 'Engineer and researcher combining academic and industrial expertise in embedded software, cybersecurity, artificial intelligence, software development, and technological innovation.',
+        'hero-title': 'AI & Data Engineer',
+        'hero-description': 'Engineer, researcher and manager with academic and industrial skills in Artificial Intelligence, machine learning, deep learning, data science and embedded systems.',
         'btn-download-cv': 'Download CV (PDF)',
         'btn-download-skills': 'Skills Portfolio (PDF)',
         'btn-download-projects': 'Projects List (LaTeX)',
@@ -49,7 +49,7 @@ const extendedTranslations = {
         // Section Skills
         'skills-title': 'My Skills',
         'main-skills': 'Core Skills',
-        'certifications': 'Certifications (6)',
+        'certifications': 'Certifications (10)',
         'programming-languages': 'Main Programming Languages',
         
         // Other sections
