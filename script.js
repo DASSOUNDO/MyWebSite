@@ -192,15 +192,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 case 'cv':
                     downloadCV();
                     break;
+                case 'Recommandations':
+                    downloadRecommendation(); 
+                    break;  
                 case 'competences':
                     downloadCompetences();
                     break;
                 case 'projets':
                     downloadProjets();
                     break;
-                case 'recommandations':
-                    downloadRecommendation(); 
-                      break;  
+               
             }
         }, 1000);
     }
@@ -222,22 +223,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-function downloadRecommendation() {
-    try {
-            // Télécharger le fichier PDF directement
-            const link = document.createElement('a');
-            link.href = 'Recommendation/Recommendation_Adébayo_DASSOUNDO.pdf'; // Changé de 'documents/' à 'resume/'
-            link.download = 'Recommendation_Adébayo_DASSOUNDO.pdf';
-            link.target = '_blank'; // Ouvre dans un nouvel onglet si le téléchargement échoue
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } catch (error) {
-            console.error('Erreur lors du téléchargement du CV:', error);
-            // Fallback: essayer d'ouvrir le fichier dans un nouvel onglet
-            window.open('Recommendation/Recommendation_Adébayo_DASSOUNDO.pdf', '_blank');
-        }
-}
+    function downloadRecommendation() {
+        try {
+                // Télécharger le fichier PDF directement
+                const link = document.createElement('a');
+                link.href = 'Recommendation/Recommendation_Adébayo_DASSOUNDO.pdf'; // Changé de 'documents/' à 'resume/'
+                link.download = 'Recommendation_Adébayo_DASSOUNDO.pdf';
+                link.target = '_blank'; // Ouvre dans un nouvel onglet si le téléchargement échoue
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } catch (error) {
+                console.error('Erreur lors du téléchargement du CV:', error);
+                // Fallback: essayer d'ouvrir le fichier dans un nouvel onglet
+                window.open('Recommendation/Recommendation_Adébayo_DASSOUNDO.pdf', '_blank');
+            }
+    }
 
 
     function downloadCompetences() {
@@ -272,6 +273,7 @@ function downloadRecommendation() {
             'hero-title': 'Logiciel Embarqué, Cybersécurité et IA.',
             'hero-description': 'Ingénieur et chercheur alliant compétences académiques et industrielles en logiciel embarqué, cybersécurité, intelligence artificielle, développement logiciel et innovation technologique.',
             'btn-download-cv': 'Télécharger CV (PDF)',
+            'btn-download-recommendation': 'Recommendation (PDF)',
             'btn-download-skills': 'Dossier Compétences (PDF)',
             'btn-location': '🇫🇷 France & 🇨🇦 Canada',
             'skills-title': 'Mes Compétences',
@@ -294,6 +296,7 @@ function downloadRecommendation() {
             'hero-title': 'Embedded Software, Cybersecurity, and AI.',
             'hero-description': 'Engineer and researcher combining academic and industrial expertise in embedded software, cybersecurity, artificial intelligence, software development, and technological innovation.',
             'btn-download-cv': 'Download CV (PDF)',
+            'btn-download-recommendation': 'Recommandation (PDF)',
             'btn-download-skills': 'Skills Portfolio (PDF)',
             'btn-location': '🇫🇷 France & 🇨🇦 Canada',
             'skills-title': 'My Skills',
@@ -315,7 +318,7 @@ function downloadRecommendation() {
     function initializeLanguage() {
         const savedLang = localStorage.getItem('preferred-language');
         const browserLang = navigator.language.startsWith('en') ? 'en' : 'fr';
-        const initialLang = savedLang || 'en'; // Default to English instead of browser language
+        const initialLang = savedLang || 'fr'; // Default to English instead of browser language
         
         if (initialLang !== currentLang) {
             changeLanguage(initialLang);

@@ -1,63 +1,78 @@
-# Adébayo DASSOUNDO - Portfolio Website
+🌐 Portfolio – Adébayo DASSOUNDO
 
-Un site web portfolio moderne et responsive présentant mes compétences en Intelligence Artificielle, Machine Learning et Data Engineering.
+Un site web portfolio moderne et interactif présentant mon parcours, mes compétences techniques et mes projets de recherche en systèmes embarqués, électronique, automatisation et intelligence artificielle.
 
-## 🚀 Fonctionnalités
+🚀 Fonctionnalités principales
+🎨 Design & Expérience utilisateur
 
-### ✨ Design et UX
-- **Design moderne** avec animations fluides et transitions CSS
-- **Responsive** - Compatible mobile, tablette et desktop
-- **Navigation fixe** avec photo de profil contextuelle
-- **Thème cohérent** avec variables CSS personnalisées
-- **Interface multilingue** (Français/Anglais)
+Interface moderne et fluide avec animations élégantes
 
-### 🛠️ Sections principales
-- **Hero Section** - Présentation avec boutons de téléchargement
-- **Compétences** - Grille interactive de technologies et certifications
-- **Projets** - Cartes dépliables organisées par catégories
-- **Recherche** - Axes de recherche détaillés
-- **Formation** - Timeline interactive du parcours académique
-- **Contact** - Informations de contact et liens sociaux
+Entièrement responsive (ordinateur, tablette, mobile)
 
-### 🎯 Fonctionnalités avancées
-- **Système de traduction** intégré FR/EN
-- **Animation au scroll** avec Intersection Observer
-- **Téléchargement de documents** (CV, compétences, projets)
-- **Cartes interactives** avec système de collapse/expand
-- **Navigation fluide** avec smooth scroll
+Navigation fixe et ergonomique avec photo de profil
 
-## 🛠️ Technologies utilisées
+Thème cohérent basé sur des variables CSS personnalisées
 
-### Frontend
-- **HTML5** - Structure sémantique moderne
-- **CSS3** - Grid, Flexbox, Variables CSS, Animations
-- **JavaScript ES6+** - Modules, Async/Await, Intersection Observer
-- **Font Awesome** - Icônes vectorielles
-- **Google Fonts** - Typography (Inter)
+Mode multilingue (Français 🇫🇷 / Anglais 🇬🇧)
 
-### Fonctionnalités JavaScript
-- **Responsive Navigation** avec menu hamburger
-- **Système de traductions** avec localStorage
-- **Animations au scroll** avec Intersection Observer
-- **Gestion de téléchargements** avec feedback utilisateur
-- **Cartes interactives** avec états expand/collapse
+🧭 Sections principales du site
 
+Accueil (Hero Section) — Présentation générale et boutons de téléchargement (CV, compétences, lettre de recommandation)
 
-# 🌐 MyWebSite — Portfolio personnel
+Compétences techniques — Organisation claire par domaines (Systèmes embarqués, Cybersécurité, IA, Électronique)
 
-Bienvenue sur mon site web personnel hébergé via **GitHub Pages**.  
-Ce site présente mon **parcours académique**, mes **projets techniques et de recherche**, ainsi que mes **compétences professionnelles** dans les domaines de l’ingénierie, des systèmes embarqués et de l’intelligence artificielle.
+Projets — Sélection de projets scolaires, industriels et de recherche
 
----
+Recherche & Innovation — Travaux menés au Canada sur les systèmes embarqués et le contrôle intelligent
 
-## 🚀 Lien du site en ligne
+Formation académique — Parcours universitaire et programmes de recherche
 
-🔗 **[Visiter le site](https://dassoundo.github.io/MyWebSite/)**  
-*(Déployé automatiquement depuis la branche `web_1` via GitHub Pages)*
+Contact — Informations, liens sociaux et localisation (🇫🇷 France / 🇨🇦 Canada)
 
----
+⚙️ Fonctionnalités avancées
 
-## 🧩 Structure du projet
+Système de traduction dynamique (FR/EN) avec sauvegarde locale
 
+Effets d’apparition au scroll (Intersection Observer)
 
+Téléchargement interactif de fichiers PDF (CV, portfolio, lettre de recommandation)
 
+Cartes de projets dépliables avec transitions fluides
+
+Navigation fluide (smooth scroll et ancrages intelligents)
+
+💻 Technologies utilisées
+🧱 Frontend
+
+HTML5 — Structure sémantique moderne
+
+CSS3 / Flexbox / Grid — Mise en page réactive et animations
+
+JavaScript (ES6+) — Interaction, animation, gestion de contenu dynamique
+
+Font Awesome — Icônes vectorielles
+
+Google Fonts (Inter) — Typographie professionnelle et lisible
+
+🧩 Fonctionnalités JavaScript
+
+Menu de navigation responsive (hamburger)
+
+Gestion de traduction et de préférences utilisateur (localStorage)
+
+Animation au défilement (Intersection Observer API)
+
+Téléchargement intelligent avec feedback visuel
+
+Gestion dynamique des cartes projets et des sections
+
+🌍 Déploiement
+
+Site hébergé via GitHub Pages.
+Déploiement automatique depuis la branche web_1.
+
+🔗 Visiter le site
+
+🧠 À propos du projet
+
+Ce portfolio a pour but de mettre en avant mes compétences d’ingénieur chercheur, mon parcours en systèmes embarqués et cybersécurité, ainsi que mes travaux de recherche appliquée à l’intelligence artificielle et au contrôle intelligent.
