@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 link.click();
                 document.body.removeChild(link);
             } catch (error) {
-                console.error('Erreur lors du téléchargement du CV:', error);
+                console.error('Erreur lors du téléchargement de la recommendation:', error);
                 // Fallback: essayer d'ouvrir le fichier dans un nouvel onglet
                 window.open('Recommendation/Recommendation_Adébayo_DASSOUNDO.pdf', '_blank');
             }
