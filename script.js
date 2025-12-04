@@ -192,9 +192,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 case 'cv':
                     downloadCV();
                     break;
-                case 'Recommandations':
+                case 'recommandations':
                     downloadRecommendation(); 
-                    break;  
+                    break;
                 case 'competences':
                     downloadCompetences();
                     break;
@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
                 // Télécharger le fichier PDF directement
                 const link = document.createElement('a');
-                link.href = 'Recommendation/Recommendation_Adébayo_DASSOUNDO.pdf'; // Changé de 'documents/' à 'resume/'
+                link.href = 'recommendation/Recommendation_Adébayo_DASSOUNDO.pdf'; // Changé de 'documents/' à 'resume/'
                 link.download = 'Recommendation_Adébayo_DASSOUNDO.pdf';
                 link.target = '_blank'; // Ouvre dans un nouvel onglet si le téléchargement échoue
                 document.body.appendChild(link);
@@ -236,7 +236,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } catch (error) {
                 console.error('Erreur lors du téléchargement de la recommendation:', error);
                 // Fallback: essayer d'ouvrir le fichier dans un nouvel onglet
-                window.open('Recommendation/Recommendation_Adébayo_DASSOUNDO.pdf', '_blank');
+                window.open('recommendation/Recommendation_Adébayo_DASSOUNDO.pdf', '_blank');
             }
     }
 
@@ -435,3 +435,8 @@ function getCurrentLanguage() {
 // Export pour utilisation externe
 window.changeLanguage = changeLanguage;
 window.getCurrentLanguage = getCurrentLanguage;
+
+
+
+// Pour mon gif animé
+

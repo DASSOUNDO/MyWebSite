@@ -3487,3 +3487,127 @@ body {
     padding: 7px 14px;
   }
 }
+
+
+/* Styles de base pour l'image (pour mon gif animé) */
+/* Centrage et taille du conteneur du GIF */
+/* Définition de l'animation de pulsation très subtile */
+@keyframes auto-pulse {
+    0% {
+        box-shadow: 0 0 18px rgba(0, 255, 255, 0.6);
+    }
+    50% {
+        box-shadow: 0 0 22px rgba(0, 255, 255, 0.75);
+    }
+    100% {
+        box-shadow: 0 0 18px rgba(0, 255, 255, 0.6);
+    }
+}
+
+/* Centrage et taille du conteneur du GIF */
+.gif-wrapper {
+    max-width: 450px; 
+    width: 90%;
+    margin: 20px auto; 
+
+    /* Styles futuristes pour l'encadrement */
+    border: 2px solid #00FFFF;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.6); 
+    border-radius: 10px;
+    overflow: hidden;
+    
+    /* ➡️ OPTIMISATION 1 : Force l'accélération matérielle au départ (performance) */
+    will-change: transform, box-shadow;
+    
+    /* ➡️ ANIMATION PROACTIVE : Pulsation subtile pour attirer l'œil */
+    animation: auto-pulse 3s infinite alternate ease-in-out;
+    
+    /* TRANSITION PLUS FLUIDE AVEC UN CUBIC-BEZIER PRO */
+    transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1), 
+                box-shadow 0.4s ease-out, 
+                border-color 0.4s ease-out;
+    
+    perspective: 1200px; 
+}
+
+/* ➡️➡️ EFFET AU SURVOL (HOVER EFFECT) ⬅️⬅️ */
+.gif-wrapper:hover {
+    cursor: pointer;
+
+    /* ⬇️ TRANSLATION ET ROTATION PLUS PRO (moins extrême) ⬇️ */
+    transform: translateY(-8px) rotateY(5deg) rotateX(1deg) translateZ(30px) scale(1.02); 
+    /* Moins de rotation (5deg au lieu de 100deg) pour rester lisible et pro */
+    
+    /* Ombre et bordure plus intenses au survol */
+    box-shadow: 0 0 50px rgba(0, 255, 255, 1), 0 0 70px rgba(0, 255, 255, 0.6);
+    border-color: rgba(0, 255, 255, 1);
+}
+
+/* L'image elle-même (L'hauteur s'ajuste automatiquement) */
+.gif-item {
+    width: 100%; 
+    height: auto; 
+    display: block; 
+}
+
+/* Légende : inchangée */
+.gif-caption {
+    color: #FFFFFF; 
+    font-size: 1.1em;
+    padding: 15px 10px;
+    margin: 0; 
+    background-color: #222222; 
+    border-top: 1px solid #00FFFF;
+    font-weight: bold; 
+    text-align: center; 
+}.gif-wrapper {
+    max-width: 450px; 
+    width: 90%;
+    margin: 20px auto; 
+
+    /* Styles futuristes pour l'encadrement */
+    border: 2px solid #00FFFF;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.6); 
+    border-radius: 10px;
+    overflow: hidden;
+    
+    /* Transition pour un effet doux */
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease-out, border-color 0.4s ease-out;
+    /* J'ai changé le timing function (cubic-bezier) pour une sensation plus dynamique */
+    
+    /* Perspective essentielle pour la 3D */
+    perspective: 1200px; /* Augmenter la perspective peut rendre l'effet plus dramatique */
+}
+
+/* ➡️➡️ AJOUT DE L'ANIMATION AU SURVOL (HOVER EFFECT) ⬅️⬅️ */
+.gif-wrapper:hover {
+    /* CURSEUR INDIQUE INTERACTIVITÉ */
+    cursor: pointer;
+
+    /* ⬇️⬇️ MODIFICATIONS ICI POUR UNE ROTATION PLUS GRANDE ⬇️⬇️ */
+    /* Rotation plus prononcée sur Y, léger déplacement sur Z pour donner de la profondeur */
+    transform: translateY(-10px) rotateY(100deg) rotateX(5deg) translateZ(30px) scale(1.03); 
+    
+    /* Ombre et bordure plus intenses au survol */
+    box-shadow: 0 0 45px rgba(0, 255, 255, 1), 0 0 60px rgba(0, 255, 255, 0.5);
+    border-color: rgba(0, 255, 255, 1);
+}
+
+/* L'image elle-même (L'hauteur s'ajuste automatiquement) */
+.gif-item {
+    width: 100%; 
+    height: auto; 
+    display: block; 
+}
+
+/* Légende : inchangée */
+.gif-caption {
+    color: #FFFFFF; 
+    font-size: 1.1em;
+    padding: 15px 10px;
+    margin: 0; 
+    background-color: #222222; 
+    border-top: 1px solid #00FFFF;
+    font-weight: bold; 
+    text-align: center; 
+}
