@@ -308,7 +308,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Ajout des liens dans le menu
     docs.forEach(doc => {
         const item = document.createElement('a');
-        item.href = `recommendation/${doc.file}`;
+        item.href = `Recommendation/${doc.file}`;
         item.download = doc.file;
         item.textContent = doc.name;
         item.style.cssText = `
@@ -393,7 +393,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'hero-title': 'Logiciel Embarqué, Cybersécurité et IA.',
             'hero-description': 'Ingénieur et chercheur alliant compétences académiques et industrielles en logiciel embarqué, cybersécurité, intelligence artificielle, développement logiciel et innovation technologique.',
             'btn-download-cv': 'Télécharger CV (PDF)',
-            'btn-download-recommendation': 'Recommendation (PDF)',
+            'btn-download-Recommendation': 'Recommendation (PDF)',
             'btn-download-skills': 'Dossier Compétences (PDF)',
             'btn-location': '🇫🇷 France & 🇨🇦 Canada',
             'skills-title': 'Mes Compétences',
