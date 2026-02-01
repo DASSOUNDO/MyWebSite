@@ -206,7 +206,55 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 1000);
     }
 
-    function downloadCV() {
+
+    document.querySelector('.download-btn[data-type="cv"]').addEventListener('click', function(e) {
+    e.preventDefault();
+
+    // Configuration de tes documents
+    const cvList = [
+        { label: "CV_Adébayo_DASSOUNDO-recherche", file: "CV_Adébayo_DASSOUNDO.pdf" },
+        { label: "CV_Adébayo_DASSOUNDO-Master2-IA", file: "CV_Adébayo_DASSOUNDO-Master2-IA.pdf" },
+    ];
+
+    // On crée dynamiquement une petite fenêtre de choix
+    let menuHtml = `
+        <div id="cv-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:9999;">
+            <div style="background:white; padding:20px; border-radius:10px; min-width:250px; text-align:center;">
+                <h3 style="margin-bottom:15px; color:#333;">Choisir une version</h3>
+                ${cvList.map((cv, index) => `
+                    <button class="btn-select-cv" data-file="${cv.file}" style="display:block; width:100%; margin:10px 0; padding:10px; cursor:pointer; border:1px solid #ddd; border-radius:5px; background:#f9f9f9;">
+                        ${cv.label}
+                    </button>
+                `).join('')}
+                <button id="close-cv-modal" style="margin-top:10px; background:none; border:none; color:red; cursor:pointer;">Annuler</button>
+            </div>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', menuHtml);
+
+    // Gestion du clic sur une option
+    document.querySelectorAll('.btn-select-cv').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const fileName = this.getAttribute('data-file');
+            const link = document.createElement('a');
+            link.href = `cv/${fileName}`;
+            link.download = fileName;
+            link.click();
+            document.getElementById('cv-modal').remove();
+        });
+    });
+
+    // Fermer la modale
+    document.getElementById('close-cv-modal').onclick = () => document.getElementById('cv-modal').remove();
+});
+
+
+
+
+    
+
+   /* function downloadCV() {
         try {
             // Télécharger le fichier PDF directement
             const link = document.createElement('a');
@@ -221,9 +269,81 @@ document.addEventListener('DOMContentLoaded', function() {
             // Fallback: essayer d'ouvrir le fichier dans un nouvel onglet
             window.open('cv/CV_Adébayo_DASSOUNDO.pdf', '_blank');
         }
+    }*/
+
+
+
+    document.querySelector('.download-btn[data-type="recommendation"]').addEventListener('click', function(e) {
+    const btn = e.currentTarget;
+    
+    // Si le menu existe déjà, on le ferme
+    if (document.getElementById('reco-menu')) {
+        document.getElementById('reco-menu').remove();
+        return;
     }
 
-    function downloadRecommendation() {
+    // Liste de tes documents (ajoute autant que tu veux ici)
+    const docs = [
+        { name: "Recommendation-1_Adébayo_DASSOUNDO", file: "Recommendation-1_Adébayo_DASSOUNDO.pdf" },
+        { name: "Recommendation-2_Adébayo_DASSOUNDO", file: "Recommendation-2_Adébayo_DASSOUNDO.pdf" },
+    ];
+
+    // Création du menu
+    const menu = document.createElement('div');
+    menu.id = 'reco-menu';
+    menu.style.cssText = `
+        position: absolute;
+        background: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        padding: 10px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 10px;
+    `;
+
+    // Ajout des liens dans le menu
+    docs.forEach(doc => {
+        const item = document.createElement('a');
+        item.href = `recommendation/${doc.file}`;
+        item.download = doc.file;
+        item.textContent = doc.name;
+        item.style.cssText = `
+            color: #333;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            transition: background 0.2s;
+            font-size: 14px;
+            border: 1px solid #eee;
+        `;
+        item.onmouseover = () => item.style.background = '#f5f5f5';
+        item.onmouseout = () => item.style.background = 'transparent';
+        
+        menu.appendChild(item);
+    });
+
+    // Positionnement du menu par rapport au bouton
+    btn.parentElement.style.position = 'relative';
+    btn.parentElement.appendChild(menu);
+
+    // Fermer le menu si on clique ailleurs
+    setTimeout(() => {
+        window.onclick = (event) => {
+            if (!menu.contains(event.target) && event.target !== btn) {
+                menu.remove();
+                window.onclick = null;
+            }
+        };
+    }, 100);
+});
+
+    
+        
+    /*function downloadRecommendation() {
         try {
                 // Télécharger le fichier PDF directement
                 const link = document.createElement('a');
@@ -238,7 +358,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Fallback: essayer d'ouvrir le fichier dans un nouvel onglet
                 window.open('recommendation/Recommendation_Adébayo_DASSOUNDO.pdf', '_blank');
             }
-    }
+    }*/
 
 
     function downloadCompetences() {
