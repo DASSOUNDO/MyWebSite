@@ -273,7 +273,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-    document.querySelector('.download-btn[data-type="recommendation"]').addEventListener('click', function(e) {
+    document.querySelector('.download-btn[data-type="Recommendation"]').addEventListener('click', function(e) {
     const btn = e.currentTarget;
     
     // Si le menu existe déjà, on le ferme
@@ -285,7 +285,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Liste de tes documents (ajoute autant que tu veux ici)
     const docs = [
         { name: "Recommendation-1_Adébayo_DASSOUNDO", file: "Recommendation-1_Adébayo_DASSOUNDO.pdf" },
-        { name: "Recommendation-2_Adébayo_DASSOUNDO", file: "Recommendation-2_Adébayo_DASSOUNDO.pdf" }
+        { name: "Recommendation-2_Adébayo_DASSOUNDO", file: "Recommendation-2_Adébayo_DASSOUNDO.pdf" },
     ];
 
     // Création du menu
