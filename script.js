@@ -1,5 +1,25 @@
+/**
+ * =============================================================
+ *  script.js — Logique interactive du portfolio
+ * =============================================================
+ *  Auteur      : Adébayo DASSOUNDO
+ *  Projet      : Portfolio personnel (systèmes embarqués, IA, Cyber)
+ *  Dépendances : Typed.js (v2.0.12), FontAwesome
+ *  Description : Ce fichier gère toutes les interactions de la page :
+ *                navigation, animations, téléchargements, traduction,
+ *                animation Canvas IA/Tech, chatbot assistant.
+ * =============================================================
+ */
+
+/* ============================================================
+   BLOC PRINCIPAL — Exécuté après le chargement complet du DOM
+   ============================================================ */
 document.addEventListener('DOMContentLoaded', function () {
-    // Navigation mobile
+    // ──────────────────────────────────────────────────────
+    // SECTION 1 : NAVIGATION MOBILE (menu hamburger)
+    // ──────────────────────────────────────────────────────
+    // Au clic sur le bouton hamburger, on bascule les classes .active
+    // sur le menu et le bouton pour déclencher les animations CSS.
     const hamburger = document.querySelector('.hamburger');
     const navMenu = document.querySelector('.nav-menu');
 
@@ -10,7 +30,12 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Smooth scroll pour les liens de navigation
+    // ──────────────────────────────────────────────────────
+    // SECTION 2 : SMOOTH SCROLL (défilement fluide)
+    // ──────────────────────────────────────────────────────
+    // Tous les liens commençant par '#' scrollent vers la section ciblée
+    // de manière fluide (behavior: 'smooth'). Le menu mobile est
+    // automatiquement refermé après la navigation.
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
@@ -27,7 +52,12 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Projets dépliables
+    // ──────────────────────────────────────────────────────
+    // SECTION 3 : PROJETS DÉPLIABLES (pattern accordion)
+    // ──────────────────────────────────────────────────────
+    // Chaque carte projet peut être ouverte (toggle .active).
+    // Cliquer sur une carte ferme automatiquement toutes les autres
+    // (comportement accordion : une seule carte ouverte à la fois).
     const projectCards = document.querySelectorAll('.project-card');
 
     projectCards.forEach(card => {
@@ -48,7 +78,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Recherche dépliable (même logique que les projets)
+    // ──────────────────────────────────────────────────────
+    // SECTION 4 : RECHERCHES DÉPLIABLES (même pattern)
+    // ──────────────────────────────────────────────────────
+    // Identique aux projets : cliquer sur un axe de recherche
+    // l'ouvre et ferme les autres.
     const researchCards = document.querySelectorAll('.research-card');
 
     researchCards.forEach(card => {
@@ -69,7 +103,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Animation au scroll
+    // ──────────────────────────────────────────────────────
+    // SECTION 5 : ANIMATIONS AU SCROLL (IntersectionObserver)
+    // ──────────────────────────────────────────────────────
+    // L'IntersectionObserver surveille la visibilité des éléments.
+    // Quand un élément entre dans le viewport (+ 10% visible),
+    // on lui ajoute la classe .fade-in pour déclencher l'animation CSS.
+    // Seuil (threshold) : 0.1 = au moins 10% de l'élément doit être visible.
+    // rootMargin : décale de -50px en bas pour un effet de révélation légèrement anticipé.
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
@@ -130,7 +171,14 @@ document.addEventListener('DOMContentLoaded', function () {
         techObserver.observe(skillsSection);
     }
 
-    // Navigation active
+    // ──────────────────────────────────────────────────────
+    // SECTION 6 : NAVIGATION ACTIVE (lien surligné au scroll)
+    // ──────────────────────────────────────────────────────
+    // À chaque événement scroll, on détermine quelle section est
+    // actuellement visible à l'écran, puis on met à jour le lien
+    // de navigation correspondant avec la classe .active.
+    // On affiche aussi la photo de profil dans la navbar quand
+    // l'utilisateur quitte la section Accueil.
     window.addEventListener('scroll', function () {
         const sections = document.querySelectorAll('section[id]');
         const navLinks = document.querySelectorAll('.nav-link');
@@ -160,7 +208,15 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Boutons de téléchargement
+    // ──────────────────────────────────────────────────────
+    // SECTION 7 : TÉLÉCHARGEMENTS (CV, Recommandation, etc.)
+    // ──────────────────────────────────────────────────────
+    // Les boutons .download-btn portent un attribut data-type
+    // qui indique le type de fichier. Chaque clic déclenche :
+    //   1. Un effet visuel d'attente sur le bouton (spinner)
+    //   2. Un délai simulé de 1 seconde
+    //   3. Le téléchargement réel du fichier PDF
+    //   4. Un retour visuel de succès pendant 2 secondes
     const downloadButtons = document.querySelectorAll('.download-btn');
 
     downloadButtons.forEach(button => {
@@ -207,10 +263,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-    document.querySelector('.download-btn[data-type="cv"]').addEventListener('click', function (e) {
-        e.preventDefault();
-
-        // Configuration de tes documents
+    // ──────────────────────────────────────────────────────
+    // SECTION 8 : SÉLECTEUR DE CV (menu modal de choix)
+    // ──────────────────────────────────────────────────────
+    // Le bouton CV ouvre une mini-fenêtre modale permettant de
+    // choisir quelle version du CV télécharger (recherche, master, etc.).
+    // La fenêtre est générée dynamiquement en JavaScript.
+    function downloadCV() {
         const cvList = [
             { label: "CV_Adébayo_DASSOUNDO-recherche", file: "CV_Adébayo_DASSOUNDO.pdf" },
             { label: "CV_Adébayo_DASSOUNDO-Master2-IA", file: "CV_Adébayo_DASSOUNDO-Master2-IA.pdf" },
@@ -218,18 +277,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // On crée dynamiquement une petite fenêtre de choix
         let menuHtml = `
-        <div id="cv-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:9999;">
-            <div style="background:white; padding:20px; border-radius:10px; min-width:250px; text-align:center;">
-                <h3 style="margin-bottom:15px; color:#333;">Choisir une version</h3>
-                ${cvList.map((cv, index) => `
-                    <button class="btn-select-cv" data-file="${cv.file}" style="display:block; width:100%; margin:10px 0; padding:10px; cursor:pointer; border:1px solid #ddd; border-radius:5px; background:#f9f9f9;">
-                        ${cv.label}
-                    </button>
-                `).join('')}
-                <button id="close-cv-modal" style="margin-top:10px; background:none; border:none; color:red; cursor:pointer;">Annuler</button>
+            <div id="cv-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:9999;">
+                <div style="background:white; padding:20px; border-radius:10px; min-width:250px; text-align:center;">
+                    <h3 style="margin-bottom:15px; color:#333;">Choisir une version</h3>
+                    ${cvList.map((cv, index) => `
+                        <button class="btn-select-cv" data-file="${cv.file}" style="display:block; width:100%; margin:10px 0; padding:10px; cursor:pointer; border:1px solid #ddd; border-radius:5px; background:#f9f9f9;">
+                            ${cv.label}
+                        </button>
+                    `).join('')}
+                    <button id="close-cv-modal" style="margin-top:10px; background:none; border:none; color:red; cursor:pointer;">Annuler</button>
+                </div>
             </div>
-        </div>
-    `;
+        `;
 
         document.body.insertAdjacentHTML('beforeend', menuHtml);
 
@@ -247,7 +306,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Fermer la modale
         document.getElementById('close-cv-modal').onclick = () => document.getElementById('cv-modal').remove();
-    });
+    }
+
 
 
 
@@ -292,34 +352,34 @@ document.addEventListener('DOMContentLoaded', function () {
         const menu = document.createElement('div');
         menu.id = 'reco-menu';
         menu.style.cssText = `
-        position: absolute;
-        background: #ffffff;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        padding: 10px;
-        z-index: 1000;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        margin-top: 10px;
-    `;
+                position: absolute;
+                background: #ffffff;
+                border: 1px solid #ddd;
+                border - radius: 8px;
+                box - shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                padding: 10px;
+                z - index: 1000;
+                display: flex;
+                flex - direction: column;
+                gap: 8px;
+                margin - top: 10px;
+                `;
 
         // Ajout des liens dans le menu
         docs.forEach(doc => {
             const item = document.createElement('a');
-            item.href = `Recommendation/${doc.file}`;
+            item.href = `Recommendation / ${doc.file} `;
             item.download = doc.file;
             item.textContent = doc.name;
             item.style.cssText = `
-            color: #333;
-            text-decoration: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            transition: background 0.2s;
-            font-size: 14px;
-            border: 1px solid #eee;
-        `;
+                color: #333;
+                text - decoration: none;
+                padding: 8px 15px;
+                border - radius: 4px;
+                transition: background 0.2s;
+                font - size: 14px;
+                border: 1px solid #eee;
+                `;
             item.onmouseover = () => item.style.background = '#f5f5f5';
             item.onmouseout = () => item.style.background = 'transparent';
 
@@ -376,12 +436,29 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Animation au chargement
+    // ──────────────────────────────────────────────────────
+    // SECTION 9 : CHARGEMENT DE LA PAGE
+    // ──────────────────────────────────────────────────────
+    // Au chargement complet des ressources (images, scripts...),
+    // on ajoute la classe .loaded au body pour déclencher
+    // les animations d'entrée de page via CSS.
     window.addEventListener('load', function () {
         document.body.classList.add('loaded');
     });
 
-    // Traductions
+    // ──────────────────────────────────────────────────────
+    // SECTION 10 : SYSTÈME DE TRADUCTIONS (FR / EN)
+    // ──────────────────────────────────────────────────────
+    // L'objet 'translations' contient deux sous-objets (fr, en).
+    // Chaque clé correspond à un attribut data-lang="clé" dans le HTML.
+    // changeLanguage(lang) met à jour tous les textes du site
+    // et sauvegarde la préférence dans localStorage.
+    //
+    // Langue par défaut : Français ('fr'), sauf si une préférence
+    // a déjà été sauvegardée dans le navigateur.
+    // ──────────────────────────────────────────────────────
+
+    // Dictionnaire de traductions complet
     const translations = {
         fr: {
             'nav-home': 'Accueil',
@@ -430,11 +507,14 @@ document.addEventListener('DOMContentLoaded', function () {
             'contact-title': 'Contact'
         }
     };
-
-    // Langue courante - changée par défaut en Français
+    // Langue active (modifiée par changeLanguage)
     let currentLang = 'fr';
 
-    // Fonction pour initialiser la langue
+    /**
+     * initializeLanguage()
+     * Lit la langue sauvegardée dans localStorage et applique la langue initiale.
+     * Si aucune préférence n'existe, la langue par défaut est le Français.
+     */
     function initializeLanguage() {
         const savedLang = localStorage.getItem('preferred-language');
         const browserLang = navigator.language.startsWith('fr') ? 'fr' : 'en';
@@ -445,11 +525,20 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Fonction pour changer la langue
+    /**
+     * changeLanguage(newLang)
+     * Applique dynamiquement la langue choisie :
+     *   1. Ajoute une classe CSS transitoire pour une animation de fondu
+     *   2. Met à jour tous les éléments [data-lang] avec les textes traduits
+     *   3. Marque visuellement le bouton de langue actif
+     *   4. Sauvegarde la préférence dans localStorage
+     *   5. Relance Typed.js si nécessaire
+     * @param {string} newLang - Code de langue ('fr' ou 'en')
+     */
     function changeLanguage(newLang) {
         if (!translations[newLang]) return;
 
-        console.log(`Changement de langue vers: ${newLang}`);
+        console.log(`Changement de langue vers: ${newLang} `);
 
         // Animation de transition
         document.body.classList.add('lang-switching');
@@ -487,25 +576,30 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.body.classList.remove('lang-switched');
             }, 500);
 
-            console.log(`Langue changée vers: ${currentLang}`);
+            console.log(`Langue changée vers: ${currentLang} `);
 
             // Relancer l'animation Typed si elle existe
             if (typeof initTyped === 'function') initTyped(currentLang);
         }, 150);
     }
 
-    // Gestionnaire de changement de langue - amélioré
+    // ──────────────────────────────────────────────────────
+    // SECTION 11 : GESTION DES BOUTONS DE LANGUE
+    // ──────────────────────────────────────────────────────
+    // Les boutons .lang-btn portent un attribut data-lang-code
+    // ('fr' ou 'en'). Au clic, si la langue choisie est différente
+    // de la langue courante, on appelle changeLanguage().
     const langButtons = document.querySelectorAll('.lang-btn');
 
     console.log('Boutons de langue trouvés:', langButtons.length);
 
     langButtons.forEach((button, index) => {
-        console.log(`Bouton ${index}:`, button.getAttribute('data-lang-code'));
+        console.log(`Bouton ${index}: `, button.getAttribute('data-lang-code'));
 
         button.addEventListener('click', function (e) {
             e.preventDefault();
             const newLang = this.getAttribute('data-lang-code');
-            console.log(`Clic sur bouton langue: ${newLang}, langue actuelle: ${currentLang}`);
+            console.log(`Clic sur bouton langue: ${newLang}, langue actuelle: ${currentLang} `);
 
             if (newLang && newLang !== currentLang) {
                 changeLanguage(newLang);
@@ -516,7 +610,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initialiser la langue après le chargement
     initializeLanguage();
 
-    // Initialisation Typed.js
+    // ──────────────────────────────────────────────────────
+    // SECTION 12 : TYPED.JS (animation "machine à écrire")
+    // ──────────────────────────────────────────────────────
+    // initTyped() crée ou recrée l'animation de texte dans .typed-text.
+    // Elle est appelée au chargement ET à chaque changement de langue
+    // pour que le texte animé soit dans la bonne langue.
+    // Paramètres : typeSpeed (vitesse d'écriture), backSpeed (effacement)
     window.initTyped = function (lang) {
         if (window.typed) window.typed.destroy();
         const textToType = translations[lang] && translations[lang]['hero-title'] ? translations[lang]['hero-title'] : 'Logiciel Embarqué, Cybersécurité et IA.';
@@ -531,7 +631,19 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     initTyped(currentLang);
 
-    // --- Animation IA/Tech (Custom Canvas) ---
+    // ────────────────────────────────────────────────────────────────
+    // SECTION 13 : ANIMATION CANVAS IA/TECH (réseau de particules)
+    // ────────────────────────────────────────────────────────────────
+    // Un élément <canvas> est créé et injecté dans le div #particles-js
+    // qui sert de fond à la section Hero.
+    //
+    // FONCTIONNEMENT :
+    //   1. Les nœuds (symboles IA/tech) flottent aléatoirement
+    //   2. Chaque frame, les positions sont mises à jour
+    //   3. Les nœuds proches (<180px) sont reliés par des traits
+    //   4. La souris attire les nœuds proches (rayon 220px)
+    //   5. Un clic repousse les nœuds dans toutes les directions
+    // ────────────────────────────────────────────────────────────────
     const canvas = document.createElement('canvas');
     canvas.id = 'tech-canvas';
     Object.assign(canvas.style, {
@@ -737,13 +849,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const posX = e.clientX;
         const posY = e.clientY;
 
-        cursorDot.style.left = `${posX}px`;
-        cursorDot.style.top = `${posY}px`;
+        cursorDot.style.left = `${posX} px`;
+        cursorDot.style.top = `${posY} px`;
 
         // Animation de l'outline (avec petit délai ou direct)
         cursorOutline.animate({
-            left: `${posX}px`,
-            top: `${posY}px`
+            left: `${posX} px`,
+            top: `${posY} px`
         }, { duration: 500, fill: "forwards" });
     });
 
@@ -773,7 +885,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const scrolled = (scrollPx / winHeightPx) * 100;
 
         if (scrollProgress) {
-            scrollProgress.style.width = `${scrolled}%`;
+            scrollProgress.style.width = `${scrolled}% `;
         }
 
         // Afficher/Cacher le bouton Back To Top
@@ -798,7 +910,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
-// Fonction pour obtenir la langue courante
+/* ============================================================
+   FONCTIONS GLOBALES (hors DOMContentLoaded)
+   Accessibles depuis la console et depuis index.html
+   ============================================================ */
+
+/** Retourne le code de la langue actuellement active ('fr' ou 'en') */
 function getCurrentLanguage() {
     return currentLang;
 }
@@ -807,9 +924,21 @@ function getCurrentLanguage() {
 window.changeLanguage = changeLanguage;
 window.getCurrentLanguage = getCurrentLanguage;
 
-// ============================================
-// CHATBOT WIDGET LOGIC (Rule-based JS Bot)
-// ============================================
+/* ============================================================
+   SECTION 14 : CHATBOT WIDGET (assistant IA pré-programmé)
+   ============================================================
+   Ce bloc est une IIFE (fonction auto-exécutante) placée
+   en dehors du DOMContentLoaded car les scripts sont chargés
+   APRÈS le HTML du widget dans index.html. Les éléments
+   #chatbot-toggle, #chatbot-window etc. existent donc déjà
+   quand ce code s'exécute.
+
+   LOGIQUE DE RÉPONSE :
+   La fonction getReply() applique des correspondances de mots-clés
+   (text.includes) sur la question de l'utilisateur pour retourner
+   une réponse pré-définie. Ce n'est PAS une vraie IA générative.
+   Pour connecter à OpenAI/Gemini, voir ARCHITECTURE.md.
+   ============================================================ */
 
 (function () {
     const chatToggle = document.getElementById('chatbot-toggle');
