@@ -20,8 +20,9 @@
   --accent-red: #ef4444;      /* Pour erreurs ou attention */
 
   /* --- Ombres et transitions --- */
-  --shadow: rgba(15, 23, 42, 0.1);
-  --transition: all 0.3s ease;
+  --shadow: rgba(15, 23, 42, 0.08); /* Plus douce */
+  --shadow-hover: rgba(30, 64, 175, 0.15); /* Plus moderne, légère teinte bleutée */
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Transition plus fluide et pro */
 }
 
 
@@ -140,11 +141,19 @@ body {
 }
 
 /* Hero Section */
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
 .hero {
     min-height: 100vh;
     display: flex;
     align-items: center;
-    background: linear-gradient(135deg, var(--white) 0%, var(--gray-50) 100%);
+    background: linear-gradient(-45deg, #ffffff, #f8fafc, #e0f2fe, #f1f5f9);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
     padding-top: 80px;
 }
 
@@ -197,11 +206,13 @@ body {
 .btn-primary {
     background: var(--primary-blue);
     color: white;
+    box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
 }
 
 .btn-primary:hover {
     background: var(--dark-blue);
     transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(30, 64, 175, 0.4);
 }
 
 .btn-secondary {
@@ -368,7 +379,7 @@ body {
 
 .overview-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px var(--shadow);
+    box-shadow: 0 15px 35px var(--shadow-hover);
 }
 
 .overview-card h3 {
@@ -480,7 +491,7 @@ body {
 
 .tech-category:hover {
     transform: translateY(-5px);
-    box-shadow: 0 12px 30px var(--shadow);
+    box-shadow: 0 15px 35px var(--shadow-hover);
 }
 
 .tech-header {
@@ -652,7 +663,7 @@ body {
 
 .project-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 12px 30px var(--shadow);
+    box-shadow: 0 15px 35px var(--shadow-hover);
 }
 
 .project-card[data-category="enterprise"] {
@@ -771,7 +782,7 @@ body {
 
 .research-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 12px 30px var(--shadow);
+    box-shadow: 0 15px 35px var(--shadow-hover);
 }
 
 .research-card[data-category="nlp"] {
