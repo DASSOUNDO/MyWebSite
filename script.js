@@ -807,7 +807,100 @@ function getCurrentLanguage() {
 window.changeLanguage = changeLanguage;
 window.getCurrentLanguage = getCurrentLanguage;
 
+// ============================================
+// CHATBOT WIDGET LOGIC (Rule-based JS Bot)
+// ============================================
 
+(function () {
+    const chatToggle = document.getElementById('chatbot-toggle');
+    const chatWindow = document.getElementById('chatbot-window');
+    const chatClose = document.getElementById('chatbot-close');
+    const chatInput = document.getElementById('chat-input');
+    const chatSubmit = document.getElementById('chat-submit');
+    const chatMessages = document.getElementById('chatbot-messages');
+
+    if (!chatToggle || !chatWindow) return;
+
+    chatToggle.addEventListener('click', function () {
+        chatWindow.classList.toggle('hidden');
+        if (!chatWindow.classList.contains('hidden')) chatInput.focus();
+    });
+
+    chatClose.addEventListener('click', function () {
+        chatWindow.classList.add('hidden');
+    });
+
+    function scrollToBottom() { chatMessages.scrollTop = chatMessages.scrollHeight; }
+
+    function addUserMessage(text) {
+        const d = document.createElement('div');
+        d.className = 'message user-message';
+        d.textContent = text;
+        chatMessages.appendChild(d);
+        scrollToBottom();
+    }
+
+    function addBotMessage(html) {
+        const d = document.createElement('div');
+        d.className = 'message bot-message';
+        d.innerHTML = html;
+        chatMessages.appendChild(d);
+        scrollToBottom();
+    }
+
+    function showTyping() {
+        const t = document.createElement('div');
+        t.className = 'typing-indicator';
+        t.id = 'typing-indicator';
+        t.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+        chatMessages.appendChild(t);
+        scrollToBottom();
+    }
+
+    function removeTyping() {
+        const t = document.getElementById('typing-indicator');
+        if (t) t.remove();
+    }
+
+    function getBotResponse(input) {
+        const text = input.toLowerCase();
+        if (text.includes('cv') || text.includes('télécharger'))
+            return "Vous pouvez télécharger le CV PDF dans la section Accueil ! 📄";
+        if (text.includes('école') || text.includes('eseo') || text.includes('parcours') || text.includes('etude'))
+            return "Adébayo est étudiant ingénieur à l'ESEO Angers (2023-2026), spécialisé en Systèmes Embarqués, IA et Cybersécurité. 🎓";
+        if (text.includes('compétence') || text.includes('skills') || text.includes('technos'))
+            return "Compétences clés :<br>💻 Python, C, C++, Rust<br>🧠 PyTorch, TensorFlow, Edge AI<br>⚙️ ROS2, RTOS, IoT<br>🔐 Wireshark, Cybersécurité";
+        if (text.includes('projet') || text.includes('portfolio'))
+            return "Projets phares :<br>🚁 Drone Surveillance (ROS2)<br>✈️ Simulateur de Vol IA<br>🤖 LLM sur microcontrôleur<br>Consultez la section Projets !";
+        if (text.includes('contact') || text.includes('mail') || text.includes('linkedin') || text.includes('joindre'))
+            return "Contactez Adébayo via <strong>adebayo.dassoundo@reseau.eseo.fr</strong> ou sur LinkedIn (lien dans le footer). ✉️";
+        if (text.includes('bonjour') || text.includes('salut') || text.includes('hello'))
+            return "Bonjour ! Comment puis-je vous aider ? Posez des questions sur son parcours, ses compétences ou ses projets 😊";
+        if (text.includes('ia') || text.includes('intelligence artificielle'))
+            return "Adébayo est passionné par l'Edge AI : il entraîne des modèles PyTorch/TF pour MCU très contraints. 🤖";
+        if (text.includes('embarqué') || text.includes('embedded'))
+            return "L'embarqué est son cœur de métier : Bare-Metal, RTOS, C/Rust, architectures proches du hardware. 🔧";
+        if (text.includes('qui') && (text.includes('tu') || text.includes('es')))
+            return "Je suis l'assistant virtuel d'Adébayo ! Je tourne en pur JavaScript, bientôt connecté à une vraie IA 😉";
+        return "Bonne question ! Explorez le site ou contactez Adébayo directement pour plus d'infos !";
+    }
+
+    function processMessage() {
+        const text = chatInput.value.trim();
+        if (!text) return;
+        addUserMessage(text);
+        chatInput.value = '';
+        showTyping();
+        setTimeout(function () {
+            removeTyping();
+            addBotMessage(getBotResponse(text));
+        }, 900 + Math.random() * 600);
+    }
+
+    chatSubmit.addEventListener('click', processMessage);
+    chatInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') processMessage();
+    });
+})();
 
 // Pour mon gif animé
-
