@@ -1,0 +1,1097 @@
+commit 6127ce3fc0e10e12b376ecc74822413282bb78b5
+Author: DASSOUNDO <sergiodassoundo2@gmail.com>
+Date:   Fri Apr 3 11:18:33 2026 +0200
+
+    v1.6 W3
+
+diff --git a/script.js b/script.js
+index f3c9150..869b2f0 100644
+--- a/script.js
++++ b/script.js
+@@ -807,7 +807,100 @@ function getCurrentLanguage() {
+ window.changeLanguage = changeLanguage;
+ window.getCurrentLanguage = getCurrentLanguage;
+ 
++// ============================================
++// CHATBOT WIDGET LOGIC (Rule-based JS Bot)
++// ============================================
++
++(function () {
++    const chatToggle = document.getElementById('chatbot-toggle');
++    const chatWindow = document.getElementById('chatbot-window');
++    const chatClose = document.getElementById('chatbot-close');
++    const chatInput = document.getElementById('chat-input');
++    const chatSubmit = document.getElementById('chat-submit');
++    const chatMessages = document.getElementById('chatbot-messages');
++
++    if (!chatToggle || !chatWindow) return;
++
++    chatToggle.addEventListener('click', function () {
++        chatWindow.classList.toggle('hidden');
++        if (!chatWindow.classList.contains('hidden')) chatInput.focus();
++    });
+ 
++    chatClose.addEventListener('click', function () {
++        chatWindow.classList.add('hidden');
++    });
+ 
+-// Pour mon gif animé
++    function scrollToBottom() { chatMessages.scrollTop = chatMessages.scrollHeight; }
++
++    function addUserMessage(text) {
++        const d = document.createElement('div');
++        d.className = 'message user-message';
++        d.textContent = text;
++        chatMessages.appendChild(d);
++        scrollToBottom();
++    }
++
++    function addBotMessage(html) {
++        const d = document.createElement('div');
++        d.className = 'message bot-message';
++        d.innerHTML = html;
++        chatMessages.appendChild(d);
++        scrollToBottom();
++    }
++
++    function showTyping() {
++        const t = document.createElement('div');
++        t.className = 'typing-indicator';
++        t.id = 'typing-indicator';
++        t.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
++        chatMessages.appendChild(t);
++        scrollToBottom();
++    }
+ 
++    function removeTyping() {
++        const t = document.getElementById('typing-indicator');
++        if (t) t.remove();
++    }
++
++    function getBotResponse(input) {
++        const text = input.toLowerCase();
++        if (text.includes('cv') || text.includes('télécharger'))
++            return "Vous pouvez télécharger le CV PDF dans la section Accueil ! 📄";
++        if (text.includes('école') || text.includes('eseo') || text.includes('parcours') || text.includes('etude'))
++            return "Adébayo est étudiant ingénieur à l'ESEO Angers (2023-2026), spécialisé en Systèmes Embarqués, IA et Cybersécurité. 🎓";
++        if (text.includes('compétence') || text.includes('skills') || text.includes('technos'))
++            return "Compétences clés :<br>💻 Python, C, C++, Rust<br>🧠 PyTorch, TensorFlow, Edge AI<br>⚙️ ROS2, RTOS, IoT<br>🔐 Wireshark, Cybersécurité";
++        if (text.includes('projet') || text.includes('portfolio'))
++            return "Projets phares :<br>🚁 Drone Surveillance (ROS2)<br>✈️ Simulateur de Vol IA<br>🤖 LLM sur microcontrôleur<br>Consultez la section Projets !";
++        if (text.includes('contact') || text.includes('mail') || text.includes('linkedin') || text.includes('joindre'))
++            return "Contactez Adébayo via <strong>adebayo.dassoundo@reseau.eseo.fr</strong> ou sur LinkedIn (lien dans le footer). ✉️";
++        if (text.includes('bonjour') || text.includes('salut') || text.includes('hello'))
++            return "Bonjour ! Comment puis-je vous aider ? Posez des questions sur son parcours, ses compétences ou ses projets 😊";
++        if (text.includes('ia') || text.includes('intelligence artificielle'))
++            return "Adébayo est passionné par l'Edge AI : il entraîne des modèles PyTorch/TF pour MCU très contraints. 🤖";
++        if (text.includes('embarqué') || text.includes('embedded'))
++            return "L'embarqué est son cœur de métier : Bare-Metal, RTOS, C/Rust, architectures proches du hardware. 🔧";
++        if (text.includes('qui') && (text.includes('tu') || text.includes('es')))
++            return "Je suis l'assistant virtuel d'Adébayo ! Je tourne en pur JavaScript, bientôt connecté à une vraie IA 😉";
++        return "Bonne question ! Explorez le site ou contactez Adébayo directement pour plus d'infos !";
++    }
++
++    function processMessage() {
++        const text = chatInput.value.trim();
++        if (!text) return;
++        addUserMessage(text);
++        chatInput.value = '';
++        showTyping();
++        setTimeout(function () {
++            removeTyping();
++            addBotMessage(getBotResponse(text));
++        }, 900 + Math.random() * 600);
++    }
++
++    chatSubmit.addEventListener('click', processMessage);
++    chatInput.addEventListener('keypress', function (e) {
++        if (e.key === 'Enter') processMessage();
++    });
++})();
++
++// Pour mon gif animé
+
+commit 81140c598b6b464864e072510f22d36ab0ba760d
+Author: DASSOUNDO <sergiodassoundo2@gmail.com>
+Date:   Fri Apr 3 10:55:37 2026 +0200
+
+    v1.5 W3
+
+diff --git a/script.js b/script.js
+index b4a9ddd..f3c9150 100644
+--- a/script.js
++++ b/script.js
+@@ -531,61 +531,170 @@ document.addEventListener('DOMContentLoaded', function () {
+     }
+     initTyped(currentLang);
+ 
+-    // Initialisation Particles.js
+-    if (window.particlesJS) {
+-        particlesJS("particles-js", {
+-            "particles": {
+-                "number": { "value": 120, "density": { "enable": true, "value_area": 900 } },
+-                "color": { "value": ["#38bdf8", "#818cf8", "#34d399", "#f472b6"] },
+-                "shape": {
+-                    "type": ["circle", "triangle", "star"],
+-                    "stroke": { "width": 0, "color": "#000000" }
+-                },
+-                "opacity": {
+-                    "value": 0.55,
+-                    "random": true,
+-                    "anim": { "enable": true, "speed": 1, "opacity_min": 0.15, "sync": false }
+-                },
+-                "size": {
+-                    "value": 4,
+-                    "random": true,
+-                    "anim": { "enable": true, "speed": 2, "size_min": 0.5, "sync": false }
+-                },
+-                "line_linked": {
+-                    "enable": true,
+-                    "distance": 130,
+-                    "color": "#38bdf8",
+-                    "opacity": 0.25,
+-                    "width": 1
+-                },
+-                "move": {
+-                    "enable": true,
+-                    "speed": 2.5,
+-                    "direction": "none",
+-                    "random": true,
+-                    "straight": false,
+-                    "out_mode": "out",
+-                    "bounce": false,
+-                    "attract": { "enable": true, "rotateX": 600, "rotateY": 1200 }
++    // --- Animation IA/Tech (Custom Canvas) ---
++    const canvas = document.createElement('canvas');
++    canvas.id = 'tech-canvas';
++    Object.assign(canvas.style, {
++        position: 'absolute', top: '0', left: '0',
++        width: '100%', height: '100%', zIndex: '0', pointerEvents: 'all'
++    });
++    const particlesContainer = document.getElementById('particles-js');
++    if (particlesContainer) {
++        particlesContainer.innerHTML = '';
++        particlesContainer.appendChild(canvas);
++
++        const ctx = canvas.getContext('2d');
++
++        // AI / New tech themed symbols only
++        const SYMBOLS = [
++            'AI', 'ML', 'GPT', 'LLM', 'NLP',
++            'IA', 'AGI', 'ANN', 'CNN', 'GAN',
++            'CUDA', 'IoT', 'ROS2', 'ARM',
++            'λ', '∑', '∂', '∇', 'σ',
++            '</>', '{}', '01', '0x1F',
++            '⚙', '📡', '🔬', '🧠', '⚡'
++        ];
++
++        const COLORS = ['#38bdf8', '#818cf8', '#34d399', '#f472b6', '#a78bfa'];
++
++        let nodes = [];
++        let mouse = { x: -9999, y: -9999 };
++
++        function resize() {
++            canvas.width = particlesContainer.offsetWidth;
++            canvas.height = particlesContainer.offsetHeight;
++        }
++
++        function createNodes(count) {
++            nodes = [];
++            for (let i = 0; i < count; i++) {
++                const symbol = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
++                const isShort = symbol.length <= 2;
++                nodes.push({
++                    x: Math.random() * canvas.width,
++                    y: Math.random() * canvas.height,
++                    vx: (Math.random() - 0.5) * 1.5,
++                    vy: (Math.random() - 0.5) * 1.5,
++                    symbol,
++                    color: COLORS[Math.floor(Math.random() * COLORS.length)],
++                    fontSize: isShort ? (14 + Math.random() * 8) : (10 + Math.random() * 6),
++                    alpha: 0.25 + Math.random() * 0.5,
++                    alphaDir: Math.random() > 0.5 ? 1 : -1,
++                    alphaSpeed: 0.005 + Math.random() * 0.008,
++                    scale: 1,
++                    scaleDir: Math.random() > 0.5 ? 1 : -1,
++                    scaleSpeed: 0.004 + Math.random() * 0.004
++                });
++            }
++        }
++
++        function drawLines() {
++            const LINK_DIST = 180;
++            for (let i = 0; i < nodes.length; i++) {
++                for (let j = i + 1; j < nodes.length; j++) {
++                    const dx = nodes[i].x - nodes[j].x;
++                    const dy = nodes[i].y - nodes[j].y;
++                    const dist = Math.sqrt(dx * dx + dy * dy);
++                    if (dist < LINK_DIST) {
++                        const opacity = (1 - dist / LINK_DIST) * 0.45;
++                        ctx.save();
++                        ctx.globalAlpha = opacity;
++                        ctx.strokeStyle = nodes[i].color;
++                        ctx.lineWidth = 0.8;
++                        ctx.shadowColor = nodes[i].color;
++                        ctx.shadowBlur = 5;
++                        ctx.beginPath();
++                        ctx.moveTo(nodes[i].x, nodes[i].y);
++                        ctx.lineTo(nodes[j].x, nodes[j].y);
++                        ctx.stroke();
++                        ctx.restore();
++                    }
++                }
++            }
++        }
++
++        function drawNode(n) {
++            const size = n.fontSize * n.scale;
++            ctx.save();
++            ctx.globalAlpha = n.alpha;
++            ctx.fillStyle = n.color;
++            ctx.font = `bold ${size}px 'Inter', monospace`;
++            ctx.shadowColor = n.color;
++            ctx.shadowBlur = 10;
++            ctx.textAlign = 'center';
++            ctx.textBaseline = 'middle';
++            ctx.fillText(n.symbol, n.x, n.y);
++            ctx.restore();
++        }
++
++        function animate() {
++            ctx.clearRect(0, 0, canvas.width, canvas.height);
++            drawLines();
++
++            for (const n of nodes) {
++                // Pulse alpha
++                n.alpha += n.alphaDir * n.alphaSpeed;
++                if (n.alpha > 0.8 || n.alpha < 0.15) n.alphaDir *= -1;
++
++                // Pulse scale
++                n.scale += n.scaleDir * n.scaleSpeed;
++                if (n.scale > 1.2 || n.scale < 0.85) n.scaleDir *= -1;
++
++                // Mouse attraction
++                const dx = mouse.x - n.x;
++                const dy = mouse.y - n.y;
++                const dist = Math.sqrt(dx * dx + dy * dy) || 1;
++                if (dist < 220) {
++                    n.vx += (dx / dist) * 0.08;
++                    n.vy += (dy / dist) * 0.08;
+                 }
+-            },
+-            "interactivity": {
+-                "detect_on": "canvas",
+-                "events": {
+-                    "onhover": { "enable": true, "mode": "bubble" },
+-                    "onclick": { "enable": true, "mode": "repulse" },
+-                    "resize": true
+-                },
+-                "modes": {
+-                    "bubble": { "distance": 180, "size": 8, "duration": 2, "opacity": 0.9, "speed": 3 },
+-                    "repulse": { "distance": 200, "duration": 0.4 },
+-                    "push": { "particles_nb": 6 }
++
++                n.vx *= 0.985;
++                n.vy *= 0.985;
++
++                const spd = Math.sqrt(n.vx * n.vx + n.vy * n.vy);
++                if (spd > 2.5) { n.vx = n.vx / spd * 2.5; n.vy = n.vy / spd * 2.5; }
++
++                n.x += n.vx;
++                n.y += n.vy;
++
++                if (n.x < 0 || n.x > canvas.width) n.vx *= -1;
++                if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
++
++                drawNode(n);
++            }
++            requestAnimationFrame(animate);
++        }
++
++        canvas.addEventListener('mousemove', e => {
++            const rect = canvas.getBoundingClientRect();
++            mouse.x = e.clientX - rect.left;
++            mouse.y = e.clientY - rect.top;
++        });
++        canvas.addEventListener('mouseleave', () => { mouse.x = -9999; mouse.y = -9999; });
++
++        canvas.addEventListener('click', e => {
++            const rect = canvas.getBoundingClientRect();
++            const cx = e.clientX - rect.left;
++            const cy = e.clientY - rect.top;
++            for (const n of nodes) {
++                const dx = n.x - cx;
++                const dy = n.y - cy;
++                const d = Math.sqrt(dx * dx + dy * dy) || 1;
++                if (d < 250) {
++                    n.vx -= (dx / d) * (10 * (1 - d / 250));
++                    n.vy -= (dy / d) * (10 * (1 - d / 250));
+                 }
+-            },
+-            "retina_detect": true
++            }
+         });
++
++        resize();
++        createNodes(95);
++        animate();
++        window.addEventListener('resize', () => { resize(); createNodes(95); });
+     }
+ 
++
+     // Company logo click effects
+     const companyLogos = document.querySelectorAll('.company-logo');
+ 
+
+commit 1671c28cecf499f6bb28f75b2a51b7311f3b45b8
+Author: DASSOUNDO <sergiodassoundo2@gmail.com>
+Date:   Fri Apr 3 10:39:31 2026 +0200
+
+    v1.4 W3
+
+diff --git a/script.js b/script.js
+index 722018c..b4a9ddd 100644
+--- a/script.js
++++ b/script.js
+@@ -535,18 +535,52 @@ document.addEventListener('DOMContentLoaded', function () {
+     if (window.particlesJS) {
+         particlesJS("particles-js", {
+             "particles": {
+-                "number": { "value": 70, "density": { "enable": true, "value_area": 800 } },
+-                "color": { "value": "#38bdf8" },
+-                "shape": { "type": "circle" },
+-                "opacity": { "value": 0.4, "random": false },
+-                "size": { "value": 3, "random": true },
+-                "line_linked": { "enable": true, "distance": 150, "color": "#0ea5e9", "opacity": 0.3, "width": 1 },
+-                "move": { "enable": true, "speed": 1.5, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
++                "number": { "value": 120, "density": { "enable": true, "value_area": 900 } },
++                "color": { "value": ["#38bdf8", "#818cf8", "#34d399", "#f472b6"] },
++                "shape": {
++                    "type": ["circle", "triangle", "star"],
++                    "stroke": { "width": 0, "color": "#000000" }
++                },
++                "opacity": {
++                    "value": 0.55,
++                    "random": true,
++                    "anim": { "enable": true, "speed": 1, "opacity_min": 0.15, "sync": false }
++                },
++                "size": {
++                    "value": 4,
++                    "random": true,
++                    "anim": { "enable": true, "speed": 2, "size_min": 0.5, "sync": false }
++                },
++                "line_linked": {
++                    "enable": true,
++                    "distance": 130,
++                    "color": "#38bdf8",
++                    "opacity": 0.25,
++                    "width": 1
++                },
++                "move": {
++                    "enable": true,
++                    "speed": 2.5,
++                    "direction": "none",
++                    "random": true,
++                    "straight": false,
++                    "out_mode": "out",
++                    "bounce": false,
++                    "attract": { "enable": true, "rotateX": 600, "rotateY": 1200 }
++                }
+             },
+             "interactivity": {
+                 "detect_on": "canvas",
+-                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
+-                "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 1 } }, "push": { "particles_nb": 4 } }
++                "events": {
++                    "onhover": { "enable": true, "mode": "bubble" },
++                    "onclick": { "enable": true, "mode": "repulse" },
++                    "resize": true
++                },
++                "modes": {
++                    "bubble": { "distance": 180, "size": 8, "duration": 2, "opacity": 0.9, "speed": 3 },
++                    "repulse": { "distance": 200, "duration": 0.4 },
++                    "push": { "particles_nb": 6 }
++                }
+             },
+             "retina_detect": true
+         });
+
+commit e01d40474a7a01a3907421a57de0272acf612668
+Author: DASSOUNDO <sergiodassoundo2@gmail.com>
+Date:   Fri Apr 3 09:36:03 2026 +0200
+
+    v1.2 W3
+
+diff --git a/script.js b/script.js
+index 2689a8a..722018c 100644
+--- a/script.js
++++ b/script.js
+@@ -1,10 +1,10 @@
+-document.addEventListener('DOMContentLoaded', function() {
++document.addEventListener('DOMContentLoaded', function () {
+     // Navigation mobile
+     const hamburger = document.querySelector('.hamburger');
+     const navMenu = document.querySelector('.nav-menu');
+-    
++
+     if (hamburger) {
+-        hamburger.addEventListener('click', function() {
++        hamburger.addEventListener('click', function () {
+             hamburger.classList.toggle('active');
+             navMenu.classList.toggle('active');
+         });
+@@ -29,19 +29,19 @@ document.addEventListener('DOMContentLoaded', function() {
+ 
+     // Projets dépliables
+     const projectCards = document.querySelectorAll('.project-card');
+-    
++
+     projectCards.forEach(card => {
+         const header = card.querySelector('.project-header');
+-        
++
+         if (header) {
+-            header.addEventListener('click', function() {
++            header.addEventListener('click', function () {
+                 // Fermer tous les autres projets
+                 projectCards.forEach(otherCard => {
+                     if (otherCard !== card) {
+                         otherCard.classList.remove('active');
+                     }
+                 });
+-                
++
+                 // Toggle le projet actuel
+                 card.classList.toggle('active');
+             });
+@@ -50,19 +50,19 @@ document.addEventListener('DOMContentLoaded', function() {
+ 
+     // Recherche dépliable (même logique que les projets)
+     const researchCards = document.querySelectorAll('.research-card');
+-    
++
+     researchCards.forEach(card => {
+         const header = card.querySelector('.research-header');
+-        
++
+         if (header) {
+-            header.addEventListener('click', function() {
++            header.addEventListener('click', function () {
+                 // Fermer toutes les autres recherches
+                 researchCards.forEach(otherCard => {
+                     if (otherCard !== card) {
+                         otherCard.classList.remove('active');
+                     }
+                 });
+-                
++
+                 // Toggle la recherche actuelle
+                 card.classList.toggle('active');
+             });
+@@ -75,16 +75,16 @@ document.addEventListener('DOMContentLoaded', function() {
+         rootMargin: '0px 0px -50px 0px'
+     };
+ 
+-    const observer = new IntersectionObserver(function(entries) {
++    const observer = new IntersectionObserver(function (entries) {
+         entries.forEach(entry => {
+             if (entry.isIntersecting) {
+                 entry.target.classList.add('fade-in');
+-                
++
+                 // Animation spéciale pour les éléments de timeline
+                 if (entry.target.classList.contains('timeline-item')) {
+                     entry.target.classList.add('animate');
+                 }
+-                
++
+                 // Animation pour les highlights
+                 if (entry.target.classList.contains('highlight-item')) {
+                     setTimeout(() => {
+@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
+     // Observer les éléments à animer
+     document.querySelectorAll('.skill-category, .overview-card, .tech-category, .company-item, .project-card, .research-card, .contact-item, .timeline-item, .highlight-item, .education-card').forEach(el => {
+         observer.observe(el);
+-        
++
+         // Préparer les highlight-items pour l'animation
+         if (el.classList.contains('highlight-item')) {
+             el.style.opacity = '0';
+@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
+     });
+ 
+     // Animation en cascade pour les catégories tech
+-    const techObserver = new IntersectionObserver(function(entries) {
++    const techObserver = new IntersectionObserver(function (entries) {
+         entries.forEach(entry => {
+             if (entry.isIntersecting) {
+                 const techCategories = document.querySelectorAll('.tech-category');
+@@ -131,11 +131,11 @@ document.addEventListener('DOMContentLoaded', function() {
+     }
+ 
+     // Navigation active
+-    window.addEventListener('scroll', function() {
++    window.addEventListener('scroll', function () {
+         const sections = document.querySelectorAll('section[id]');
+         const navLinks = document.querySelectorAll('.nav-link');
+         const navProfileImg = document.querySelector('.nav-profile-img');
+-        
++
+         let current = '';
+         sections.forEach(section => {
+             const sectionTop = section.offsetTop;
+@@ -162,9 +162,9 @@ document.addEventListener('DOMContentLoaded', function() {
+ 
+     // Boutons de téléchargement
+     const downloadButtons = document.querySelectorAll('.download-btn');
+-    
++
+     downloadButtons.forEach(button => {
+-        button.addEventListener('click', function() {
++        button.addEventListener('click', function () {
+             const type = this.getAttribute('data-type');
+             handleDownload(type);
+         });
+@@ -174,26 +174,26 @@ document.addEventListener('DOMContentLoaded', function() {
+         // Effet visuel du bouton
+         const button = document.querySelector(`[data-type="${type}"]`);
+         const originalText = button.innerHTML;
+-        
++
+         button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Téléchargement...';
+         button.disabled = true;
+ 
+         // Simulation du téléchargement
+         setTimeout(() => {
+             button.innerHTML = '<i class="fas fa-check"></i> Téléchargé !';
+-            
++
+             setTimeout(() => {
+                 button.innerHTML = originalText;
+                 button.disabled = false;
+             }, 2000);
+ 
+             // Logique de téléchargement selon le type
+-            switch(type) {
++            switch (type) {
+                 case 'cv':
+                     downloadCV();
+                     break;
+                 case 'recommandations':
+-                    downloadRecommendation(); 
++                    downloadRecommendation();
+                     break;
+                 case 'competences':
+                     downloadCompetences();
+@@ -201,23 +201,23 @@ document.addEventListener('DOMContentLoaded', function() {
+                 case 'projets':
+                     downloadProjets();
+                     break;
+-               
++
+             }
+         }, 1000);
+     }
+ 
+ 
+-    document.querySelector('.download-btn[data-type="cv"]').addEventListener('click', function(e) {
+-    e.preventDefault();
++    document.querySelector('.download-btn[data-type="cv"]').addEventListener('click', function (e) {
++        e.preventDefault();
+ 
+-    // Configuration de tes documents
+-    const cvList = [
+-        { label: "CV_Adébayo_DASSOUNDO-recherche", file: "CV_Adébayo_DASSOUNDO.pdf" },
+-        { label: "CV_Adébayo_DASSOUNDO-Master2-IA", file: "CV_Adébayo_DASSOUNDO-Master2-IA.pdf" },
+-    ];
++        // Configuration de tes documents
++        const cvList = [
++            { label: "CV_Adébayo_DASSOUNDO-recherche", file: "CV_Adébayo_DASSOUNDO.pdf" },
++            { label: "CV_Adébayo_DASSOUNDO-Master2-IA", file: "CV_Adébayo_DASSOUNDO-Master2-IA.pdf" },
++        ];
+ 
+-    // On crée dynamiquement une petite fenêtre de choix
+-    let menuHtml = `
++        // On crée dynamiquement une petite fenêtre de choix
++        let menuHtml = `
+         <div id="cv-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:9999;">
+             <div style="background:white; padding:20px; border-radius:10px; min-width:250px; text-align:center;">
+                 <h3 style="margin-bottom:15px; color:#333;">Choisir une version</h3>
+@@ -231,67 +231,67 @@ document.addEventListener('DOMContentLoaded', function() {
+         </div>
+     `;
+ 
+-    document.body.insertAdjacentHTML('beforeend', menuHtml);
++        document.body.insertAdjacentHTML('beforeend', menuHtml);
+ 
+-    // Gestion du clic sur une option
+-    document.querySelectorAll('.btn-select-cv').forEach(btn => {
+-        btn.addEventListener('click', function() {
+-            const fileName = this.getAttribute('data-file');
+-            const link = document.createElement('a');
+-            link.href = `cv/${fileName}`;
+-            link.download = fileName;
+-            link.click();
+-            document.getElementById('cv-modal').remove();
++        // Gestion du clic sur une option
++        document.querySelectorAll('.btn-select-cv').forEach(btn => {
++            btn.addEventListener('click', function () {
++                const fileName = this.getAttribute('data-file');
++                const link = document.createElement('a');
++                link.href = `cv/${fileName}`;
++                link.download = fileName;
++                link.click();
++                document.getElementById('cv-modal').remove();
++            });
+         });
++
++        // Fermer la modale
++        document.getElementById('close-cv-modal').onclick = () => document.getElementById('cv-modal').remove();
+     });
+ 
+-    // Fermer la modale
+-    document.getElementById('close-cv-modal').onclick = () => document.getElementById('cv-modal').remove();
+-});
+ 
+ 
+ 
+ 
+-    
+ 
+-   /* function downloadCV() {
+-        try {
+-            // Télécharger le fichier PDF directement
+-            const link = document.createElement('a');
+-            link.href = 'cv/CV_Adébayo_DASSOUNDO.pdf'; // Changé de 'documents/' à 'resume/'
+-            link.download = 'CV_Adébayo_DASSOUNDO.pdf';
+-            link.target = '_blank'; // Ouvre dans un nouvel onglet si le téléchargement échoue
+-            document.body.appendChild(link);
+-            link.click();
+-            document.body.removeChild(link);
+-        } catch (error) {
+-            console.error('Erreur lors du téléchargement du CV:', error);
+-            // Fallback: essayer d'ouvrir le fichier dans un nouvel onglet
+-            window.open('cv/CV_Adébayo_DASSOUNDO.pdf', '_blank');
+-        }
+-    }*/
++    /* function downloadCV() {
++         try {
++             // Télécharger le fichier PDF directement
++             const link = document.createElement('a');
++             link.href = 'cv/CV_Adébayo_DASSOUNDO.pdf'; // Changé de 'documents/' à 'resume/'
++             link.download = 'CV_Adébayo_DASSOUNDO.pdf';
++             link.target = '_blank'; // Ouvre dans un nouvel onglet si le téléchargement échoue
++             document.body.appendChild(link);
++             link.click();
++             document.body.removeChild(link);
++         } catch (error) {
++             console.error('Erreur lors du téléchargement du CV:', error);
++             // Fallback: essayer d'ouvrir le fichier dans un nouvel onglet
++             window.open('cv/CV_Adébayo_DASSOUNDO.pdf', '_blank');
++         }
++     }*/
+ 
+ 
+ 
+-    document.querySelector('.download-btn[data-type="Recommendation"]').addEventListener('click', function(e) {
+-    const btn = e.currentTarget;
+-    
+-    // Si le menu existe déjà, on le ferme
+-    if (document.getElementById('reco-menu')) {
+-        document.getElementById('reco-menu').remove();
+-        return;
+-    }
++    document.querySelector('.download-btn[data-type="Recommendation"]').addEventListener('click', function (e) {
++        const btn = e.currentTarget;
+ 
+-    // Liste de tes documents (ajoute autant que tu veux ici)
+-    const docs = [
+-        { name: "Recommendation-1_Adébayo_DASSOUNDO", file: "Recommendation-1_Adébayo_DASSOUNDO.pdf" },
+-        { name: "Recommendation-2_Adébayo_DASSOUNDO", file: "Recommendation-2_Adébayo_DASSOUNDO.pdf" },
+-    ];
++        // Si le menu existe déjà, on le ferme
++        if (document.getElementById('reco-menu')) {
++            document.getElementById('reco-menu').remove();
++            return;
++        }
++
++        // Liste de tes documents (ajoute autant que tu veux ici)
++        const docs = [
++            { name: "Recommendation-1_Adébayo_DASSOUNDO", file: "Recommendation-1_Adébayo_DASSOUNDO.pdf" },
++            { name: "Recommendation-2_Adébayo_DASSOUNDO", file: "Recommendation-2_Adébayo_DASSOUNDO.pdf" },
++        ];
+ 
+-    // Création du menu
+-    const menu = document.createElement('div');
+-    menu.id = 'reco-menu';
+-    menu.style.cssText = `
++        // Création du menu
++        const menu = document.createElement('div');
++        menu.id = 'reco-menu';
++        menu.style.cssText = `
+         position: absolute;
+         background: #ffffff;
+         border: 1px solid #ddd;
+@@ -305,13 +305,13 @@ document.addEventListener('DOMContentLoaded', function() {
+         margin-top: 10px;
+     `;
+ 
+-    // Ajout des liens dans le menu
+-    docs.forEach(doc => {
+-        const item = document.createElement('a');
+-        item.href = `Recommendation/${doc.file}`;
+-        item.download = doc.file;
+-        item.textContent = doc.name;
+-        item.style.cssText = `
++        // Ajout des liens dans le menu
++        docs.forEach(doc => {
++            const item = document.createElement('a');
++            item.href = `Recommendation/${doc.file}`;
++            item.download = doc.file;
++            item.textContent = doc.name;
++            item.style.cssText = `
+             color: #333;
+             text-decoration: none;
+             padding: 8px 15px;
+@@ -320,29 +320,29 @@ document.addEventListener('DOMContentLoaded', function() {
+             font-size: 14px;
+             border: 1px solid #eee;
+         `;
+-        item.onmouseover = () => item.style.background = '#f5f5f5';
+-        item.onmouseout = () => item.style.background = 'transparent';
+-        
+-        menu.appendChild(item);
++            item.onmouseover = () => item.style.background = '#f5f5f5';
++            item.onmouseout = () => item.style.background = 'transparent';
++
++            menu.appendChild(item);
++        });
++
++        // Positionnement du menu par rapport au bouton
++        btn.parentElement.style.position = 'relative';
++        btn.parentElement.appendChild(menu);
++
++        // Fermer le menu si on clique ailleurs
++        setTimeout(() => {
++            window.onclick = (event) => {
++                if (!menu.contains(event.target) && event.target !== btn) {
++                    menu.remove();
++                    window.onclick = null;
++                }
++            };
++        }, 100);
+     });
+ 
+-    // Positionnement du menu par rapport au bouton
+-    btn.parentElement.style.position = 'relative';
+-    btn.parentElement.appendChild(menu);
+ 
+-    // Fermer le menu si on clique ailleurs
+-    setTimeout(() => {
+-        window.onclick = (event) => {
+-            if (!menu.contains(event.target) && event.target !== btn) {
+-                menu.remove();
+-                window.onclick = null;
+-            }
+-        };
+-    }, 100);
+-});
+ 
+-    
+-        
+     /*function downloadRecommendation() {
+         try {
+                 // Télécharger le fichier PDF directement
+@@ -377,7 +377,7 @@ document.addEventListener('DOMContentLoaded', function() {
+     }
+ 
+     // Animation au chargement
+-    window.addEventListener('load', function() {
++    window.addEventListener('load', function () {
+         document.body.classList.add('loaded');
+     });
+ 
+@@ -431,15 +431,15 @@ document.addEventListener('DOMContentLoaded', function() {
+         }
+     };
+ 
+-    // Langue courante - déclarée en global - CHANGED DEFAULT TO ENGLISH
+-    let currentLang = 'en';
++    // Langue courante - changée par défaut en Français
++    let currentLang = 'fr';
+ 
+     // Fonction pour initialiser la langue
+     function initializeLanguage() {
+         const savedLang = localStorage.getItem('preferred-language');
+-        const browserLang = navigator.language.startsWith('en') ? 'en' : 'fr';
+-        const initialLang = savedLang || 'fr'; // Default to English instead of browser language
+-        
++        const browserLang = navigator.language.startsWith('fr') ? 'fr' : 'en';
++        const initialLang = savedLang || 'fr'; // Défaut renforcé en Français
++
+         if (initialLang !== currentLang) {
+             changeLanguage(initialLang);
+         }
+@@ -448,15 +448,15 @@ document.addEventListener('DOMContentLoaded', function() {
+     // Fonction pour changer la langue
+     function changeLanguage(newLang) {
+         if (!translations[newLang]) return;
+-        
++
+         console.log(`Changement de langue vers: ${newLang}`);
+-        
++
+         // Animation de transition
+         document.body.classList.add('lang-switching');
+-        
++
+         setTimeout(() => {
+             currentLang = newLang;
+-            
++
+             // Mettre à jour tous les éléments avec data-lang
+             document.querySelectorAll('[data-lang]').forEach(element => {
+                 const key = element.getAttribute('data-lang');
+@@ -464,7 +464,7 @@ document.addEventListener('DOMContentLoaded', function() {
+                     element.textContent = translations[currentLang][key];
+                 }
+             });
+-            
++
+             // Mettre à jour les boutons de langue
+             document.querySelectorAll('.lang-btn').forEach(btn => {
+                 btn.classList.remove('active');
+@@ -472,38 +472,41 @@ document.addEventListener('DOMContentLoaded', function() {
+                     btn.classList.add('active');
+                 }
+             });
+-            
++
+             // Sauvegarder la préférence
+             localStorage.setItem('preferred-language', currentLang);
+-            
++
+             // Mettre à jour l'attribut lang du document
+             document.documentElement.lang = currentLang;
+-            
++
+             // Animation de fin
+             document.body.classList.remove('lang-switching');
+             document.body.classList.add('lang-switched');
+-            
++
+             setTimeout(() => {
+                 document.body.classList.remove('lang-switched');
+             }, 500);
+-            
++
+             console.log(`Langue changée vers: ${currentLang}`);
++
++            // Relancer l'animation Typed si elle existe
++            if (typeof initTyped === 'function') initTyped(currentLang);
+         }, 150);
+     }
+ 
+     // Gestionnaire de changement de langue - amélioré
+     const langButtons = document.querySelectorAll('.lang-btn');
+-    
++
+     console.log('Boutons de langue trouvés:', langButtons.length);
+-    
++
+     langButtons.forEach((button, index) => {
+         console.log(`Bouton ${index}:`, button.getAttribute('data-lang-code'));
+-        
+-        button.addEventListener('click', function(e) {
++
++        button.addEventListener('click', function (e) {
+             e.preventDefault();
+             const newLang = this.getAttribute('data-lang-code');
+             console.log(`Clic sur bouton langue: ${newLang}, langue actuelle: ${currentLang}`);
+-            
++
+             if (newLang && newLang !== currentLang) {
+                 changeLanguage(newLang);
+             }
+@@ -513,38 +516,143 @@ document.addEventListener('DOMContentLoaded', function() {
+     // Initialiser la langue après le chargement
+     initializeLanguage();
+ 
++    // Initialisation Typed.js
++    window.initTyped = function (lang) {
++        if (window.typed) window.typed.destroy();
++        const textToType = translations[lang] && translations[lang]['hero-title'] ? translations[lang]['hero-title'] : 'Logiciel Embarqué, Cybersécurité et IA.';
++        window.typed = new Typed('.typed-text', {
++            strings: [textToType],
++            typeSpeed: 50,
++            backSpeed: 30,
++            showCursor: true,
++            cursorChar: '|',
++            loop: false
++        });
++    }
++    initTyped(currentLang);
++
++    // Initialisation Particles.js
++    if (window.particlesJS) {
++        particlesJS("particles-js", {
++            "particles": {
++                "number": { "value": 70, "density": { "enable": true, "value_area": 800 } },
++                "color": { "value": "#38bdf8" },
++                "shape": { "type": "circle" },
++                "opacity": { "value": 0.4, "random": false },
++                "size": { "value": 3, "random": true },
++                "line_linked": { "enable": true, "distance": 150, "color": "#0ea5e9", "opacity": 0.3, "width": 1 },
++                "move": { "enable": true, "speed": 1.5, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
++            },
++            "interactivity": {
++                "detect_on": "canvas",
++                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
++                "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 1 } }, "push": { "particles_nb": 4 } }
++            },
++            "retina_detect": true
++        });
++    }
++
+     // Company logo click effects
+     const companyLogos = document.querySelectorAll('.company-logo');
+-    
++
+     companyLogos.forEach(logo => {
+-        logo.addEventListener('click', function(e) {
++        logo.addEventListener('click', function (e) {
+             e.preventDefault();
+-            
++
+             // Remove active class from all logos
+             companyLogos.forEach(otherLogo => {
+                 otherLogo.classList.remove('logo-clicked');
+             });
+-            
++
+             // Add active class to clicked logo
+             this.classList.add('logo-clicked');
+-            
++
+             // Remove the class after animation
+             setTimeout(() => {
+                 this.classList.remove('logo-clicked');
+             }, 3000);
+         });
+-        
++
+         // Add hover effect enhancement
+-        logo.addEventListener('mouseenter', function() {
++        logo.addEventListener('mouseenter', function () {
+             this.style.zIndex = '20';
+         });
+-        
+-        logo.addEventListener('mouseleave', function() {
++
++        logo.addEventListener('mouseleave', function () {
+             if (!this.classList.contains('logo-clicked')) {
+                 this.style.zIndex = '1';
+             }
+         });
+     });
++    // --- Nouvelles features interactives ---
++
++    // Custom Cursor
++    const cursorDot = document.querySelector('[data-cursor-dot]');
++    const cursorOutline = document.querySelector('[data-cursor-outline]');
++
++    window.addEventListener('mousemove', function (e) {
++        const posX = e.clientX;
++        const posY = e.clientY;
++
++        cursorDot.style.left = `${posX}px`;
++        cursorDot.style.top = `${posY}px`;
++
++        // Animation de l'outline (avec petit délai ou direct)
++        cursorOutline.animate({
++            left: `${posX}px`,
++            top: `${posY}px`
++        }, { duration: 500, fill: "forwards" });
++    });
++
++    // Hover effect on links for custom cursor
++    const interactiveElements = document.querySelectorAll('a, button, .project-card, .research-card, .hover-target');
++    interactiveElements.forEach(el => {
++        el.addEventListener('mouseenter', () => {
++            cursorOutline.style.width = '50px';
++            cursorOutline.style.height = '50px';
++            cursorOutline.style.backgroundColor = 'rgba(56, 189, 248, 0.1)';
++        });
++        el.addEventListener('mouseleave', () => {
++            cursorOutline.style.width = '30px';
++            cursorOutline.style.height = '30px';
++            cursorOutline.style.backgroundColor = 'transparent';
++        });
++    });
++
++    // Scroll progress bar
++    const scrollProgress = document.getElementById('scroll-progress');
++    const backToTopBtn = document.getElementById('back-to-top');
++
++    window.addEventListener('scroll', () => {
++        // Calculer la progression
++        const scrollPx = document.documentElement.scrollTop;
++        const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
++        const scrolled = (scrollPx / winHeightPx) * 100;
++
++        if (scrollProgress) {
++            scrollProgress.style.width = `${scrolled}%`;
++        }
++
++        // Afficher/Cacher le bouton Back To Top
++        if (backToTopBtn) {
++            if (scrollPx > 400) {
++                backToTopBtn.classList.add('show');
++            } else {
++                backToTopBtn.classList.remove('show');
++            }
++        }
++    });
++
++    // Bouton retour en haut
++    if (backToTopBtn) {
++        backToTopBtn.addEventListener('click', () => {
++            window.scrollTo({
++                top: 0,
++                behavior: 'smooth'
++            });
++        });
++    }
++
+ });
+ 
+ // Fonction pour obtenir la langue courante
+
+commit a9285f565bacc3c146c025ca1371dd88451f09a4
+Author: DASSOUNDO Adébayo <adebayo.dassoundo@reseau.eseo.fr>
+Date:   Sun Feb 1 14:19:21 2026 +0100
+
+    add recomm..........
+
+diff --git a/script.js b/script.js
+index dea59c0..2689a8a 100644
+--- a/script.js
++++ b/script.js
+@@ -308,7 +308,7 @@ document.addEventListener('DOMContentLoaded', function() {
+     // Ajout des liens dans le menu
+     docs.forEach(doc => {
+         const item = document.createElement('a');
+-        item.href = `recommendation/${doc.file}`;
++        item.href = `Recommendation/${doc.file}`;
+         item.download = doc.file;
+         item.textContent = doc.name;
+         item.style.cssText = `
+@@ -393,7 +393,7 @@ document.addEventListener('DOMContentLoaded', function() {
+             'hero-title': 'Logiciel Embarqué, Cybersécurité et IA.',
+             'hero-description': 'Ingénieur et chercheur alliant compétences académiques et industrielles en logiciel embarqué, cybersécurité, intelligence artificielle, développement logiciel et innovation technologique.',
+             'btn-download-cv': 'Télécharger CV (PDF)',
+-            'btn-download-recommendation': 'Recommendation (PDF)',
++            'btn-download-Recommendation': 'Recommendation (PDF)',
+             'btn-download-skills': 'Dossier Compétences (PDF)',
+             'btn-location': '🇫🇷 France & 🇨🇦 Canada',
+             'skills-title': 'Mes Compétences',
