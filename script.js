@@ -531,60 +531,169 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     initTyped(currentLang);
 
-    // Initialisation Particles.js
-    if (window.particlesJS) {
-        particlesJS("particles-js", {
-            "particles": {
-                "number": { "value": 120, "density": { "enable": true, "value_area": 900 } },
-                "color": { "value": ["#38bdf8", "#818cf8", "#34d399", "#f472b6"] },
-                "shape": {
-                    "type": ["circle", "triangle", "star"],
-                    "stroke": { "width": 0, "color": "#000000" }
-                },
-                "opacity": {
-                    "value": 0.55,
-                    "random": true,
-                    "anim": { "enable": true, "speed": 1, "opacity_min": 0.15, "sync": false }
-                },
-                "size": {
-                    "value": 4,
-                    "random": true,
-                    "anim": { "enable": true, "speed": 2, "size_min": 0.5, "sync": false }
-                },
-                "line_linked": {
-                    "enable": true,
-                    "distance": 130,
-                    "color": "#38bdf8",
-                    "opacity": 0.25,
-                    "width": 1
-                },
-                "move": {
-                    "enable": true,
-                    "speed": 2.5,
-                    "direction": "none",
-                    "random": true,
-                    "straight": false,
-                    "out_mode": "out",
-                    "bounce": false,
-                    "attract": { "enable": true, "rotateX": 600, "rotateY": 1200 }
+    // --- Animation IA/Tech (Custom Canvas) ---
+    const canvas = document.createElement('canvas');
+    canvas.id = 'tech-canvas';
+    Object.assign(canvas.style, {
+        position: 'absolute', top: '0', left: '0',
+        width: '100%', height: '100%', zIndex: '0', pointerEvents: 'all'
+    });
+    const particlesContainer = document.getElementById('particles-js');
+    if (particlesContainer) {
+        particlesContainer.innerHTML = '';
+        particlesContainer.appendChild(canvas);
+
+        const ctx = canvas.getContext('2d');
+
+        // AI / New tech themed symbols only
+        const SYMBOLS = [
+            'AI', 'ML', 'GPT', 'LLM', 'NLP',
+            'IA', 'AGI', 'ANN', 'CNN', 'GAN',
+            'CUDA', 'IoT', 'ROS2', 'ARM',
+            'λ', '∑', '∂', '∇', 'σ',
+            '</>', '{}', '01', '0x1F',
+            '⚙', '📡', '🔬', '🧠', '⚡'
+        ];
+
+        const COLORS = ['#38bdf8', '#818cf8', '#34d399', '#f472b6', '#a78bfa'];
+
+        let nodes = [];
+        let mouse = { x: -9999, y: -9999 };
+
+        function resize() {
+            canvas.width = particlesContainer.offsetWidth;
+            canvas.height = particlesContainer.offsetHeight;
+        }
+
+        function createNodes(count) {
+            nodes = [];
+            for (let i = 0; i < count; i++) {
+                const symbol = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+                const isShort = symbol.length <= 2;
+                nodes.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 1.5,
+                    vy: (Math.random() - 0.5) * 1.5,
+                    symbol,
+                    color: COLORS[Math.floor(Math.random() * COLORS.length)],
+                    fontSize: isShort ? (14 + Math.random() * 8) : (10 + Math.random() * 6),
+                    alpha: 0.25 + Math.random() * 0.5,
+                    alphaDir: Math.random() > 0.5 ? 1 : -1,
+                    alphaSpeed: 0.005 + Math.random() * 0.008,
+                    scale: 1,
+                    scaleDir: Math.random() > 0.5 ? 1 : -1,
+                    scaleSpeed: 0.004 + Math.random() * 0.004
+                });
+            }
+        }
+
+        function drawLines() {
+            const LINK_DIST = 180;
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const dx = nodes[i].x - nodes[j].x;
+                    const dy = nodes[i].y - nodes[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < LINK_DIST) {
+                        const opacity = (1 - dist / LINK_DIST) * 0.45;
+                        ctx.save();
+                        ctx.globalAlpha = opacity;
+                        ctx.strokeStyle = nodes[i].color;
+                        ctx.lineWidth = 0.8;
+                        ctx.shadowColor = nodes[i].color;
+                        ctx.shadowBlur = 5;
+                        ctx.beginPath();
+                        ctx.moveTo(nodes[i].x, nodes[i].y);
+                        ctx.lineTo(nodes[j].x, nodes[j].y);
+                        ctx.stroke();
+                        ctx.restore();
+                    }
                 }
-            },
-            "interactivity": {
-                "detect_on": "canvas",
-                "events": {
-                    "onhover": { "enable": true, "mode": "bubble" },
-                    "onclick": { "enable": true, "mode": "repulse" },
-                    "resize": true
-                },
-                "modes": {
-                    "bubble": { "distance": 180, "size": 8, "duration": 2, "opacity": 0.9, "speed": 3 },
-                    "repulse": { "distance": 200, "duration": 0.4 },
-                    "push": { "particles_nb": 6 }
+            }
+        }
+
+        function drawNode(n) {
+            const size = n.fontSize * n.scale;
+            ctx.save();
+            ctx.globalAlpha = n.alpha;
+            ctx.fillStyle = n.color;
+            ctx.font = `bold ${size}px 'Inter', monospace`;
+            ctx.shadowColor = n.color;
+            ctx.shadowBlur = 10;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(n.symbol, n.x, n.y);
+            ctx.restore();
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawLines();
+
+            for (const n of nodes) {
+                // Pulse alpha
+                n.alpha += n.alphaDir * n.alphaSpeed;
+                if (n.alpha > 0.8 || n.alpha < 0.15) n.alphaDir *= -1;
+
+                // Pulse scale
+                n.scale += n.scaleDir * n.scaleSpeed;
+                if (n.scale > 1.2 || n.scale < 0.85) n.scaleDir *= -1;
+
+                // Mouse attraction
+                const dx = mouse.x - n.x;
+                const dy = mouse.y - n.y;
+                const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                if (dist < 220) {
+                    n.vx += (dx / dist) * 0.08;
+                    n.vy += (dy / dist) * 0.08;
                 }
-            },
-            "retina_detect": true
+
+                n.vx *= 0.985;
+                n.vy *= 0.985;
+
+                const spd = Math.sqrt(n.vx * n.vx + n.vy * n.vy);
+                if (spd > 2.5) { n.vx = n.vx / spd * 2.5; n.vy = n.vy / spd * 2.5; }
+
+                n.x += n.vx;
+                n.y += n.vy;
+
+                if (n.x < 0 || n.x > canvas.width) n.vx *= -1;
+                if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
+
+                drawNode(n);
+            }
+            requestAnimationFrame(animate);
+        }
+
+        canvas.addEventListener('mousemove', e => {
+            const rect = canvas.getBoundingClientRect();
+            mouse.x = e.clientX - rect.left;
+            mouse.y = e.clientY - rect.top;
         });
+        canvas.addEventListener('mouseleave', () => { mouse.x = -9999; mouse.y = -9999; });
+
+        canvas.addEventListener('click', e => {
+            const rect = canvas.getBoundingClientRect();
+            const cx = e.clientX - rect.left;
+            const cy = e.clientY - rect.top;
+            for (const n of nodes) {
+                const dx = n.x - cx;
+                const dy = n.y - cy;
+                const d = Math.sqrt(dx * dx + dy * dy) || 1;
+                if (d < 250) {
+                    n.vx -= (dx / d) * (10 * (1 - d / 250));
+                    n.vy -= (dy / d) * (10 * (1 - d / 250));
+                }
+            }
+        });
+
+        resize();
+        createNodes(95);
+        animate();
+        window.addEventListener('resize', () => { resize(); createNodes(95); });
     }
+
 
     // Company logo click effects
     const companyLogos = document.querySelectorAll('.company-logo');
