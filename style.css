@@ -1034,7 +1034,7 @@ body {
 
 /* Footer */
 .footer {
-    background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%);
+    background: var(--white);
     color: white;
     padding: 4rem 0 2rem;
     border-top: 4px solid var(--primary-blue);
@@ -1956,7 +1956,7 @@ body {
 
 /* Footer */
 .footer {
-    background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%);
+    background: var(--white);
     color: white;
     padding: 4rem 0 2rem;
     border-top: 4px solid var(--primary-blue);
@@ -2406,11 +2406,11 @@ body {
         left: -100%;
         top: 70px;
         flex-direction: column;
-        background-color: white;
+        background-color: var(--gray-50);
         width: 100%;
         text-align: center;
         transition: 0.3s;
-        box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 10px 27px rgba(0, 0, 0, 0.5);
         padding: 2rem 0;
     }
 
@@ -3417,10 +3417,11 @@ body {
     display: flex;
     align-items: flex-start;
     gap: 15px;
-    background: #fff;
+    background: var(--gray-50);
     padding: 20px;
     border-radius: 16px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--gray-100);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     height: 100%;
 }
@@ -3445,7 +3446,7 @@ body {
 
 .highlight-content p {
     margin: 0 0 8px;
-    color: #444;
+    color: var(--gray-600);
     font-size: 0.95rem;
 }
 
@@ -3471,23 +3472,23 @@ body {
 
 /* --- Carte Vie associative (centrée et mise en avant) --- */
 .club-card {
-    border: 2px solid #0077b6;
-    background: #f9fbff;
+    border: none;
+    background: rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-radius: 18px;
     padding: 25px;
-    box-shadow: 0 4px 12px rgba(0, 119, 182, 0.15);
-    transition: all 0.3s ease;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     width: 80%;
     max-width: 720px;
     justify-self: center;
-    /* ✅ centre le bloc horizontalement */
     grid-column: 1 / -1;
-    /* ✅ le fait s’étendre sur toute la largeur de la grille */
 }
 
 .club-card:hover {
-    background: #eef6ff;
-    box-shadow: 0 8px 20px rgba(0, 119, 182, 0.25);
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 10px 40px rgba(56, 189, 248, 0.1);
     transform: translateY(-6px);
 }
 
@@ -3504,8 +3505,8 @@ body {
     gap: 12px;
     margin-bottom: 12px;
     font-size: 0.96rem;
-    color: #333;
-    transition: transform 0.2s ease;
+    color: var(--gray-800);
+    transition: transform 0.2s ease, text-shadow 0.2s ease;
 }
 
 .club-list li:last-child {
@@ -3569,6 +3570,7 @@ body {
 /* --- Section Centres d’intérêt --- */
 .interest-section {
     margin-top: 60px;
+    margin-bottom: 80px;
     text-align: center;
 }
 
@@ -3578,7 +3580,7 @@ body {
     margin-bottom: 30px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: #0a0a0a;
+    color: var(--gray-900);
 }
 
 /* --- Grille des centres d’intérêt --- */
@@ -3591,8 +3593,10 @@ body {
 
 /* --- Carte individuelle --- */
 .interest-item {
-    background: #f9fbff;
-    border: 2px solid #0077b6;
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-radius: 14px;
     padding: 18px 28px;
     min-width: 160px;
@@ -3600,27 +3604,32 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
     transition: all 0.3s ease;
 }
 
 .interest-item:hover {
-    background: #eef6ff;
+    background: rgba(255, 255, 255, 0.1);
     transform: translateY(-6px);
-    box-shadow: 0 8px 20px rgba(0, 119, 182, 0.25);
+    box-shadow: 0 10px 40px rgba(56, 189, 248, 0.1);
 }
 
 /* --- Icônes --- */
 .interest-item i {
     font-size: 1.8rem;
-    color: #0077b6;
+    color: var(--primary-blue);
     margin-bottom: 10px;
+    transition: var(--transition);
+}
+
+.interest-item:hover i {
+    transform: scale(1.1);
 }
 
 /* --- Texte --- */
 .interest-item span {
     font-size: 1rem;
-    color: #333;
+    color: var(--gray-800);
     font-weight: 500;
     letter-spacing: 0.3px;
 }
