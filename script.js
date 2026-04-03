@@ -849,28 +849,28 @@ document.addEventListener('DOMContentLoaded', function () {
         const posX = e.clientX;
         const posY = e.clientY;
 
-        cursorDot.style.left = `${posX} px`;
-        cursorDot.style.top = `${posY} px`;
+        cursorDot.style.left = `${posX}px`;
+        cursorDot.style.top = `${posY}px`;
 
         // Animation de l'outline (avec petit délai ou direct)
         cursorOutline.animate({
-            left: `${posX} px`,
-            top: `${posY} px`
-        }, { duration: 500, fill: "forwards" });
+            left: `${posX}px`,
+            top: `${posY}px`
+        }, { duration: 150, fill: "forwards" });
     });
 
     // Hover effect on links for custom cursor
     const interactiveElements = document.querySelectorAll('a, button, .project-card, .research-card, .hover-target');
     interactiveElements.forEach(el => {
         el.addEventListener('mouseenter', () => {
-            cursorOutline.style.width = '50px';
-            cursorOutline.style.height = '50px';
-            cursorOutline.style.backgroundColor = 'rgba(56, 189, 248, 0.1)';
+            cursorOutline.style.width = '60px';
+            cursorOutline.style.height = '60px';
+            cursorOutline.style.backgroundColor = 'rgba(56, 189, 248, 0.4)';
         });
         el.addEventListener('mouseleave', () => {
-            cursorOutline.style.width = '30px';
-            cursorOutline.style.height = '30px';
-            cursorOutline.style.backgroundColor = 'transparent';
+            cursorOutline.style.width = '36px';
+            cursorOutline.style.height = '36px';
+            cursorOutline.style.backgroundColor = 'rgba(56, 189, 248, 0.2)';
         });
     });
 
