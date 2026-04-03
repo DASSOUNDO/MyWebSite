@@ -1,10 +1,10 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Navigation mobile
     const hamburger = document.querySelector('.hamburger');
     const navMenu = document.querySelector('.nav-menu');
-    
+
     if (hamburger) {
-        hamburger.addEventListener('click', function() {
+        hamburger.addEventListener('click', function () {
             hamburger.classList.toggle('active');
             navMenu.classList.toggle('active');
         });
@@ -29,19 +29,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Projets dépliables
     const projectCards = document.querySelectorAll('.project-card');
-    
+
     projectCards.forEach(card => {
         const header = card.querySelector('.project-header');
-        
+
         if (header) {
-            header.addEventListener('click', function() {
+            header.addEventListener('click', function () {
                 // Fermer tous les autres projets
                 projectCards.forEach(otherCard => {
                     if (otherCard !== card) {
                         otherCard.classList.remove('active');
                     }
                 });
-                
+
                 // Toggle le projet actuel
                 card.classList.toggle('active');
             });
@@ -50,19 +50,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Recherche dépliable (même logique que les projets)
     const researchCards = document.querySelectorAll('.research-card');
-    
+
     researchCards.forEach(card => {
         const header = card.querySelector('.research-header');
-        
+
         if (header) {
-            header.addEventListener('click', function() {
+            header.addEventListener('click', function () {
                 // Fermer toutes les autres recherches
                 researchCards.forEach(otherCard => {
                     if (otherCard !== card) {
                         otherCard.classList.remove('active');
                     }
                 });
-                
+
                 // Toggle la recherche actuelle
                 card.classList.toggle('active');
             });
@@ -75,16 +75,16 @@ document.addEventListener('DOMContentLoaded', function() {
         rootMargin: '0px 0px -50px 0px'
     };
 
-    const observer = new IntersectionObserver(function(entries) {
+    const observer = new IntersectionObserver(function (entries) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('fade-in');
-                
+
                 // Animation spéciale pour les éléments de timeline
                 if (entry.target.classList.contains('timeline-item')) {
                     entry.target.classList.add('animate');
                 }
-                
+
                 // Animation pour les highlights
                 if (entry.target.classList.contains('highlight-item')) {
                     setTimeout(() => {
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Observer les éléments à animer
     document.querySelectorAll('.skill-category, .overview-card, .tech-category, .company-item, .project-card, .research-card, .contact-item, .timeline-item, .highlight-item, .education-card').forEach(el => {
         observer.observe(el);
-        
+
         // Préparer les highlight-items pour l'animation
         if (el.classList.contains('highlight-item')) {
             el.style.opacity = '0';
@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Animation en cascade pour les catégories tech
-    const techObserver = new IntersectionObserver(function(entries) {
+    const techObserver = new IntersectionObserver(function (entries) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 const techCategories = document.querySelectorAll('.tech-category');
@@ -131,11 +131,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Navigation active
-    window.addEventListener('scroll', function() {
+    window.addEventListener('scroll', function () {
         const sections = document.querySelectorAll('section[id]');
         const navLinks = document.querySelectorAll('.nav-link');
         const navProfileImg = document.querySelector('.nav-profile-img');
-        
+
         let current = '';
         sections.forEach(section => {
             const sectionTop = section.offsetTop;
@@ -162,9 +162,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Boutons de téléchargement
     const downloadButtons = document.querySelectorAll('.download-btn');
-    
+
     downloadButtons.forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
             const type = this.getAttribute('data-type');
             handleDownload(type);
         });
@@ -174,26 +174,26 @@ document.addEventListener('DOMContentLoaded', function() {
         // Effet visuel du bouton
         const button = document.querySelector(`[data-type="${type}"]`);
         const originalText = button.innerHTML;
-        
+
         button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Téléchargement...';
         button.disabled = true;
 
         // Simulation du téléchargement
         setTimeout(() => {
             button.innerHTML = '<i class="fas fa-check"></i> Téléchargé !';
-            
+
             setTimeout(() => {
                 button.innerHTML = originalText;
                 button.disabled = false;
             }, 2000);
 
             // Logique de téléchargement selon le type
-            switch(type) {
+            switch (type) {
                 case 'cv':
                     downloadCV();
                     break;
                 case 'recommandations':
-                    downloadRecommendation(); 
+                    downloadRecommendation();
                     break;
                 case 'competences':
                     downloadCompetences();
@@ -201,23 +201,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 case 'projets':
                     downloadProjets();
                     break;
-               
+
             }
         }, 1000);
     }
 
 
-    document.querySelector('.download-btn[data-type="cv"]').addEventListener('click', function(e) {
-    e.preventDefault();
+    document.querySelector('.download-btn[data-type="cv"]').addEventListener('click', function (e) {
+        e.preventDefault();
 
-    // Configuration de tes documents
-    const cvList = [
-        { label: "CV_Adébayo_DASSOUNDO-recherche", file: "CV_Adébayo_DASSOUNDO.pdf" },
-        { label: "CV_Adébayo_DASSOUNDO-Master2-IA", file: "CV_Adébayo_DASSOUNDO-Master2-IA.pdf" },
-    ];
+        // Configuration de tes documents
+        const cvList = [
+            { label: "CV_Adébayo_DASSOUNDO-recherche", file: "CV_Adébayo_DASSOUNDO.pdf" },
+            { label: "CV_Adébayo_DASSOUNDO-Master2-IA", file: "CV_Adébayo_DASSOUNDO-Master2-IA.pdf" },
+        ];
 
-    // On crée dynamiquement une petite fenêtre de choix
-    let menuHtml = `
+        // On crée dynamiquement une petite fenêtre de choix
+        let menuHtml = `
         <div id="cv-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:9999;">
             <div style="background:white; padding:20px; border-radius:10px; min-width:250px; text-align:center;">
                 <h3 style="margin-bottom:15px; color:#333;">Choisir une version</h3>
@@ -231,67 +231,67 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     `;
 
-    document.body.insertAdjacentHTML('beforeend', menuHtml);
+        document.body.insertAdjacentHTML('beforeend', menuHtml);
 
-    // Gestion du clic sur une option
-    document.querySelectorAll('.btn-select-cv').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const fileName = this.getAttribute('data-file');
-            const link = document.createElement('a');
-            link.href = `cv/${fileName}`;
-            link.download = fileName;
-            link.click();
-            document.getElementById('cv-modal').remove();
+        // Gestion du clic sur une option
+        document.querySelectorAll('.btn-select-cv').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const fileName = this.getAttribute('data-file');
+                const link = document.createElement('a');
+                link.href = `cv/${fileName}`;
+                link.download = fileName;
+                link.click();
+                document.getElementById('cv-modal').remove();
+            });
         });
+
+        // Fermer la modale
+        document.getElementById('close-cv-modal').onclick = () => document.getElementById('cv-modal').remove();
     });
 
-    // Fermer la modale
-    document.getElementById('close-cv-modal').onclick = () => document.getElementById('cv-modal').remove();
-});
 
 
 
 
-    
 
-   /* function downloadCV() {
-        try {
-            // Télécharger le fichier PDF directement
-            const link = document.createElement('a');
-            link.href = 'cv/CV_Adébayo_DASSOUNDO.pdf'; // Changé de 'documents/' à 'resume/'
-            link.download = 'CV_Adébayo_DASSOUNDO.pdf';
-            link.target = '_blank'; // Ouvre dans un nouvel onglet si le téléchargement échoue
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } catch (error) {
-            console.error('Erreur lors du téléchargement du CV:', error);
-            // Fallback: essayer d'ouvrir le fichier dans un nouvel onglet
-            window.open('cv/CV_Adébayo_DASSOUNDO.pdf', '_blank');
+    /* function downloadCV() {
+         try {
+             // Télécharger le fichier PDF directement
+             const link = document.createElement('a');
+             link.href = 'cv/CV_Adébayo_DASSOUNDO.pdf'; // Changé de 'documents/' à 'resume/'
+             link.download = 'CV_Adébayo_DASSOUNDO.pdf';
+             link.target = '_blank'; // Ouvre dans un nouvel onglet si le téléchargement échoue
+             document.body.appendChild(link);
+             link.click();
+             document.body.removeChild(link);
+         } catch (error) {
+             console.error('Erreur lors du téléchargement du CV:', error);
+             // Fallback: essayer d'ouvrir le fichier dans un nouvel onglet
+             window.open('cv/CV_Adébayo_DASSOUNDO.pdf', '_blank');
+         }
+     }*/
+
+
+
+    document.querySelector('.download-btn[data-type="Recommendation"]').addEventListener('click', function (e) {
+        const btn = e.currentTarget;
+
+        // Si le menu existe déjà, on le ferme
+        if (document.getElementById('reco-menu')) {
+            document.getElementById('reco-menu').remove();
+            return;
         }
-    }*/
 
+        // Liste de tes documents (ajoute autant que tu veux ici)
+        const docs = [
+            { name: "Recommendation-1_Adébayo_DASSOUNDO", file: "Recommendation-1_Adébayo_DASSOUNDO.pdf" },
+            { name: "Recommendation-2_Adébayo_DASSOUNDO", file: "Recommendation-2_Adébayo_DASSOUNDO.pdf" },
+        ];
 
-
-    document.querySelector('.download-btn[data-type="Recommendation"]').addEventListener('click', function(e) {
-    const btn = e.currentTarget;
-    
-    // Si le menu existe déjà, on le ferme
-    if (document.getElementById('reco-menu')) {
-        document.getElementById('reco-menu').remove();
-        return;
-    }
-
-    // Liste de tes documents (ajoute autant que tu veux ici)
-    const docs = [
-        { name: "Recommendation-1_Adébayo_DASSOUNDO", file: "Recommendation-1_Adébayo_DASSOUNDO.pdf" },
-        { name: "Recommendation-2_Adébayo_DASSOUNDO", file: "Recommendation-2_Adébayo_DASSOUNDO.pdf" },
-    ];
-
-    // Création du menu
-    const menu = document.createElement('div');
-    menu.id = 'reco-menu';
-    menu.style.cssText = `
+        // Création du menu
+        const menu = document.createElement('div');
+        menu.id = 'reco-menu';
+        menu.style.cssText = `
         position: absolute;
         background: #ffffff;
         border: 1px solid #ddd;
@@ -305,13 +305,13 @@ document.addEventListener('DOMContentLoaded', function() {
         margin-top: 10px;
     `;
 
-    // Ajout des liens dans le menu
-    docs.forEach(doc => {
-        const item = document.createElement('a');
-        item.href = `Recommendation/${doc.file}`;
-        item.download = doc.file;
-        item.textContent = doc.name;
-        item.style.cssText = `
+        // Ajout des liens dans le menu
+        docs.forEach(doc => {
+            const item = document.createElement('a');
+            item.href = `Recommendation/${doc.file}`;
+            item.download = doc.file;
+            item.textContent = doc.name;
+            item.style.cssText = `
             color: #333;
             text-decoration: none;
             padding: 8px 15px;
@@ -320,29 +320,29 @@ document.addEventListener('DOMContentLoaded', function() {
             font-size: 14px;
             border: 1px solid #eee;
         `;
-        item.onmouseover = () => item.style.background = '#f5f5f5';
-        item.onmouseout = () => item.style.background = 'transparent';
-        
-        menu.appendChild(item);
+            item.onmouseover = () => item.style.background = '#f5f5f5';
+            item.onmouseout = () => item.style.background = 'transparent';
+
+            menu.appendChild(item);
+        });
+
+        // Positionnement du menu par rapport au bouton
+        btn.parentElement.style.position = 'relative';
+        btn.parentElement.appendChild(menu);
+
+        // Fermer le menu si on clique ailleurs
+        setTimeout(() => {
+            window.onclick = (event) => {
+                if (!menu.contains(event.target) && event.target !== btn) {
+                    menu.remove();
+                    window.onclick = null;
+                }
+            };
+        }, 100);
     });
 
-    // Positionnement du menu par rapport au bouton
-    btn.parentElement.style.position = 'relative';
-    btn.parentElement.appendChild(menu);
 
-    // Fermer le menu si on clique ailleurs
-    setTimeout(() => {
-        window.onclick = (event) => {
-            if (!menu.contains(event.target) && event.target !== btn) {
-                menu.remove();
-                window.onclick = null;
-            }
-        };
-    }, 100);
-});
 
-    
-        
     /*function downloadRecommendation() {
         try {
                 // Télécharger le fichier PDF directement
@@ -377,7 +377,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Animation au chargement
-    window.addEventListener('load', function() {
+    window.addEventListener('load', function () {
         document.body.classList.add('loaded');
     });
 
@@ -431,15 +431,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // Langue courante - déclarée en global - CHANGED DEFAULT TO ENGLISH
-    let currentLang = 'en';
+    // Langue courante - changée par défaut en Français
+    let currentLang = 'fr';
 
     // Fonction pour initialiser la langue
     function initializeLanguage() {
         const savedLang = localStorage.getItem('preferred-language');
-        const browserLang = navigator.language.startsWith('en') ? 'en' : 'fr';
-        const initialLang = savedLang || 'fr'; // Default to English instead of browser language
-        
+        const browserLang = navigator.language.startsWith('fr') ? 'fr' : 'en';
+        const initialLang = savedLang || 'fr'; // Défaut renforcé en Français
+
         if (initialLang !== currentLang) {
             changeLanguage(initialLang);
         }
@@ -448,15 +448,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Fonction pour changer la langue
     function changeLanguage(newLang) {
         if (!translations[newLang]) return;
-        
+
         console.log(`Changement de langue vers: ${newLang}`);
-        
+
         // Animation de transition
         document.body.classList.add('lang-switching');
-        
+
         setTimeout(() => {
             currentLang = newLang;
-            
+
             // Mettre à jour tous les éléments avec data-lang
             document.querySelectorAll('[data-lang]').forEach(element => {
                 const key = element.getAttribute('data-lang');
@@ -464,7 +464,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     element.textContent = translations[currentLang][key];
                 }
             });
-            
+
             // Mettre à jour les boutons de langue
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.classList.remove('active');
@@ -472,38 +472,41 @@ document.addEventListener('DOMContentLoaded', function() {
                     btn.classList.add('active');
                 }
             });
-            
+
             // Sauvegarder la préférence
             localStorage.setItem('preferred-language', currentLang);
-            
+
             // Mettre à jour l'attribut lang du document
             document.documentElement.lang = currentLang;
-            
+
             // Animation de fin
             document.body.classList.remove('lang-switching');
             document.body.classList.add('lang-switched');
-            
+
             setTimeout(() => {
                 document.body.classList.remove('lang-switched');
             }, 500);
-            
+
             console.log(`Langue changée vers: ${currentLang}`);
+
+            // Relancer l'animation Typed si elle existe
+            if (typeof initTyped === 'function') initTyped(currentLang);
         }, 150);
     }
 
     // Gestionnaire de changement de langue - amélioré
     const langButtons = document.querySelectorAll('.lang-btn');
-    
+
     console.log('Boutons de langue trouvés:', langButtons.length);
-    
+
     langButtons.forEach((button, index) => {
         console.log(`Bouton ${index}:`, button.getAttribute('data-lang-code'));
-        
-        button.addEventListener('click', function(e) {
+
+        button.addEventListener('click', function (e) {
             e.preventDefault();
             const newLang = this.getAttribute('data-lang-code');
             console.log(`Clic sur bouton langue: ${newLang}, langue actuelle: ${currentLang}`);
-            
+
             if (newLang && newLang !== currentLang) {
                 changeLanguage(newLang);
             }
@@ -513,38 +516,143 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialiser la langue après le chargement
     initializeLanguage();
 
+    // Initialisation Typed.js
+    window.initTyped = function (lang) {
+        if (window.typed) window.typed.destroy();
+        const textToType = translations[lang] && translations[lang]['hero-title'] ? translations[lang]['hero-title'] : 'Logiciel Embarqué, Cybersécurité et IA.';
+        window.typed = new Typed('.typed-text', {
+            strings: [textToType],
+            typeSpeed: 50,
+            backSpeed: 30,
+            showCursor: true,
+            cursorChar: '|',
+            loop: false
+        });
+    }
+    initTyped(currentLang);
+
+    // Initialisation Particles.js
+    if (window.particlesJS) {
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 70, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#38bdf8" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.4, "random": false },
+                "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#0ea5e9", "opacity": 0.3, "width": 1 },
+                "move": { "enable": true, "speed": 1.5, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
+                "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 1 } }, "push": { "particles_nb": 4 } }
+            },
+            "retina_detect": true
+        });
+    }
+
     // Company logo click effects
     const companyLogos = document.querySelectorAll('.company-logo');
-    
+
     companyLogos.forEach(logo => {
-        logo.addEventListener('click', function(e) {
+        logo.addEventListener('click', function (e) {
             e.preventDefault();
-            
+
             // Remove active class from all logos
             companyLogos.forEach(otherLogo => {
                 otherLogo.classList.remove('logo-clicked');
             });
-            
+
             // Add active class to clicked logo
             this.classList.add('logo-clicked');
-            
+
             // Remove the class after animation
             setTimeout(() => {
                 this.classList.remove('logo-clicked');
             }, 3000);
         });
-        
+
         // Add hover effect enhancement
-        logo.addEventListener('mouseenter', function() {
+        logo.addEventListener('mouseenter', function () {
             this.style.zIndex = '20';
         });
-        
-        logo.addEventListener('mouseleave', function() {
+
+        logo.addEventListener('mouseleave', function () {
             if (!this.classList.contains('logo-clicked')) {
                 this.style.zIndex = '1';
             }
         });
     });
+    // --- Nouvelles features interactives ---
+
+    // Custom Cursor
+    const cursorDot = document.querySelector('[data-cursor-dot]');
+    const cursorOutline = document.querySelector('[data-cursor-outline]');
+
+    window.addEventListener('mousemove', function (e) {
+        const posX = e.clientX;
+        const posY = e.clientY;
+
+        cursorDot.style.left = `${posX}px`;
+        cursorDot.style.top = `${posY}px`;
+
+        // Animation de l'outline (avec petit délai ou direct)
+        cursorOutline.animate({
+            left: `${posX}px`,
+            top: `${posY}px`
+        }, { duration: 500, fill: "forwards" });
+    });
+
+    // Hover effect on links for custom cursor
+    const interactiveElements = document.querySelectorAll('a, button, .project-card, .research-card, .hover-target');
+    interactiveElements.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            cursorOutline.style.width = '50px';
+            cursorOutline.style.height = '50px';
+            cursorOutline.style.backgroundColor = 'rgba(56, 189, 248, 0.1)';
+        });
+        el.addEventListener('mouseleave', () => {
+            cursorOutline.style.width = '30px';
+            cursorOutline.style.height = '30px';
+            cursorOutline.style.backgroundColor = 'transparent';
+        });
+    });
+
+    // Scroll progress bar
+    const scrollProgress = document.getElementById('scroll-progress');
+    const backToTopBtn = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+        // Calculer la progression
+        const scrollPx = document.documentElement.scrollTop;
+        const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (scrollPx / winHeightPx) * 100;
+
+        if (scrollProgress) {
+            scrollProgress.style.width = `${scrolled}%`;
+        }
+
+        // Afficher/Cacher le bouton Back To Top
+        if (backToTopBtn) {
+            if (scrollPx > 400) {
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        }
+    });
+
+    // Bouton retour en haut
+    if (backToTopBtn) {
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    }
+
 });
 
 // Fonction pour obtenir la langue courante

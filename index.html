@@ -1,26 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adébayo Dassoundo - Logiciel Embarqué & Cybersécurité</title>
-    
+
     <!-- SEO & OpenGraph -->
-    <meta name="description" content="Portfolio d'Adébayo Dassoundo - Ingénieur et chercheur en Logiciel Embarqué, Cybersécurité, IA et Développement Logiciel. Découvrez mes projets et mon parcours.">
+    <meta name="description"
+        content="Portfolio d'Adébayo Dassoundo - Ingénieur et chercheur en Logiciel Embarqué, Cybersécurité, IA et Développement Logiciel. Découvrez mes projets et mon parcours.">
     <meta property="og:title" content="Adébayo Dassoundo | Ingénieur Logiciel Embarqué & Cybersécurité">
-    <meta property="og:description" content="Ingénieur alliant compétences académiques et industrielles. Découvrez mon portfolio technique et mes projets.">
-    <meta property="og:image" content="https://adebayo-dassoundo.com/images/photo.jpg"> <!-- Image générique, à ajuster si besoin -->
+    <meta property="og:description"
+        content="Ingénieur alliant compétences académiques et industrielles. Découvrez mon portfolio technique et mes projets.">
+    <meta property="og:image" content="https://adebayo-dassoundo.com/images/photo.jpg">
+    <!-- Image générique, à ajuster si besoin -->
     <meta property="og:type" content="website">
-    
+
     <!-- Favicon (Fallback au cas où on n'a pas de favicon custom) -->
     <link rel="icon" type="image/x-icon" href="images/photo.jpg">
 
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Scripts UI Modernes -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
 </head>
+
 <body>
+    <!-- Nouveaux Éléments Interactifs -->
+    <div class="cursor-dot" data-cursor-dot></div>
+    <div class="cursor-outline" data-cursor-outline></div>
+    <div class="scroll-progress-bar" id="scroll-progress"></div>
+    <button id="back-to-top" class="back-to-top" title="Retour en haut" aria-label="Retour en haut">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
@@ -54,32 +71,34 @@
 
     <!-- Home Section -->
     <section id="accueil" class="hero">
-        <div class="container">
+        <div id="particles-js"></div>
+        <div class="container relative-z">
             <div class="hero-content">
                 <div class="hero-text">
                     <h1 class="hero-title">
                         Adébayo Dassoundo
-                        <span class="highlight" data-lang="hero-title">Logiciel Embarqué, Cybersécurité et IA.</span>
+                        <span class="highlight"><span class="typed-text"></span></span>
                     </h1>
                     <p class="hero-description" data-lang="hero-description">
-                        Ingénieur et chercheur alliant compétences académiques et industrielles en logiciel embarqué, cybersécurité, intelligence artificielle, développement logiciel et innovation technologique.
+                        Ingénieur et chercheur alliant compétences académiques et industrielles en logiciel embarqué,
+                        cybersécurité, intelligence artificielle, développement logiciel et innovation technologique.
                     </p>
 
 
                     <div class="hero-buttons">
 
-                    <button class="btn-primary download-btn" data-type="cv">
-                        <i class="fas fa-download"></i>
-                        <span data-lang="btn-download-cv"> Télécharger CV (PDF)</span>
-                    </button>
+                        <button class="btn-primary download-btn" data-type="cv">
+                            <i class="fas fa-download"></i>
+                            <span data-lang="btn-download-cv"> Télécharger CV (PDF)</span>
+                        </button>
 
 
-                    <button class="btn-primary download-btn" data-type="Recommendation">
-                        <i class="fas fa-envelope-open-text"></i>
-                        <span data-lang="btn-download-Recommendation">Recommandation (PDF)</span>
-                    </button>
+                        <button class="btn-primary download-btn" data-type="Recommendation">
+                            <i class="fas fa-envelope-open-text"></i>
+                            <span data-lang="btn-download-Recommendation">Recommandation (PDF)</span>
+                        </button>
 
-                    <!-- 
+                        <!-- 
                      <button class="btn-primary download-btn" data-type="recommendation">
                         <i class="fas fa-envelope-open-text"></i>
                         <span data-lang="btn-download-recommendation">Recommandation (PDF)</span>
@@ -87,21 +106,22 @@
 
                     -->
 
-                    <button class="btn-secondary download-btn" data-type="competences">
-                        <i class="fas fa-file-alt"></i>
-                        <span data-lang="btn-download-skills">Compétences</span>
-                    </button>
+                        <button class="btn-secondary download-btn" data-type="competences">
+                            <i class="fas fa-file-alt"></i>
+                            <span data-lang="btn-download-skills">Compétences</span>
+                        </button>
 
-                    <button class="btn-secondary location-btn">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span data-lang="btn-location">🇫🇷 France & 🇨🇦 Canada</span>
-                    </button>
+                        <button class="btn-secondary location-btn">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span data-lang="btn-location">🇫🇷 France & 🇨🇦 Canada</span>
+                        </button>
                     </div>
 
 
 
                     <div class="social-links">
-                        <a href="https://www.linkedin.com/in/ad%C3%A9bayo-dassoundo-a9323a2a3/" target="_blank" class="social-link">
+                        <a href="https://www.linkedin.com/in/ad%C3%A9bayo-dassoundo-a9323a2a3/" target="_blank"
+                            class="social-link">
                             <i class="fab fa-linkedin"></i>
                         </a>
                         <a href="https://github.com/DASSOUNDO" target="_blank" class="social-link">
@@ -149,12 +169,12 @@
     <!-- Skills Section -->
     <section id="competences" class="skills">
         <div class="container">
-            <h2 class="section-title" data-lang="skills-title">My Skills</h2>
-            
+            <h2 class="section-title" data-lang="skills-title">Mes Compétences</h2>
+
             <div class="skills-overview">
 
                 <div class="skill-category overview-card">
-                    <h3 data-lang="main-skills">Core Skills</h3>
+                    <h3 data-lang="main-skills">Grandes Compétences</h3>
                     <div class="skill-tags">
                         <span class="skill-tag primary">Systèmes embarqués</span>
                         <span class="skill-tag primary">Programmation temps réel</span>
@@ -165,7 +185,8 @@
                         <span class="skill-tag primary">Linux & intégration continue (GitLab CI/CD)</span>
                         <span class="skill-tag primary">Cybersécurité & protocoles sécurisés (TLS, SSH)</span>
                         <span class="skill-tag primary">Simulation & analyse : MATLAB / Simulink / LTspice</span>
-                        <span class="skill-tag primary">Conception électronique & microcontrôleurs (STM32, Arduino, ESP32, Raspberry Pi)</span>
+                        <span class="skill-tag primary">Conception électronique & microcontrôleurs (STM32, Arduino,
+                            ESP32, Raspberry Pi)</span>
                         <span class="skill-tag primary">Gestion de projet & travail collaboratif (Agile / Scrum)</span>
                     </div>
                 </div>
@@ -173,24 +194,31 @@
                 <div class="skill-category overview-card">
                     <h3 data-lang="certifications">Certifications (6)</h3>
                     <div class="certifications">
-                         <div class="cert-item">
-                            <img loading="lazy" src="images/Ampere.png" alt="Ampere Software Technology Masterclass certifiante sur l'Intelligence Artificielle" class="cert-logo">
-                            <a href="https://www.linkedin.com/in/adébayo-dassoundo-a9323a2a3/details/certifications" target="_blank" class="cert-link">
+                        <div class="cert-item">
+                            <img loading="lazy" src="images/Ampere.png"
+                                alt="Ampere Software Technology Masterclass certifiante sur l'Intelligence Artificielle"
+                                class="cert-logo">
+                            <a href="https://www.linkedin.com/in/adébayo-dassoundo-a9323a2a3/details/certifications"
+                                target="_blank" class="cert-link">
                                 <i class="fas fa-certificate"></i>
-                                <span>Ampere Software Technology: Masterclass certifiante sur l'Intelligence Artificielle</span>
+                                <span>Ampere Software Technology: Masterclass certifiante sur l'Intelligence
+                                    Artificielle</span>
                             </a>
                         </div>
-                        
+
                         <div class="cert-item">
-                            <img loading="lazy" src="images/Renault.png" alt="Renault Group Cybersecurity certification" class="cert-logo">
-                            <a href="https://www.linkedin.com/in/adébayo-dassoundo-a9323a2a3/details/certifications" target="_blank" class="cert-link">
+                            <img loading="lazy" src="images/Renault.png" alt="Renault Group Cybersecurity certification"
+                                class="cert-logo">
+                            <a href="https://www.linkedin.com/in/adébayo-dassoundo-a9323a2a3/details/certifications"
+                                target="_blank" class="cert-link">
                                 <i class="fas fa-certificate"></i>
                                 <span>Renault Group : Cybersecurity certification</span>
                             </a>
                         </div>
 
                         <div class="cert-item">
-                            <img loading="lazy" src="images/Coursera.jpg" alt="Python Desktop Application Development (Full GUI Stack)" class="cert-logo">
+                            <img loading="lazy" src="images/Coursera.jpg"
+                                alt="Python Desktop Application Development (Full GUI Stack)" class="cert-logo">
                             <a href="" target="_blank" class="cert-link">
                                 <i class="fas fa-certificate"></i>
                                 <span>Python Desktop Application Development (Full GUI Stack)</span>
@@ -198,16 +226,19 @@
                         </div>
 
                         <div class="cert-item">
-                            <img loading="lazy" src="images/rg.png" alt="Data Protection Certification" class="cert-logo">
-                            <a href="https://www.linkedin.com/in/adébayo-dassoundo-a9323a2a3/details/certifications" target="_blank" class="cert-link">
+                            <img loading="lazy" src="images/rg.png" alt="Data Protection Certification"
+                                class="cert-logo">
+                            <a href="https://www.linkedin.com/in/adébayo-dassoundo-a9323a2a3/details/certifications"
+                                target="_blank" class="cert-link">
                                 <i class="fas fa-certificate"></i>
                                 <span>Data Protection Certification</span>
                             </a>
                         </div>
-                    
+
                         <div class="cert-item">
                             <img loading="lazy" src="images/mooc.jpg" alt="MOOC Gestion de Projet" class="cert-logo">
-                            <a href="https://certification.gestiondeprojet.pm/GdP22AP/GdP22PC-DAAySxfFA.pdf" target="_blank" class="cert-link">
+                            <a href="https://certification.gestiondeprojet.pm/GdP22AP/GdP22PC-DAAySxfFA.pdf"
+                                target="_blank" class="cert-link">
                                 <i class="fas fa-certificate"></i>
                                 <span>MOOC Gestion de Projet</span>
                             </a>
@@ -215,7 +246,8 @@
 
                         <div class="cert-item">
                             <img loading="lazy" src="images/inrs.jpg" alt="Prevention_Sup" class="cert-logo">
-                            <a href="https://www.linkedin.com/in/adébayo-dassoundo-a9323a2a3/details/certifications" target="_blank" class="cert-link">
+                            <a href="https://www.linkedin.com/in/adébayo-dassoundo-a9323a2a3/details/certifications"
+                                target="_blank" class="cert-link">
                                 <i class="fas fa-certificate"></i>
                                 <span>Prevention_Sup</span>
                             </a>
@@ -225,7 +257,7 @@
                 </div>
             </div>
 
-          <div class="tech-categories">
+            <div class="tech-categories">
 
                 <div class="tech-category">
                     <div class="tech-header">
@@ -233,11 +265,16 @@
                         <h3>Systèmes embarqués</h3>
                     </div>
                     <div class="tech-items">
-                        <div class="tech-item"><span class="tech-name">ROS2 / NUC</span><span class="tech-desc">Prototypage logiciel châssis</span></div>
-                        <div class="tech-item"><span class="tech-name">STM32 / Arduino / ESP32</span><span class="tech-desc">Développement microcontrôleurs</span></div>
-                        <div class="tech-item"><span class="tech-name">dSPACE</span><span class="tech-desc">Prototypage et simulation temps réel</span></div>
-                        <div class="tech-item"><span class="tech-name">MATLAB / Simulink</span><span class="tech-desc">Modélisation et génération de code</span></div>
-                        <div class="tech-item"><span class="tech-name">Raspberry Pi</span><span class="tech-desc">Pilotage et acquisition capteurs</span></div>
+                        <div class="tech-item"><span class="tech-name">ROS2 / NUC</span><span
+                                class="tech-desc">Prototypage logiciel châssis</span></div>
+                        <div class="tech-item"><span class="tech-name">STM32 / Arduino / ESP32</span><span
+                                class="tech-desc">Développement microcontrôleurs</span></div>
+                        <div class="tech-item"><span class="tech-name">dSPACE</span><span class="tech-desc">Prototypage
+                                et simulation temps réel</span></div>
+                        <div class="tech-item"><span class="tech-name">MATLAB / Simulink</span><span
+                                class="tech-desc">Modélisation et génération de code</span></div>
+                        <div class="tech-item"><span class="tech-name">Raspberry Pi</span><span
+                                class="tech-desc">Pilotage et acquisition capteurs</span></div>
                     </div>
                 </div>
 
@@ -247,11 +284,16 @@
                         <h3>Développement logiciel</h3>
                     </div>
                     <div class="tech-items">
-                        <div class="tech-item"><span class="tech-name">C / C++ / Java / Python / VHDL</span><span class="tech-desc">Programmation multi-langages</span></div>
-                        <div class="tech-item"><span class="tech-name">SQL / MySQL</span><span class="tech-desc">Gestion et stockage de données</span></div>
-                        <div class="tech-item"><span class="tech-name">Tkinter / PyQt</span><span class="tech-desc">Création d’interfaces IHM</span></div>
-                        <div class="tech-item"><span class="tech-name">Git / GitLab</span><span class="tech-desc">Gestion de version et CI/CD</span></div>
-                        <div class="tech-item"><span class="tech-name">Linux / Bash</span><span class="tech-desc">Déploiement et automatisation</span></div>
+                        <div class="tech-item"><span class="tech-name">C / C++ / Java / Python / VHDL</span><span
+                                class="tech-desc">Programmation multi-langages</span></div>
+                        <div class="tech-item"><span class="tech-name">SQL / MySQL</span><span class="tech-desc">Gestion
+                                et stockage de données</span></div>
+                        <div class="tech-item"><span class="tech-name">Tkinter / PyQt</span><span
+                                class="tech-desc">Création d’interfaces IHM</span></div>
+                        <div class="tech-item"><span class="tech-name">Git / GitLab</span><span
+                                class="tech-desc">Gestion de version et CI/CD</span></div>
+                        <div class="tech-item"><span class="tech-name">Linux / Bash</span><span
+                                class="tech-desc">Déploiement et automatisation</span></div>
                     </div>
                 </div>
 
@@ -261,10 +303,14 @@
                         <h3>Ingénierie logicielle & modélisation</h3>
                     </div>
                     <div class="tech-items">
-                        <div class="tech-item"><span class="tech-name">UML</span><span class="tech-desc">Diagrammes de classes, séquences, cas d’utilisation</span></div>
-                        <div class="tech-item"><span class="tech-name">Spécifications techniques</span><span class="tech-desc">Architecture et système</span></div>
-                        <div class="tech-item"><span class="tech-name">Protocoles</span><span class="tech-desc">Définition des échanges inter-modules</span></div>
-                        <div class="tech-item"><span class="tech-name">Conception orientée objet</span><span class="tech-desc">Développement modulaire</span></div>
+                        <div class="tech-item"><span class="tech-name">UML</span><span class="tech-desc">Diagrammes de
+                                classes, séquences, cas d’utilisation</span></div>
+                        <div class="tech-item"><span class="tech-name">Spécifications techniques</span><span
+                                class="tech-desc">Architecture et système</span></div>
+                        <div class="tech-item"><span class="tech-name">Protocoles</span><span
+                                class="tech-desc">Définition des échanges inter-modules</span></div>
+                        <div class="tech-item"><span class="tech-name">Conception orientée objet</span><span
+                                class="tech-desc">Développement modulaire</span></div>
                     </div>
                 </div>
 
@@ -274,23 +320,31 @@
                         <h3>Tests, validation & qualité</h3>
                     </div>
                     <div class="tech-items">
-                        <div class="tech-item"><span class="tech-name">Robot Framework / JMeter</span><span class="tech-desc">Tests automatisés</span></div>
-                        <div class="tech-item"><span class="tech-name">Plan de test</span><span class="tech-desc">Spécification et validation</span></div>
-                        <div class="tech-item"><span class="tech-name">Matrice de traçabilité</span><span class="tech-desc">Suivi et vérification des exigences</span></div>
-                        <div class="tech-item"><span class="tech-name">Rédaction des tests</span><span class="tech-desc">squash</span></div>
+                        <div class="tech-item"><span class="tech-name">Robot Framework / JMeter</span><span
+                                class="tech-desc">Tests automatisés</span></div>
+                        <div class="tech-item"><span class="tech-name">Plan de test</span><span
+                                class="tech-desc">Spécification et validation</span></div>
+                        <div class="tech-item"><span class="tech-name">Matrice de traçabilité</span><span
+                                class="tech-desc">Suivi et vérification des exigences</span></div>
+                        <div class="tech-item"><span class="tech-name">Rédaction des tests</span><span
+                                class="tech-desc">squash</span></div>
                     </div>
                 </div>
- 
+
                 <div class="tech-category">
                     <div class="tech-header">
                         <i class="fas fa-shield-alt"></i>
                         <h3>Cybersécurité & communication</h3>
                     </div>
                     <div class="tech-items">
-                        <div class="tech-item"><span class="tech-name">TLS / SSH</span><span class="tech-desc">Protocoles sécurisés</span></div>
-                        <div class="tech-item"><span class="tech-name">CAN / UART / SPI / I2C</span><span class="tech-desc">Bus de communication embarqués</span></div>
-                        <div class="tech-item"><span class="tech-name">Sécurité logicielle</span><span class="tech-desc">Authentification et chiffrement</span></div>
-                        <div class="tech-item"><span class="tech-name">Interopérabilité</span><span class="tech-desc">Échanges entre modules logiciels</span></div>
+                        <div class="tech-item"><span class="tech-name">TLS / SSH</span><span
+                                class="tech-desc">Protocoles sécurisés</span></div>
+                        <div class="tech-item"><span class="tech-name">CAN / UART / SPI / I2C</span><span
+                                class="tech-desc">Bus de communication embarqués</span></div>
+                        <div class="tech-item"><span class="tech-name">Sécurité logicielle</span><span
+                                class="tech-desc">Authentification et chiffrement</span></div>
+                        <div class="tech-item"><span class="tech-name">Interopérabilité</span><span
+                                class="tech-desc">Échanges entre modules logiciels</span></div>
                     </div>
                 </div>
 
@@ -300,33 +354,38 @@
                         <h3>Électronique & systèmes connectés</h3>
                     </div>
                     <div class="tech-items">
-                        <div class="tech-item"><span class="tech-name">Altium Designer</span><span class="tech-desc">Conception de PCB</span></div>
-                        <div class="tech-item"><span class="tech-name">Capteurs et actionneurs</span><span class="tech-desc">Acquisition et commande</span></div>
-                        <div class="tech-item"><span class="tech-name">Alimentation linéaire / découpage</span><span class="tech-desc">Conception et tests</span></div>
-                        <div class="tech-item"><span class="tech-name">Assemblage & soudure</span><span class="tech-desc">Montage de prototypes</span></div>
-                        <div class="tech-item"><span class="tech-name">Simulation & analyse</span><span class="tech-desc">LTspice, SystemVue</span></div>
+                        <div class="tech-item"><span class="tech-name">Altium Designer</span><span
+                                class="tech-desc">Conception de PCB</span></div>
+                        <div class="tech-item"><span class="tech-name">Capteurs et actionneurs</span><span
+                                class="tech-desc">Acquisition et commande</span></div>
+                        <div class="tech-item"><span class="tech-name">Alimentation linéaire / découpage</span><span
+                                class="tech-desc">Conception et tests</span></div>
+                        <div class="tech-item"><span class="tech-name">Assemblage & soudure</span><span
+                                class="tech-desc">Montage de prototypes</span></div>
+                        <div class="tech-item"><span class="tech-name">Simulation & analyse</span><span
+                                class="tech-desc">LTspice, SystemVue</span></div>
                     </div>
                 </div>
 
-             <div class="tech-category">
-                <div class="tech-header">
-                    <i class="fas fa-brain"></i>
-                    <h3>Intelligence Artificielle & Data</h3>
-                </div>
-                <div class="tech-items">
-                    <div class="tech-item">
-                    <span class="tech-name">Apprentissage automatique</span>
-                    <span class="tech-desc">Bases de la modélisation prédictive</span>
+                <div class="tech-category">
+                    <div class="tech-header">
+                        <i class="fas fa-brain"></i>
+                        <h3>Intelligence Artificielle & Data</h3>
                     </div>
-                    <div class="tech-item">
-                    <span class="tech-name">Analyse et préparation de données</span>
-                    <span class="tech-desc">Nettoyage et structuration des jeux de données</span>
+                    <div class="tech-items">
+                        <div class="tech-item">
+                            <span class="tech-name">Apprentissage automatique</span>
+                            <span class="tech-desc">Bases de la modélisation prédictive</span>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-name">Analyse et préparation de données</span>
+                            <span class="tech-desc">Nettoyage et structuration des jeux de données</span>
+                        </div>
+                        <div class="tech-item">
+                            <span class="tech-name">Python (Pandas, Scikit-learn)</span>
+                            <span class="tech-desc">Manipulation et traitement de données</span>
+                        </div>
                     </div>
-                    <div class="tech-item">
-                    <span class="tech-name">Python (Pandas, Scikit-learn)</span>
-                    <span class="tech-desc">Manipulation et traitement de données</span>
-                    </div>
-                </div>
                 </div>
 
 
@@ -336,21 +395,25 @@
                         <h3>Gestion de projet & collaboration</h3>
                     </div>
                     <div class="tech-items">
-                        <div class="tech-item"><span class="tech-name">Agile / Scrum</span><span class="tech-desc">Organisation collaborative</span></div>
-                        <div class="tech-item"><span class="tech-name">Notion / Jira</span><span class="tech-desc">Suivi de tâches et planification</span></div>
-                        <div class="tech-item"><span class="tech-name">Communication technique</span><span class="tech-desc">Rédaction de spécifications et documentation</span></div>
-                        <div class="tech-item"><span class="tech-name">Leadership</span><span class="tech-desc">Coordination et esprit d’équipe</span></div>
+                        <div class="tech-item"><span class="tech-name">Agile / Scrum</span><span
+                                class="tech-desc">Organisation collaborative</span></div>
+                        <div class="tech-item"><span class="tech-name">Notion / Jira</span><span class="tech-desc">Suivi
+                                de tâches et planification</span></div>
+                        <div class="tech-item"><span class="tech-name">Communication technique</span><span
+                                class="tech-desc">Rédaction de spécifications et documentation</span></div>
+                        <div class="tech-item"><span class="tech-name">Leadership</span><span
+                                class="tech-desc">Coordination et esprit d’équipe</span></div>
                     </div>
                 </div>
 
             </div>
 
             <div class="tech-category" style="margin-bottom: 30px;">
-                 
+
             </div>
-            
+
             <div class="tech-category">
-                
+
                 <div class="tech-header">
                     <i class="fas fa-cogs"></i>
                     <h3>Mécanique & Production industrielle</h3>
@@ -387,7 +450,7 @@
                 </div>
             </div>
 
-    </section> 
+    </section>
 
     <!-- Experience Section -->
     <section id="experience" class="experience">
@@ -468,7 +531,8 @@
                     </div>
                     <div class="company-position">
                         <h4>Stagiaire en fabrication mécanique sur machines-outils</h4>
-                        <span class="position-company">Centre de perfectionnement des personnes d’entreprises – Bénin</span><br>
+                        <span class="position-company">Centre de perfectionnement des personnes d’entreprises –
+                            Bénin</span><br>
                         <span class="position-duration">2019 – 2020</span>
                     </div>
                 </div>
@@ -502,593 +566,635 @@
 
     <!-- Projects Section -->
     <section id="projets" class="projects">
-    <div class="container">
-        <h2 class="section-title" data-lang="projects-title">Principaux projets techniques et professionnels</h2>
+        <div class="container">
+            <h2 class="section-title" data-lang="projects-title">Principaux projets techniques et professionnels</h2>
 
-        <div class="projects-note">
-        <p>
-            <strong>Note :</strong> Certains projets réalisés en entreprise sont soumis à des clauses de confidentialité.
-            Les informations présentées ici décrivent uniquement les aspects techniques généraux et les compétences mises en œuvre.
-        </p>
+            <div class="projects-note">
+                <p>
+                    <strong>Note :</strong> Certains projets réalisés en entreprise sont soumis à des clauses de
+                    confidentialité.
+                    Les informations présentées ici décrivent uniquement les aspects techniques généraux et les
+                    compétences mises en œuvre.
+                </p>
+            </div>
+
+            <div class="projects-grid">
+
+                <!-- Renault Group -->
+                <div class="project-card" data-category="embedded">
+                    <div class="project-header">
+                        <h3>Prototypage logiciel embarqué – Renault Group (Entreprise)</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="project-content">
+                        <p>
+                            Recherche industrielle menée au sein d’Ampere Software Technology pour le développement et
+                            la validation de logiciels de contrôle châssis dans un environnement ROS2 embarqué.
+                        </p>
+                        <ul>
+                            <li>Portage de logiciels temps réel vers ROS2 et génération de nœuds depuis MATLAB.</li>
+                            <li>Automatisation du déploiement logiciel via GitLab CI/CD.</li>
+                            <li>Conception d’une solution hybride dSPACE–ROS2 pour le prototypage rapide.</li>
+                            <li>Développement d’interfaces homme–machine (IHM) pour la supervision.</li>
+                            <li>Validation d’algorithmes embarqués sur véhicules prototypes.</li>
+                        </ul>
+                        <div class="project-tags">
+                            <span class="tag">ROS2</span>
+                            <span class="tag">dSPACE</span>
+                            <span class="tag">CI/CD</span>
+                            <span class="tag">IHM</span>
+                            <span class="tag">Automotive</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thales -->
+                <div class="project-card" data-category="research">
+                    <div class="project-header">
+                        <h3>Projet de fin d’études – Thales (Entreprise & École)</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="project-content">
+                        <p>
+                            Projet collectif portant sur la conception d’architectures logicielles distribuées et le
+                            développement d’algorithmes de coordination multi-robots autonomes.
+                        </p>
+                        <ul>
+                            <li>Modélisation UML : diagrammes de séquence, d’objets et de classes.</li>
+                            <li>Programmation des modules en C++ et Python.</li>
+                            <li>Tests et validation des comportements autonomes sur simulateur.</li>
+                            <li>Intégration et communication inter-modules via protocoles ROS2.</li>
+                        </ul>
+                        <div class="project-tags">
+                            <span class="tag">C++</span>
+                            <span class="tag">Python</span>
+                            <span class="tag">UML</span>
+                            <span class="tag">Multi-robots</span>
+                            <span class="tag">ROS2</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Université de Sherbrooke -->
+                <div class="project-card" data-category="research">
+                    <div class="project-header">
+                        <h3>Contrôle de bioreacteur – Université de Sherbrooke (Laboratoire)</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="project-content">
+                        <p>
+                            Stage de recherche axé sur la conception d’un système de contrôle embarqué pour un
+                            bioréacteur de décellularisation automatisé.
+                        </p>
+                        <ul>
+                            <li>Développement d’une interface logicielle en Python pour le pilotage.</li>
+                            <li>Automatisation du système de perfusion et de décellularisation.</li>
+                            <li>Intégration de capteurs, pompes et valves contrôlées par microcontrôleur.</li>
+                            <li>Validation du système par essais en conditions réelles au laboratoire.</li>
+                        </ul>
+                        <div class="project-tags">
+                            <span class="tag">Python</span>
+                            <span class="tag">Automation</span>
+                            <span class="tag">IoT</span>
+                            <span class="tag">Bioreacteur</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ESEO -->
+                <div class="project-card" data-category="school">
+                    <div class="project-header">
+                        <h3>Projets d’ingénierie – ESEO (École)</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="project-content">
+                        <p>
+                            Réalisation de projets intégrant électronique, développement logiciel et conception
+                            mécanique.
+                        </p>
+                        <ul>
+                            <li>Développement d’applications en C et Java pour systèmes embarqués.</li>
+                            <li>Réalisation de cartes électroniques sous Altium Designer.</li>
+                            <li>Conception et contrôle de véhicules Bluetooth télécommandés.</li>
+                            <li>Modélisation mécanique 3D de systèmes sur SolidWorks.</li>
+                        </ul>
+                        <div class="project-tags">
+                            <span class="tag">C</span>
+                            <span class="tag">Java</span>
+                            <span class="tag">Altium</span>
+                            <span class="tag">SolidWorks</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Digital-Tech -->
+                <div class="project-card" data-category="embedded">
+                    <div class="project-header">
+                        <h3>Objets connectés – Digital-Tech (Entreprise)</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="project-content">
+                        <p>
+                            Conception de solutions électroniques embarquées pour dispositifs connectés et IoT
+                            industriels.
+                        </p>
+                        <ul>
+                            <li>Conception de cartes d’alimentation (à découpage et linéaires).</li>
+                            <li>Programmation de microcontrôleurs en C/C++.</li>
+                            <li>Communication via UART, SPI, I2C et CAN.</li>
+                            <li>Tests et validation des circuits électroniques.</li>
+                        </ul>
+                        <div class="project-tags">
+                            <span class="tag">C</span>
+                            <span class="tag">C++</span>
+                            <span class="tag">IoT</span>
+                            <span class="tag">Électronique</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Société De Brasserie -->
+                <div class="project-card" data-category="mechanical">
+                    <div class="project-header">
+                        <h3>Fabrication mécanique et maintenance – Société De Brasserie (Entreprise)</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="project-content">
+                        <p>
+                            Projet industriel orienté sur la maintenance d’équipements et la production mécanique de
+                            pièces techniques.
+                        </p>
+                        <ul>
+                            <li>Usinage de pièces de rechange et assemblages métalliques.</li>
+                            <li>Maintenance préventive et corrective des machines.</li>
+                            <li>Lecture de plans, contrôle de conformité et soudure.</li>
+                        </ul>
+                        <div class="project-tags">
+                            <span class="tag">Mécanique</span>
+                            <span class="tag">Usinage</span>
+                            <span class="tag">Maintenance</span>
+                            <span class="tag">Soudure</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
-
-        <div class="projects-grid">
-
-        <!-- Renault Group -->
-        <div class="project-card" data-category="embedded">
-            <div class="project-header">
-            <h3>Prototypage logiciel embarqué – Renault Group (Entreprise)</h3>
-            <i class="fas fa-chevron-down toggle-icon"></i>
-            </div>
-            <div class="project-content">
-            <p>
-                Recherche industrielle menée au sein d’Ampere Software Technology pour le développement et la validation de logiciels de contrôle châssis dans un environnement ROS2 embarqué.
-            </p>
-            <ul>
-                <li>Portage de logiciels temps réel vers ROS2 et génération de nœuds depuis MATLAB.</li>
-                <li>Automatisation du déploiement logiciel via GitLab CI/CD.</li>
-                <li>Conception d’une solution hybride dSPACE–ROS2 pour le prototypage rapide.</li>
-                <li>Développement d’interfaces homme–machine (IHM) pour la supervision.</li>
-                <li>Validation d’algorithmes embarqués sur véhicules prototypes.</li>
-            </ul>
-            <div class="project-tags">
-                <span class="tag">ROS2</span>
-                <span class="tag">dSPACE</span>
-                <span class="tag">CI/CD</span>
-                <span class="tag">IHM</span>
-                <span class="tag">Automotive</span>
-            </div>
-            </div>
-        </div>
-
-        <!-- Thales -->
-        <div class="project-card" data-category="research">
-            <div class="project-header">
-            <h3>Projet de fin d’études – Thales (Entreprise & École)</h3>
-            <i class="fas fa-chevron-down toggle-icon"></i>
-            </div>
-            <div class="project-content">
-            <p>
-                Projet collectif portant sur la conception d’architectures logicielles distribuées et le développement d’algorithmes de coordination multi-robots autonomes.
-            </p>
-            <ul>
-                <li>Modélisation UML : diagrammes de séquence, d’objets et de classes.</li>
-                <li>Programmation des modules en C++ et Python.</li>
-                <li>Tests et validation des comportements autonomes sur simulateur.</li>
-                <li>Intégration et communication inter-modules via protocoles ROS2.</li>
-            </ul>
-            <div class="project-tags">
-                <span class="tag">C++</span>
-                <span class="tag">Python</span>
-                <span class="tag">UML</span>
-                <span class="tag">Multi-robots</span>
-                <span class="tag">ROS2</span>
-            </div>
-            </div>
-        </div>
-
-        <!-- Université de Sherbrooke -->
-        <div class="project-card" data-category="research">
-            <div class="project-header">
-            <h3>Contrôle de bioreacteur – Université de Sherbrooke (Laboratoire)</h3>
-            <i class="fas fa-chevron-down toggle-icon"></i>
-            </div>
-            <div class="project-content">
-            <p>
-                Stage de recherche axé sur la conception d’un système de contrôle embarqué pour un bioréacteur de décellularisation automatisé.
-            </p>
-            <ul>
-                <li>Développement d’une interface logicielle en Python pour le pilotage.</li>
-                <li>Automatisation du système de perfusion et de décellularisation.</li>
-                <li>Intégration de capteurs, pompes et valves contrôlées par microcontrôleur.</li>
-                <li>Validation du système par essais en conditions réelles au laboratoire.</li>
-            </ul>
-            <div class="project-tags">
-                <span class="tag">Python</span>
-                <span class="tag">Automation</span>
-                <span class="tag">IoT</span>
-                <span class="tag">Bioreacteur</span>
-            </div>
-            </div>
-        </div>
-
-        <!-- ESEO -->
-        <div class="project-card" data-category="school">
-            <div class="project-header">
-            <h3>Projets d’ingénierie – ESEO (École)</h3>
-            <i class="fas fa-chevron-down toggle-icon"></i>
-            </div>
-            <div class="project-content">
-            <p>
-                Réalisation de projets intégrant électronique, développement logiciel et conception mécanique.
-            </p>
-            <ul>
-                <li>Développement d’applications en C et Java pour systèmes embarqués.</li>
-                <li>Réalisation de cartes électroniques sous Altium Designer.</li>
-                <li>Conception et contrôle de véhicules Bluetooth télécommandés.</li>
-                <li>Modélisation mécanique 3D de systèmes sur SolidWorks.</li>
-            </ul>
-            <div class="project-tags">
-                <span class="tag">C</span>
-                <span class="tag">Java</span>
-                <span class="tag">Altium</span>
-                <span class="tag">SolidWorks</span>
-            </div>
-            </div>
-        </div>
-
-        <!-- Digital-Tech -->
-        <div class="project-card" data-category="embedded">
-            <div class="project-header">
-            <h3>Objets connectés – Digital-Tech (Entreprise)</h3>
-            <i class="fas fa-chevron-down toggle-icon"></i>
-            </div>
-            <div class="project-content">
-            <p>
-                Conception de solutions électroniques embarquées pour dispositifs connectés et IoT industriels.
-            </p>
-            <ul>
-                <li>Conception de cartes d’alimentation (à découpage et linéaires).</li>
-                <li>Programmation de microcontrôleurs en C/C++.</li>
-                <li>Communication via UART, SPI, I2C et CAN.</li>
-                <li>Tests et validation des circuits électroniques.</li>
-            </ul>
-            <div class="project-tags">
-                <span class="tag">C</span>
-                <span class="tag">C++</span>
-                <span class="tag">IoT</span>
-                <span class="tag">Électronique</span>
-            </div>
-            </div>
-        </div>
-
-        <!-- Société De Brasserie -->
-        <div class="project-card" data-category="mechanical">
-            <div class="project-header">
-            <h3>Fabrication mécanique et maintenance – Société De Brasserie (Entreprise)</h3>
-            <i class="fas fa-chevron-down toggle-icon"></i>
-            </div>
-            <div class="project-content">
-            <p>
-                Projet industriel orienté sur la maintenance d’équipements et la production mécanique de pièces techniques.
-            </p>
-            <ul>
-                <li>Usinage de pièces de rechange et assemblages métalliques.</li>
-                <li>Maintenance préventive et corrective des machines.</li>
-                <li>Lecture de plans, contrôle de conformité et soudure.</li>
-            </ul>
-            <div class="project-tags">
-                <span class="tag">Mécanique</span>
-                <span class="tag">Usinage</span>
-                <span class="tag">Maintenance</span>
-                <span class="tag">Soudure</span>
-            </div>
-            </div>
-        </div>
-
-        </div>
-    </div>
     </section>
 
 
 
     <!-- Research Areas Section -->
     <section id="recherche" class="research">
-    <div class="container">
-        <h2 class="section-title" data-lang="research-title">Mes principaux projets de recherche</h2>
+        <div class="container">
+            <h2 class="section-title" data-lang="research-title">Mes principaux projets de recherche</h2>
 
-        <div class="research-grid">
+            <div class="research-grid">
 
-        <!-- Sherbrooke -->
-        <div class="research-card" data-category="embedded">
-            <div class="research-header">
-            <h3>Système automatisé de décellularisation – Université de Sherbrooke</h3>
-            <i class="fas fa-chevron-down toggle-icon"></i>
-            </div>
-            <div class="research-content">
-            <p>
-                Recherche appliquée sur le développement d’un système embarqué pour la décellularisation de tissus biologiques, intégrant le contrôle temps réel d’un bioréacteur.
-            </p>
-            <ul>
-                <li>Conception d’une interface Python pour le pilotage du bioréacteur.</li>
-                <li>Intégration et commande de capteurs, pompes et valves via microcontrôleurs.</li>
-                <li>Optimisation du code embarqué pour la gestion en temps réel des cycles de perfusion.</li>
-                <li>Validation expérimentale du système sur tissus biologiques.</li>
-            </ul>
-            <div class="research-tags">
-                <span class="tag">Systèmes embarqués</span>
-                <span class="tag">Python</span>
-                <span class="tag">Biotechnologie</span>
-                <span class="tag">Automation</span>
-            </div>
+                <!-- Sherbrooke -->
+                <div class="research-card" data-category="embedded">
+                    <div class="research-header">
+                        <h3>Système automatisé de décellularisation – Université de Sherbrooke</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="research-content">
+                        <p>
+                            Recherche appliquée sur le développement d’un système embarqué pour la décellularisation de
+                            tissus biologiques, intégrant le contrôle temps réel d’un bioréacteur.
+                        </p>
+                        <ul>
+                            <li>Conception d’une interface Python pour le pilotage du bioréacteur.</li>
+                            <li>Intégration et commande de capteurs, pompes et valves via microcontrôleurs.</li>
+                            <li>Optimisation du code embarqué pour la gestion en temps réel des cycles de perfusion.
+                            </li>
+                            <li>Validation expérimentale du système sur tissus biologiques.</li>
+                        </ul>
+                        <div class="research-tags">
+                            <span class="tag">Systèmes embarqués</span>
+                            <span class="tag">Python</span>
+                            <span class="tag">Biotechnologie</span>
+                            <span class="tag">Automation</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Renault / Ampere -->
+                <div class="research-card" data-category="embedded">
+                    <div class="research-header">
+                        <h3>Recherche sur l’architecture ROS2 pour le prototypage logiciel châssis – Ampere Software
+                            Technology</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="research-content">
+                        <p>
+                            Étude industrielle sur l’optimisation d’une infrastructure ROS2 embarquée pour le
+                            prototypage rapide de logiciels de contrôle châssis sur plateformes NUC.
+                        </p>
+                        <ul>
+                            <li>Production et intégration manuelle des binaires ROS2 pour environnements embarqués.</li>
+                            <li>Génération et déploiement de nœuds ROS depuis MATLAB.</li>
+                            <li>Validation fonctionnelle de plusieurs modules de contrôle dans un véhicule prototype.
+                            </li>
+                            <li>Amélioration des performances et de la fiabilité du système ROS2 embarqué.</li>
+                        </ul>
+                        <div class="research-tags">
+                            <span class="tag">ROS2</span>
+                            <span class="tag">NUC</span>
+                            <span class="tag">MATLAB</span>
+                            <span class="tag">Automobile</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agent IA embarqué -->
+                <div class="research-card" data-category="ai">
+                    <div class="research-header">
+                        <h3>Agent IA embarqué pour l’analyse et la supervision des systèmes automobiles</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="research-content">
+                        <p>
+                            Conception d’un agent d’intelligence artificielle embarqué capable de surveiller,
+                            diagnostiquer et interpréter les données issues de systèmes embarqués automobiles.
+                        </p>
+                        <ul>
+                            <li>Création d’une base de connaissances dédiée aux protocoles CAN, LIN et ROS2.</li>
+                            <li>Développement d’un moteur d’analyse contextuelle pour la détection d’anomalies.</li>
+                            <li>Implémentation d’un modèle Edge AI optimisé pour microcontrôleurs.</li>
+                            <li>Interface IHM de visualisation et supervision en temps réel.</li>
+                        </ul>
+                        <div class="research-tags">
+                            <span class="tag">Edge AI</span>
+                            <span class="tag">CAN/LIN</span>
+                            <span class="tag">ROS2</span>
+                            <span class="tag">Supervision</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Application de gestion de projets -->
+                <div class="research-card" data-category="software">
+                    <div class="research-header">
+                        <h3>Application de gestion et supervision de projets techniques</h3>
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </div>
+                    <div class="research-content">
+                        <p>
+                            Développement d’une application multiplateforme pour la planification et le suivi de projets
+                            techniques, combinant modélisation UML et interface graphique en Python.
+                        </p>
+                        <ul>
+                            <li>Conception du backend en Python et du frontend avec PyQt/Tkinter.</li>
+                            <li>Définition UML et conception de la base de données du système.</li>
+                            <li>Automatisation de la génération de rapports (PDF, Excel).</li>
+                            <li>Outil de suivi, traçabilité et gestion de performance de projets.</li>
+                        </ul>
+                        <div class="research-tags">
+                            <span class="tag">Python</span>
+                            <span class="tag">PyQt</span>
+                            <span class="tag">UML</span>
+                            <span class="tag">Gestion de projet</span>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
-
-        <!-- Renault / Ampere -->
-        <div class="research-card" data-category="embedded">
-            <div class="research-header">
-            <h3>Recherche sur l’architecture ROS2 pour le prototypage logiciel châssis – Ampere Software Technology</h3>
-            <i class="fas fa-chevron-down toggle-icon"></i>
-            </div>
-            <div class="research-content">
-            <p>
-                Étude industrielle sur l’optimisation d’une infrastructure ROS2 embarquée pour le prototypage rapide de logiciels de contrôle châssis sur plateformes NUC.
-            </p>
-            <ul>
-                <li>Production et intégration manuelle des binaires ROS2 pour environnements embarqués.</li>
-                <li>Génération et déploiement de nœuds ROS depuis MATLAB.</li>
-                <li>Validation fonctionnelle de plusieurs modules de contrôle dans un véhicule prototype.</li>
-                <li>Amélioration des performances et de la fiabilité du système ROS2 embarqué.</li>
-            </ul>
-            <div class="research-tags">
-                <span class="tag">ROS2</span>
-                <span class="tag">NUC</span>
-                <span class="tag">MATLAB</span>
-                <span class="tag">Automobile</span>
-            </div>
-            </div>
-        </div>
-
-        <!-- Agent IA embarqué -->
-        <div class="research-card" data-category="ai">
-            <div class="research-header">
-            <h3>Agent IA embarqué pour l’analyse et la supervision des systèmes automobiles</h3>
-            <i class="fas fa-chevron-down toggle-icon"></i>
-            </div>
-            <div class="research-content">
-            <p>
-                Conception d’un agent d’intelligence artificielle embarqué capable de surveiller, diagnostiquer et interpréter les données issues de systèmes embarqués automobiles.
-            </p>
-            <ul>
-                <li>Création d’une base de connaissances dédiée aux protocoles CAN, LIN et ROS2.</li>
-                <li>Développement d’un moteur d’analyse contextuelle pour la détection d’anomalies.</li>
-                <li>Implémentation d’un modèle Edge AI optimisé pour microcontrôleurs.</li>
-                <li>Interface IHM de visualisation et supervision en temps réel.</li>
-            </ul>
-            <div class="research-tags">
-                <span class="tag">Edge AI</span>
-                <span class="tag">CAN/LIN</span>
-                <span class="tag">ROS2</span>
-                <span class="tag">Supervision</span>
-            </div>
-            </div>
-        </div>
-
-        <!-- Application de gestion de projets -->
-        <div class="research-card" data-category="software">
-            <div class="research-header">
-            <h3>Application de gestion et supervision de projets techniques</h3>
-            <i class="fas fa-chevron-down toggle-icon"></i>
-            </div>
-            <div class="research-content">
-            <p>
-                Développement d’une application multiplateforme pour la planification et le suivi de projets techniques, combinant modélisation UML et interface graphique en Python.
-            </p>
-            <ul>
-                <li>Conception du backend en Python et du frontend avec PyQt/Tkinter.</li>
-                <li>Définition UML et conception de la base de données du système.</li>
-                <li>Automatisation de la génération de rapports (PDF, Excel).</li>
-                <li>Outil de suivi, traçabilité et gestion de performance de projets.</li>
-            </ul>
-            <div class="research-tags">
-                <span class="tag">Python</span>
-                <span class="tag">PyQt</span>
-                <span class="tag">UML</span>
-                <span class="tag">Gestion de projet</span>
-            </div>
-            </div>
-        </div>
-
-        </div>
-    </div>
     </section>
 
 
     <!-- Education Section -->
     <section id="education" class="education">
-    <div class="container">
-        <h2 class="section-title" data-lang="education-title">Éducation</h2>
-
-        <div class="education-timeline">
-
-        <!-- Diplôme d’ingénieur -->
-        <div class="timeline-item">
-            <div class="timeline-year">2023 - 2026</div>
-            <div class="timeline-content">
-            <div class="education-card">
-                <h3>Diplôme d’ingénieur</h3>
-                <h4>Spécialisation en Logiciel Embarqué & Cybersécurité</h4>
-                <div class="school">
-                <i class="fas fa-university"></i>
-                ESEO – Grande école d’ingénieurs (France)
-                </div>
-                <div class="education-description">
-                Formation avancée en logiciels embarqués et cybersécurité, axée sur la conception de systèmes temps réel, la sécurité des communications et le développement de solutions fiables pour les environnements industriels.
-                </div>
-            </div>
-            </div>
-        </div>
-
-        <!-- Programme de recherche -->
-        <div class="timeline-item">
-            <div class="timeline-year">2025</div>
-            <div class="timeline-content">
-            <div class="education-card">
-                <h3>Programme de recherche</h3>
-                <h4>Systèmes embarqués</h4>
-                <div class="school">
-                <i class="fas fa-university"></i>
-                Université de Sherbrooke (Canada)
-                </div>
-                <div class="education-description">
-                Participation à des programmes de recherche à l’Université de Sherbrooke portant sur la conception de systèmes embarqués dédiés à la décellularisation automatisée de tissus biologiques.
-                </div>
-            </div>
-            </div>
-        </div>
-
-        <!-- Formation en gestion -->
-        <div class="timeline-item">
-            <div class="timeline-year">2025</div>
-            <div class="timeline-content">
-            <div class="education-card">
-                <h3>Formation en gestion, marketing et développement entrepreneurial</h3>
-                <div class="school">
-                <i class="fas fa-university"></i>
-                Stratégie Escape (France)
-                </div>
-                <div class="education-description">
-                Acquisition de compétences en stratégie de marque, communication digitale et pilotage d’activité commerciale, avec une orientation vers l’innovation et la gestion d’entreprise.
-                </div>
-            </div>
-            </div>
-        </div>
-
-        <!-- Classes préparatoires -->
-        <div class="timeline-item">
-            <div class="timeline-year">2021 - 2023</div>
-            <div class="timeline-content">
-            <div class="education-card">
-                <h3>Cours préparatoires aux écoles d’ingénieurs</h3>
-                <h4>Mathématiques et Physique (CPGE)</h4>
-                <div class="school">
-                <i class="fas fa-university"></i>
-                École Polytechnique (Bénin)
-                </div>
-                <div class="education-description">
-                Formation intensive de deux ans en mathématiques et en physique, axée sur l’analyse, la résolution de problèmes complexes et la préparation aux concours d’écoles d’ingénieurs.
-                </div>
-            </div>
-            </div>
-        </div>
-
-        </div>
-
-       <!-- Qualités personnelles et leadership -->
-<section id="leadership" class="education-highlights">
-  <div class="container">
-    <h3 class="section-title">Qualités personnelles et leadership</h3>
-
-    <div class="highlights-grid">
-
-      <!-- Président Fondation Jeunesse Locale -->
-      <div class="highlight-item">
-        <div class="highlight-icon">
-          <i class="fas fa-users"></i>
-        </div>
-        <div class="highlight-content">
-          <h4>Président – Fondation Jeunesse Locale</h4>
-          <p><strong>ONG JPA | 2018 – 2021</strong></p>
-          <ul>
-            <li>Organisation d’événements communautaires et gestion d’équipes de bénévoles.</li>
-            <li>Développement de compétences en communication, planification et prise de décision.</li>
-            <li>Capacité à mobiliser et fédérer autour de projets collectifs à long terme.</li>
-            <li>Esprit d’initiative et persévérance dans la conduite de projets sociaux.</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Entraîneur de football -->
-      <div class="highlight-item">
-        <div class="highlight-icon">
-          <i class="fas fa-futbol"></i>
-        </div>
-        <div class="highlight-content">
-          <h4>Entraîneur – Club de football U12</h4>
-          <p><strong>FC Espoir | 2019 – 2021</strong></p>
-          <ul>
-            <li>Encadrement et formation de jeunes joueurs dans un cadre sportif et éducatif.</li>
-            <li>Créativité, adaptabilité et esprit d’équipe dans la gestion du groupe.</li>
-            <li>Capacité à motiver et à travailler sous pression pour atteindre des objectifs communs.</li>
-            <li>Développement de compétences en gestion du stress et communication interpersonnelle.</li>
-          </ul>
-        </div>
-      </div>
-
-    <!-- Vie associative (encadrée et interactive) -->
-    <div class="highlight-item club-card">
-    <div class="highlight-icon">
-        <i class="fas fa-hands-helping"></i>
-    </div>
-
-    <div class="highlight-content">
-        <h4>Vie associative</h4>
-        <p><strong>ESEO Angers | 2023 – 2026</strong></p>
-
-        <ul class="club-list">
-
-        <!-- Club Robot -->
-        <li>
-            <a href="Club/robot.png" class="club-link" target="_blank" title="Voir le logo Robot ESEO">
-            <img loading="lazy" src="Club/robot.png" alt="Logo Robot ESEO" class="club-logo">
-            </a>
-            <span>Membre du club Robot ESEO Angers</span>
-        </li>
-
-        <!-- Club Auto -->
-        <li>
-            <a href="Club/auto.png" class="club-link" target="_blank" title="Voir le logo ESE’Auto">
-            <img loading="lazy" src="Club/auto.png" alt="Logo ESE’Auto" class="club-logo">
-            </a>
-            <span>Membre du club automobile de l’ESEO (ESE’Auto)</span>
-        </li>
-
-        <!-- Club Foot -->
-        <li>
-            <a href="Club/foot.png" class="club-link" target="_blank" title="Voir le logo Club Foot ESEO">
-            <img loading="lazy" src="Club/foot.png" alt="Logo Club Football ESEO" class="club-logo">
-            </a>
-            <span>Membre du club de football de l’ESEO Angers</span>
-        </li>
-
-        </ul>
-    </div>
-    </div>
-
-</section>
-
-
-
-<div class="tech-category" style="margin-bottom: 30px;">
-                 
-            </div>
-
-            
-
-
-<!-- Centres d’intérêt -->
-<section id="interets" class="interest-section">
-  <div class="container">
-    <h3 class="section-title">Centres d’intérêt</h3>
-
-    <div class="interest-grid">
-
-      <div class="interest-item">
-        <i class="fas fa-running"></i>
-        <span>Sport</span>
-      </div>
-
-      <div class="interest-item">
-        <i class="fas fa-car"></i>
-        <span>Automobile</span>
-      </div>
-
-      <div class="interest-item">
-        <i class="fas fa-plane"></i>
-        <span>Aéronautique</span>
-      </div>
-
-      <div class="interest-item">
-        <i class="fas fa-hands-helping"></i>
-        <span>Humanitaire</span>
-      </div>
-
-      <div class="interest-item">
-        <i class="fas fa-globe-europe"></i>
-        <span>Voyage</span>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-
-
-<div class="tech-category" style="margin-bottom: 30px;">
-                 
-            </div>
-
-
-
-    <!-- Contact Section -->
-    <section id="contact" class="contact">
         <div class="container">
-            <h2 class="section-title" data-lang="contact-title">Contact</h2>
-            <div class="contact-content">
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <i class="fas fa-envelope"></i>
-                        <span>sergiodassoundo2@gmail.com</span>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>🇫🇷 France & 🇨🇦 Canada</span>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-briefcase"></i>
-                        <span>Logiciel Embarqué & Cybersécurité [ prototypage SW Châssis ] @ Renault Group</span>
-                    </div>
-                      <div class="projects-note">
-                        <p><strong>Development:</strong> This website was developed entirely by me using modern web technologies. The complete source code is available on my <a href="https://github.com/DASSOUNDO/MyWebSite/tree/web_1" target="_blank">GitHub</a>. If you decide to use or cite this work, please indicate the source. Thank you !!</p>
-                    </div>
-                </div> 
-            </div>
+            <h2 class="section-title" data-lang="education-title">Éducation</h2>
 
-        </div>
-    </section>
+            <div class="education-timeline">
 
-    <div class="tech-category" style="margin-bottom: 30px;">
-                 
-            </div>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-contact">
-                    <h3>Contact</h3>
-                    <div class="footer-contact-items">
-                        <div class="footer-contact-item">
-                            <i class="fas fa-envelope"></i>
-                            <a href="mailto:sergiodassoundo2@gmail.com">sergiodassoundo2@gmail.com</a>
-                        </div>
-                        <div class="footer-contact-item">
-                            <i class="fas fa-envelope"></i>
-                            <a href="mailto:adebayo.dassoundo@reseau.eseo.fr">adebayo.dassoundo@reseau.eseo.fr</a>
-                        </div>
-                        <div class="footer-contact-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>🇫🇷 France & 🇨🇦 Canada</span>
-                        </div>
-                        <div class="footer-contact-item">
-                            <i class="fab fa-linkedin"></i>
-                            <a href="https://www.linkedin.com/in/ad%C3%A9bayo-dassoundo-a9323a2a3/" target="_blank">LinkedIn</a>
-                        </div>
-                        <div class="footer-contact-item">
-                            <i class="fab fa-github"></i>
-                            <a href="https://github.com/DASSOUNDO" target="_blank">GitHub</a>
+                <!-- Diplôme d’ingénieur -->
+                <div class="timeline-item">
+                    <div class="timeline-year">2023 - 2026</div>
+                    <div class="timeline-content">
+                        <div class="education-card">
+                            <h3>Diplôme d’ingénieur</h3>
+                            <h4>Spécialisation en Logiciel Embarqué & Cybersécurité</h4>
+                            <div class="school">
+                                <i class="fas fa-university"></i>
+                                ESEO – Grande école d’ingénieurs (France)
+                            </div>
+                            <div class="education-description">
+                                Formation avancée en logiciels embarqués et cybersécurité, axée sur la conception de
+                                systèmes temps réel, la sécurité des communications et le développement de solutions
+                                fiables pour les environnements industriels.
+                            </div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="footer-info">
-                    <div class="footer-brand">
-                        <img loading="lazy" src="images/photo.jpg" alt="Adébayo Dassoundo" class="footer-profile-img">
-                        <div>
-                            <h4>Adébayo Dassoundo</h4>
-                            <p>Logiciel Embarqué, Cybersécurité & IA - prototypage SW Châssis @ Renault Group</p>
+
+                <!-- Programme de recherche -->
+                <div class="timeline-item">
+                    <div class="timeline-year">2025</div>
+                    <div class="timeline-content">
+                        <div class="education-card">
+                            <h3>Programme de recherche</h3>
+                            <h4>Systèmes embarqués</h4>
+                            <div class="school">
+                                <i class="fas fa-university"></i>
+                                Université de Sherbrooke (Canada)
+                            </div>
+                            <div class="education-description">
+                                Participation à des programmes de recherche à l’Université de Sherbrooke portant sur la
+                                conception de systèmes embarqués dédiés à la décellularisation automatisée de tissus
+                                biologiques.
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 Adébayo Dassoundo. Tous droits réservés.</p>
-                <div class="footer-links">
-                    <a href="#accueil">Accueil</a>
-                    <a href="#competences">Compétences</a>
-                    <a href="#projets">Projets</a>
-                    <a href="#recherche">Recherche</a>
-                    <a href="#education">Formation</a>
-                    <a href="#contact">Contact</a>
+
+                <!-- Formation en gestion -->
+                <div class="timeline-item">
+                    <div class="timeline-year">2025</div>
+                    <div class="timeline-content">
+                        <div class="education-card">
+                            <h3>Formation en gestion, marketing et développement entrepreneurial</h3>
+                            <div class="school">
+                                <i class="fas fa-university"></i>
+                                Stratégie Escape (France)
+                            </div>
+                            <div class="education-description">
+                                Acquisition de compétences en stratégie de marque, communication digitale et pilotage
+                                d’activité commerciale, avec une orientation vers l’innovation et la gestion
+                                d’entreprise.
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Classes préparatoires -->
+                <div class="timeline-item">
+                    <div class="timeline-year">2021 - 2023</div>
+                    <div class="timeline-content">
+                        <div class="education-card">
+                            <h3>Cours préparatoires aux écoles d’ingénieurs</h3>
+                            <h4>Mathématiques et Physique (CPGE)</h4>
+                            <div class="school">
+                                <i class="fas fa-university"></i>
+                                École Polytechnique (Bénin)
+                            </div>
+                            <div class="education-description">
+                                Formation intensive de deux ans en mathématiques et en physique, axée sur l’analyse, la
+                                résolution de problèmes complexes et la préparation aux concours d’écoles d’ingénieurs.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-        </div>
-    </footer>
 
-    <script src="script.js"></script>
+            <!-- Qualités personnelles et leadership -->
+            <section id="leadership" class="education-highlights">
+                <div class="container">
+                    <h3 class="section-title">Qualités personnelles et leadership</h3>
 
-    <script src="translations.js"></script>
+                    <div class="highlights-grid">
+
+                        <!-- Président Fondation Jeunesse Locale -->
+                        <div class="highlight-item">
+                            <div class="highlight-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="highlight-content">
+                                <h4>Président – Fondation Jeunesse Locale</h4>
+                                <p><strong>ONG JPA | 2018 – 2021</strong></p>
+                                <ul>
+                                    <li>Organisation d’événements communautaires et gestion d’équipes de bénévoles.</li>
+                                    <li>Développement de compétences en communication, planification et prise de
+                                        décision.</li>
+                                    <li>Capacité à mobiliser et fédérer autour de projets collectifs à long terme.</li>
+                                    <li>Esprit d’initiative et persévérance dans la conduite de projets sociaux.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Entraîneur de football -->
+                        <div class="highlight-item">
+                            <div class="highlight-icon">
+                                <i class="fas fa-futbol"></i>
+                            </div>
+                            <div class="highlight-content">
+                                <h4>Entraîneur – Club de football U12</h4>
+                                <p><strong>FC Espoir | 2019 – 2021</strong></p>
+                                <ul>
+                                    <li>Encadrement et formation de jeunes joueurs dans un cadre sportif et éducatif.
+                                    </li>
+                                    <li>Créativité, adaptabilité et esprit d’équipe dans la gestion du groupe.</li>
+                                    <li>Capacité à motiver et à travailler sous pression pour atteindre des objectifs
+                                        communs.</li>
+                                    <li>Développement de compétences en gestion du stress et communication
+                                        interpersonnelle.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Vie associative (encadrée et interactive) -->
+                        <div class="highlight-item club-card">
+                            <div class="highlight-icon">
+                                <i class="fas fa-hands-helping"></i>
+                            </div>
+
+                            <div class="highlight-content">
+                                <h4>Vie associative</h4>
+                                <p><strong>ESEO Angers | 2023 – 2026</strong></p>
+
+                                <ul class="club-list">
+
+                                    <!-- Club Robot -->
+                                    <li>
+                                        <a href="Club/robot.png" class="club-link" target="_blank"
+                                            title="Voir le logo Robot ESEO">
+                                            <img loading="lazy" src="Club/robot.png" alt="Logo Robot ESEO"
+                                                class="club-logo">
+                                        </a>
+                                        <span>Membre du club Robot ESEO Angers</span>
+                                    </li>
+
+                                    <!-- Club Auto -->
+                                    <li>
+                                        <a href="Club/auto.png" class="club-link" target="_blank"
+                                            title="Voir le logo ESE’Auto">
+                                            <img loading="lazy" src="Club/auto.png" alt="Logo ESE’Auto"
+                                                class="club-logo">
+                                        </a>
+                                        <span>Membre du club automobile de l’ESEO (ESE’Auto)</span>
+                                    </li>
+
+                                    <!-- Club Foot -->
+                                    <li>
+                                        <a href="Club/foot.png" class="club-link" target="_blank"
+                                            title="Voir le logo Club Foot ESEO">
+                                            <img loading="lazy" src="Club/foot.png" alt="Logo Club Football ESEO"
+                                                class="club-logo">
+                                        </a>
+                                        <span>Membre du club de football de l’ESEO Angers</span>
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </div>
+
+            </section>
+
+
+
+            <div class="tech-category" style="margin-bottom: 30px;">
+
+            </div>
+
+
+
+
+            <!-- Centres d’intérêt -->
+            <section id="interets" class="interest-section">
+                <div class="container">
+                    <h3 class="section-title">Centres d’intérêt</h3>
+
+                    <div class="interest-grid">
+
+                        <div class="interest-item">
+                            <i class="fas fa-running"></i>
+                            <span>Sport</span>
+                        </div>
+
+                        <div class="interest-item">
+                            <i class="fas fa-car"></i>
+                            <span>Automobile</span>
+                        </div>
+
+                        <div class="interest-item">
+                            <i class="fas fa-plane"></i>
+                            <span>Aéronautique</span>
+                        </div>
+
+                        <div class="interest-item">
+                            <i class="fas fa-hands-helping"></i>
+                            <span>Humanitaire</span>
+                        </div>
+
+                        <div class="interest-item">
+                            <i class="fas fa-globe-europe"></i>
+                            <span>Voyage</span>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+
+
+            <div class="tech-category" style="margin-bottom: 30px;">
+
+            </div>
+
+
+
+            <!-- Contact Section -->
+            <section id="contact" class="contact">
+                <div class="container">
+                    <h2 class="section-title" data-lang="contact-title">Contact</h2>
+                    <div class="contact-content">
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>sergiodassoundo2@gmail.com</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>🇫🇷 France & 🇨🇦 Canada</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-briefcase"></i>
+                                <span>Logiciel Embarqué & Cybersécurité [ prototypage SW Châssis ] @ Renault
+                                    Group</span>
+                            </div>
+                            <div class="projects-note">
+                                <p><strong>Development:</strong> This website was developed entirely by me using modern
+                                    web technologies. The complete source code is available on my <a
+                                        href="https://github.com/DASSOUNDO/MyWebSite/tree/web_1"
+                                        target="_blank">GitHub</a>. If you decide to use or cite this work, please
+                                    indicate the source. Thank you !!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <div class="tech-category" style="margin-bottom: 30px;">
+
+            </div>
+
+            <!-- Footer -->
+            <footer class="footer">
+                <div class="container">
+                    <div class="footer-content">
+                        <div class="footer-contact">
+                            <h3>Contact</h3>
+                            <div class="footer-contact-items">
+                                <div class="footer-contact-item">
+                                    <i class="fas fa-envelope"></i>
+                                    <a href="mailto:sergiodassoundo2@gmail.com">sergiodassoundo2@gmail.com</a>
+                                </div>
+                                <div class="footer-contact-item">
+                                    <i class="fas fa-envelope"></i>
+                                    <a
+                                        href="mailto:adebayo.dassoundo@reseau.eseo.fr">adebayo.dassoundo@reseau.eseo.fr</a>
+                                </div>
+                                <div class="footer-contact-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>🇫🇷 France & 🇨🇦 Canada</span>
+                                </div>
+                                <div class="footer-contact-item">
+                                    <i class="fab fa-linkedin"></i>
+                                    <a href="https://www.linkedin.com/in/ad%C3%A9bayo-dassoundo-a9323a2a3/"
+                                        target="_blank">LinkedIn</a>
+                                </div>
+                                <div class="footer-contact-item">
+                                    <i class="fab fa-github"></i>
+                                    <a href="https://github.com/DASSOUNDO" target="_blank">GitHub</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="footer-info">
+                            <div class="footer-brand">
+                                <img loading="lazy" src="images/photo.jpg" alt="Adébayo Dassoundo"
+                                    class="footer-profile-img">
+                                <div>
+                                    <h4>Adébayo Dassoundo</h4>
+                                    <p>Logiciel Embarqué, Cybersécurité & IA - prototypage SW Châssis @ Renault Group
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer-bottom">
+                        <p>&copy; 2025 Adébayo Dassoundo. Tous droits réservés.</p>
+                        <div class="footer-links">
+                            <a href="#accueil">Accueil</a>
+                            <a href="#competences">Compétences</a>
+                            <a href="#projets">Projets</a>
+                            <a href="#recherche">Recherche</a>
+                            <a href="#education">Formation</a>
+                            <a href="#contact">Contact</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+
+            <script src="script.js"></script>
+
+            <script src="translations.js"></script>
 
 
 </body>
+
 </html>
