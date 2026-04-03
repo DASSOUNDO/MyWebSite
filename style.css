@@ -10,13 +10,13 @@
     /* Très clair, pour contrastes inverses */
 
     /* --- Couleurs neutres (Adoucies) --- */
-    --white: #0f172a;
-    /* Fond ardoise sombre (moins dur que le noir pur) */
-    --gray-50: #1e293b;
+    --white: #111827;
+    /* Fond principal : bleu nuit plus lumineux */
+    --gray-50: #1f2d3d;
     /* Fond de sections claires */
-    --gray-100: #334155;
+    --gray-100: #2e4057;
     /* Lignes de cartes */
-    --gray-300: #475569;
+    --gray-300: #4a6680;
     --gray-600: #94a3b8;
     /* Texte secondaire / Descriptions */
     --gray-800: #e2e8f0;
@@ -31,7 +31,7 @@
     --accent-red: #ef4444;
 
     /* --- Ombres et transitions --- */
-    --shadow: rgba(0, 0, 0, 0.5);
+    --shadow: rgba(0, 0, 0, 0.4);
     /* Ombre de base plus marquée en dark mode */
     --shadow-hover: rgba(56, 189, 248, 0.25);
     /* Glow shadow tech (Effet néon au survol) */
