@@ -1186,39 +1186,108 @@
             </footer>
 
             <!-- Tech Chatbot Widget -->
-            <div class="chatbot-widget">
-                <!-- Floating Button -->
-                <button id="chatbot-toggle" class="chatbot-toggle" aria-label="Ouvrir le chat">
+            <div id="chatbot-container"
+                style="position:fixed;bottom:30px;right:30px;z-index:99999;display:flex;flex-direction:column;align-items:flex-end;">
+                <button id="chatbot-toggle" aria-label="Ouvrir le chat"
+                    style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#38bdf8,#818cf8);color:#fff;font-size:1.5rem;border:none;cursor:pointer;display:flex;justify-content:center;align-items:center;box-shadow:0 4px 20px rgba(56,189,248,0.5);">
                     <i class="fas fa-robot"></i>
                 </button>
-
-                <!-- Chat Window -->
-                <div id="chatbot-window" class="chatbot-window hidden">
-                    <div class="chatbot-header">
+                <div id="chatbot-window"
+                    style="display:none;width:340px;height:460px;background:rgba(17,24,39,0.97);border:1px solid rgba(56,189,248,0.4);border-radius:16px;margin-bottom:14px;flex-direction:column;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.7);">
+                    <div
+                        style="background:rgba(30,41,59,0.97);padding:14px 18px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(56,189,248,0.2);">
                         <div>
-                            <h4>Assistant IA</h4>
-                            <span class="status-indicator"></span><span class="status-text">En ligne</span>
+                            <h4 style="margin:0;color:#38bdf8;font-size:1rem;">🤖 Assistant IA</h4>
+                            <small style="color:#94a3b8;">● En ligne</small>
                         </div>
-                        <button id="chatbot-close" class="chatbot-close"><i class="fas fa-times"></i></button>
+                        <button id="chatbot-close"
+                            style="background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer;">✕</button>
                     </div>
-
-                    <div id="chatbot-messages" class="chatbot-messages">
-                        <div class="message bot-message">
-                            <p>Bonjour ! Je suis l'assistant virtuel d'Adébayo. Une question sur ses compétences, ses
-                                projets ou son parcours ? 🚀</p>
+                    <div id="chatbot-messages"
+                        style="flex:1;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;">
+                        <div
+                            style="background:rgba(30,41,59,0.9);border:1px solid rgba(56,189,248,0.15);padding:10px 14px;border-radius:12px;color:#cbd5e1;font-size:0.88rem;max-width:90%;align-self:flex-start;">
+                            Bonjour ! Je suis l'assistant d'Adébayo. Posez des questions sur ses compétences, projets ou
+                            parcours 🚀
                         </div>
-                        <!-- Messages will be injected here -->
                     </div>
-
-                    <div class="chatbot-input">
-                        <input type="text" id="chat-input" placeholder="Posez votre question ici..." autocomplete="off">
-                        <button id="chat-submit"><i class="fas fa-paper-plane"></i></button>
+                    <div
+                        style="display:flex;padding:12px;background:rgba(15,23,42,0.97);border-top:1px solid rgba(56,189,248,0.2);">
+                        <input id="chat-input" type="text" placeholder="Votre question..." autocomplete="off"
+                            style="flex:1;background:transparent;border:none;color:#fff;outline:none;font-size:0.9rem;font-family:inherit;">
+                        <button id="chat-submit"
+                            style="background:none;border:none;color:#38bdf8;font-size:1.2rem;cursor:pointer;margin-left:10px;">➤</button>
                     </div>
                 </div>
             </div>
 
             <script src="script.js"></script>
             <script src="translations.js"></script>
+
+            <script>
+                (function () {
+                    var toggle = document.getElementById('chatbot-toggle');
+                    var win = document.getElementById('chatbot-window');
+                    var close = document.getElementById('chatbot-close');
+                    var input = document.getElementById('chat-input');
+                    var submit = document.getElementById('chat-submit');
+                    var msgs = document.getElementById('chatbot-messages');
+                    var isOpen = false;
+
+                    if (!toggle) { console.error('Chatbot toggle not found'); return; }
+
+                    function openClose(forceOpen) {
+                        isOpen = (forceOpen !== undefined) ? forceOpen : !isOpen;
+                        win.style.display = isOpen ? 'flex' : 'none';
+                        if (isOpen) setTimeout(function () { input.focus(); }, 50);
+                    }
+
+                    toggle.addEventListener('click', function (e) { e.stopPropagation(); openClose(); });
+                    close.addEventListener('click', function (e) { e.stopPropagation(); openClose(false); });
+
+                    function addMsg(html, isUser) {
+                        var d = document.createElement('div');
+                        d.innerHTML = html;
+                        d.style.cssText = 'padding:10px 14px;border-radius:12px;font-size:0.88rem;max-width:88%;line-height:1.4;' +
+                            (isUser
+                                ? 'background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.3);color:#7dd3fc;align-self:flex-end;'
+                                : 'background:rgba(30,41,59,0.9);border:1px solid rgba(56,189,248,0.15);color:#cbd5e1;align-self:flex-start;');
+                        msgs.appendChild(d);
+                        msgs.scrollTop = msgs.scrollHeight;
+                        return d;
+                    }
+
+                    function getReply(q) {
+                        var t = q.toLowerCase();
+                        if (t.includes('cv') || t.includes('t\u00e9l\u00e9charger')) return 'T\u00e9l\u00e9chargez le CV PDF dans la section Accueil ! \ud83d\udcc4';
+                        if (t.includes('eseo') || t.includes('\u00e9cole') || t.includes('parcours') || t.includes('etude')) return "Ad\u00e9bayo est \u00e9tudiant ing\u00e9nieur \u00e0 l'ESEO Angers (2023-2026), sp\u00e9cialis\u00e9 en Syst\u00e8mes Embarqu\u00e9s, IA & Cybers\u00e9curit\u00e9. \ud83c\udf93";
+                        if (t.includes('comp\u00e9tence') || t.includes('skill') || t.includes('techno') || t.includes('langage')) return 'Comp\u00e9tences :<br>\ud83d\udcbb Python, C, C++, Rust<br>\ud83e\udde0 PyTorch, TensorFlow, Edge AI<br>\u2699\ufe0f ROS2, RTOS, IoT<br>\ud83d\udd10 Cybers\u00e9curit\u00e9';
+                        if (t.includes('projet') || t.includes('portfolio')) return 'Projets cl\u00e9s :<br>\ud83d\udea1 Drone ROS2<br>\u2708\ufe0f Simulateur Vol IA<br>\ud83e\udd16 LLM sur MCU<br>&rarr; Consultez la section Projets !';
+                        if (t.includes('contact') || t.includes('mail') || t.includes('linkedin')) return 'Email : <strong>adebayo.dassoundo@reseau.eseo.fr</strong><br>LinkedIn dans le footer \u2709\ufe0f';
+                        if (t.includes('bonjour') || t.includes('salut') || t.includes('hello')) return 'Bonjour ! Comment puis-je vous aider ? \ud83d\ude0a';
+                        if (t.includes('ia') || t.includes('intelligence')) return "Passionn\u00e9 d'Edge AI : mod\u00e8les PyTorch/TF sur microcontr\u00f4leurs tr\u00e8s contraints. \ud83e\udd16";
+                        if (t.includes('embarqu')) return 'Expert Bare-Metal, RTOS, C/Rust, architectures proches du hardware. \ud83d\udd27';
+                        return 'Bonne question ! Explorez le site ou contactez Ad\u00e9bayo directement.';
+                    }
+
+                    function send() {
+                        var text = input.value.trim();
+                        if (!text) return;
+                        addMsg(text, true);
+                        input.value = '';
+                        var typing = addMsg('...', false);
+                        setTimeout(function () {
+                            typing.innerHTML = getReply(text);
+                            msgs.scrollTop = msgs.scrollHeight;
+                        }, 700 + Math.random() * 500);
+                    }
+
+                    submit.addEventListener('click', send);
+                    input.addEventListener('keypress', function (e) { if (e.key === 'Enter') send(); });
+
+                    console.log('%c Chatbot OK \u2713', 'color:#38bdf8;font-weight:bold;');
+                })();
+            </script>
 
 </body>
 
