@@ -908,21 +908,22 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    /* ============================================================
+       FONCTIONS GLOBALES
+       Accessibles depuis la console et depuis index.html
+       ============================================================ */
+
+    /** Retourne le code de la langue actuellement active ('fr' ou 'en') */
+    function getCurrentLanguage() {
+        return currentLang;
+    }
+
+    // Export pour utilisation externe
+    window.changeLanguage = changeLanguage;
+    window.getCurrentLanguage = getCurrentLanguage;
+
 });
 
-/* ============================================================
-   FONCTIONS GLOBALES (hors DOMContentLoaded)
-   Accessibles depuis la console et depuis index.html
-   ============================================================ */
-
-/** Retourne le code de la langue actuellement active ('fr' ou 'en') */
-function getCurrentLanguage() {
-    return currentLang;
-}
-
-// Export pour utilisation externe
-window.changeLanguage = changeLanguage;
-window.getCurrentLanguage = getCurrentLanguage;
 
 /* ============================================================
    SECTION 14 : CHATBOT WIDGET (assistant IA pré-programmé)
@@ -947,12 +948,15 @@ window.getCurrentLanguage = getCurrentLanguage;
     const chatInput = document.getElementById('chat-input');
     const chatSubmit = document.getElementById('chat-submit');
     const chatMessages = document.getElementById('chatbot-messages');
+    const quickReplies = document.querySelectorAll('.quick-reply-btn');
 
     if (!chatToggle || !chatWindow) return;
 
     chatToggle.addEventListener('click', function () {
         chatWindow.classList.toggle('hidden');
-        if (!chatWindow.classList.contains('hidden')) chatInput.focus();
+        if (!chatWindow.classList.contains('hidden')) {
+            chatInput.focus();
+        }
     });
 
     chatClose.addEventListener('click', function () {
@@ -994,15 +998,15 @@ window.getCurrentLanguage = getCurrentLanguage;
     function getBotResponse(input) {
         const text = input.toLowerCase();
         if (text.includes('cv') || text.includes('télécharger'))
-            return "Vous pouvez télécharger le CV PDF dans la section Accueil ! 📄";
-        if (text.includes('école') || text.includes('eseo') || text.includes('parcours') || text.includes('etude'))
-            return "Adébayo est étudiant ingénieur à l'ESEO Angers (2023-2026), spécialisé en Systèmes Embarqués, IA et Cybersécurité. 🎓";
+            return "Vous pouvez télécharger le CV PDF dans la section Accueil ! 📄<br><a href='#accueil' style='color:#38bdf8;text-decoration:underline;'>Aller à l'accueil</a>";
+        if (text.includes('école') || text.includes('eseo') || text.includes('parcours') || text.includes('etude') || text.includes('formation'))
+            return "Adébayo est étudiant ingénieur à l'ESEO Angers (2023-2026), spécialisé en Systèmes Embarqués, IA et Cybersécurité. 🎓<br><a href='#education' style='color:#38bdf8;text-decoration:underline;'>Voir la formation</a>";
         if (text.includes('compétence') || text.includes('skills') || text.includes('technos'))
-            return "Compétences clés :<br>💻 Python, C, C++, Rust<br>🧠 PyTorch, TensorFlow, Edge AI<br>⚙️ ROS2, RTOS, IoT<br>🔐 Wireshark, Cybersécurité";
-        if (text.includes('projet') || text.includes('portfolio'))
-            return "Projets phares :<br>🚁 Drone Surveillance (ROS2)<br>✈️ Simulateur de Vol IA<br>🤖 LLM sur microcontrôleur<br>Consultez la section Projets !";
+            return "Compétences clés :<br>💻 Python, C, C++, Rust<br>🧠 PyTorch, TensorFlow, Edge AI<br>⚙️ ROS2, RTOS, IoT<br>🔐 Wireshark, Cybersécurité<br><a href='#competences' style='color:#38bdf8;text-decoration:underline;'>Voir tout</a>";
+        if (text.includes('projet') || text.includes('portfolio') || text.includes('projets'))
+            return "Projets phares :<br>🚁 Drone Surveillance (ROS2)<br>✈️ Simulateur de Vol IA<br>🤖 LLM sur microcontrôleur<br><a href='#projets' style='color:#38bdf8;text-decoration:underline;'>Consulter les projets</a>";
         if (text.includes('contact') || text.includes('mail') || text.includes('linkedin') || text.includes('joindre'))
-            return "Contactez Adébayo via <strong>adebayo.dassoundo@reseau.eseo.fr</strong> ou sur LinkedIn (lien dans le footer). ✉️";
+            return "Contactez Adébayo via <strong>adebayo.dassoundo@reseau.eseo.fr</strong> ou sur LinkedIn (lien dans le footer). ✉️<br><a href='#contact' style='color:#38bdf8;text-decoration:underline;'>Aller au contact</a>";
         if (text.includes('bonjour') || text.includes('salut') || text.includes('hello'))
             return "Bonjour ! Comment puis-je vous aider ? Posez des questions sur son parcours, ses compétences ou ses projets 😊";
         if (text.includes('ia') || text.includes('intelligence artificielle'))
@@ -1010,16 +1014,47 @@ window.getCurrentLanguage = getCurrentLanguage;
         if (text.includes('embarqué') || text.includes('embedded'))
             return "L'embarqué est son cœur de métier : Bare-Metal, RTOS, C/Rust, architectures proches du hardware. 🔧";
         if (text.includes('qui') && (text.includes('tu') || text.includes('es')))
-            return "Je suis l'assistant virtuel d'Adébayo ! Je tourne en pur JavaScript, bientôt connecté à une vraie IA 😉";
+            return "Je suis l'assistant virtuel d'Adébayo ! Je suis là pour vous guider sur son portfolio 😉";
         return "Bonne question ! Explorez le site ou contactez Adébayo directement pour plus d'infos !";
     }
 
-    function processMessage() {
-        const text = chatInput.value.trim();
+    async function processMessage(textOverride) {
+        let text = "";
+        if (typeof textOverride === 'string' && textOverride.trim() !== '') {
+            text = textOverride;
+        } else {
+            text = chatInput.value.trim();
+        }
+
         if (!text) return;
+
         addUserMessage(text);
-        chatInput.value = '';
+        if (typeof textOverride !== 'string') chatInput.value = '';
+
+        // Remove quick replies when user starts chatting to save space
+        const qrContainer = document.getElementById('quick-replies');
+        if (qrContainer) qrContainer.style.display = 'none';
+
         showTyping();
+
+        try {
+            // Tente de contacter le backend Python (LLM API)
+            const response = await fetch('http://127.0.0.1:5000/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                removeTyping();
+                addBotMessage(data.reply);
+                return;
+            }
+        } catch (error) {
+            console.log("Le backend Python n'est pas actif. Utilisation des réponses de base locales (fallback).");
+        }
+
         setTimeout(function () {
             removeTyping();
             addBotMessage(getBotResponse(text));
@@ -1029,6 +1064,13 @@ window.getCurrentLanguage = getCurrentLanguage;
     chatSubmit.addEventListener('click', processMessage);
     chatInput.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') processMessage();
+    });
+
+    quickReplies.forEach(btn => {
+        btn.addEventListener('click', function () {
+            const query = this.getAttribute('data-query');
+            processMessage(query);
+        });
     });
 })();
 

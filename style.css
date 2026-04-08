@@ -4003,6 +4003,39 @@ body {
     border: 1px solid rgba(56, 189, 248, 0.3);
 }
 
+.quick-replies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: -5px;
+    margin-bottom: 10px;
+}
+
+.quick-reply-btn {
+    background: transparent;
+    color: var(--primary-blue);
+    border: 1px solid var(--primary-blue);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.quick-reply-btn:hover {
+    background: rgba(56, 189, 248, 0.15);
+    transform: translateY(-2px);
+}
+
+.message a {
+    transition: color 0.2s;
+}
+
+.message a:hover {
+    color: var(--warm-blue) !important;
+}
+
 .typing-indicator {
     display: flex;
     gap: 4px;
