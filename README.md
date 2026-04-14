@@ -6,6 +6,7 @@
 
 ## 📁 Structure du projet
 
+
 ```
 MyWebSite/
 ├── index.html          # Page principale (structure HTML complète)
@@ -112,3 +113,12 @@ Spécialisation : Systèmes Embarqués · IA · Cybersécurité
 📧 adebayo.dassoundo@reseau.eseo.fr  
 🔗 [LinkedIn](https://www.linkedin.com/in/adébayo-dassoundo-a9323a2a3/)  
 💻 [GitHub](https://github.com/DASSOUNDO)
+
+
+
+
+
+
+
+
+## xdg-open index.html
