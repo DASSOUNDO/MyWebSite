@@ -211,9 +211,15 @@ document.addEventListener('DOMContentLoaded', function() {
     e.preventDefault();
 
     // Configuration de tes documents
+    // const cvList = [
+      //   { label: "CV_Adébayo_DASSOUNDO-recherche", file: "CV_Adébayo_DASSOUNDO.pdf" },
+       //  { label: "CV_Adébayo_DASSOUNDO-Master2-IA", file: "CV_Adébayo_DASSOUNDO-Master2-IA.pdf" },
+    // ];
+
+    // Configuration de tes documents
     const cvList = [
-        { label: "CV_Adébayo_DASSOUNDO-recherche", file: "CV_Adébayo_DASSOUNDO.pdf" },
-        { label: "CV_Adébayo_DASSOUNDO-Master2-IA", file: "CV_Adébayo_DASSOUNDO-Master2-IA.pdf" },
+        { label: "CV_Sergio", file: "CV_Sergio.pdf" },
+        { label: "CV_détailler_Sergio", file: "CV_détailler_Sergio.pdf" },
     ];
 
     // On crée dynamiquement une petite fenêtre de choix
