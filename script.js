@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
        //  { label: "CV_Adébayo_DASSOUNDO-Master2-IA", file: "CV_Adébayo_DASSOUNDO-Master2-IA.pdf" },
     // ];
 
-    // Configuration de tes documents
+    // Configuration de tes documentsgit ba
     const cvList = [
         { label: "CV_Sergio", file: "CV_Sergio.pdf" },
         { label: "CV_détailler_Sergio", file: "CV_détailler_Sergio.pdf" },
