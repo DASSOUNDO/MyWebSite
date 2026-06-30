@@ -9,7 +9,7 @@ const extendedTranslations = {
         'nav-contact': 'Contact',
         
         // Section Hero
-        'hero-title': 'AI & Data Engineer',
+        'hero-title': 'Logiciel Embarqué, Cybersécurité, Data & IA.',
         'hero-description': 'Ingénieur, chercheur et gestionnaire avec des compétences académiques et industrielles en Intelligence Artificielle, machine learning, deep learning, data science et systèmes embarqués.',
         'btn-download-cv': 'Télécharger CV (PDF)',
         'btn-download-skills': 'Dossier Compétences (PDF)',
@@ -40,7 +40,7 @@ const extendedTranslations = {
         'nav-contact': 'Contact',
         
         // Section Hero
-        'hero-title': 'AI & Data Engineer',
+        'hero-title': 'Embedded Software, Cybersecurity, Data & AI.',
         'hero-description': 'Engineer, researcher and manager with academic and industrial skills in Artificial Intelligence, machine learning, deep learning, data science and embedded systems.',
         'btn-download-cv': 'Download CV (PDF)',
         'btn-download-skills': 'Skills Portfolio (PDF)',

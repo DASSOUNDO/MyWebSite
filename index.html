@@ -58,7 +58,7 @@
             <div class="hero-content">
                 <div class="hero-text">
                     <h1 class="hero-title">
-                        DASSOUNDO ADEBAYO
+                        <span style="white-space: nowrap;">DASSOUNDO ADEBAYO</span>
                         <span class="highlight" data-lang="hero-title">Logiciel Embarqué, Cybersécurité, Data & IA.</span>
                     </h1>
                     <p class="hero-description" data-lang="hero-description">
@@ -419,7 +419,7 @@
 
             <div class="companies-grid">
 
-                <div class="company-item">
+                <a href="https://dasia.vercel.app/" target="_blank" class="company-item" style="text-decoration: none; color: inherit; cursor: pointer;">
                     <div class="company-logo">
                         <!-- Remplace le src par le vrai nom de ton image de logo une fois ajoutée dans le dossier company -->
                         <img loading="lazy" src="company/dasia.png" alt="DASIA Start-up" class="company-img">
@@ -429,7 +429,7 @@
                         <span class="position-company">Plateforme GenIA avec des agents IA sur-mesure et sécurisés pour les PME/ETI.</span><br>
                         <span class="position-duration">2026 – Présent</span>
                     </div>
-                </div>
+                </a>
 
                 <div class="company-item">
                     <div class="company-logo">
@@ -1160,5 +1160,29 @@
     <script src="translations.js"></script>
 
 
+    <!-- Chatbot Assistant -->
+    <div class="chatbot-container">
+        <div class="chatbot-button" id="chatbot-toggle">
+            <i class="fas fa-robot"></i>
+        </div>
+        <div class="chatbot-window" id="chatbot-window">
+            <div class="chatbot-header">
+                <div class="chatbot-title">
+                    <i class="fas fa-robot"></i>
+                    <span>Assistant Profil IA</span>
+                </div>
+                <button class="chatbot-close" id="chatbot-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="chatbot-messages" id="chatbot-messages">
+                <div class="message bot-message">
+                    Bonjour ! Je suis l'assistant virtuel de DASSOUNDO ADEBAYO. Je connais parfaitement son profil. Cherchez-vous des informations sur ses <strong>compétences en IA</strong>, ses <strong>projets</strong>, ou son <strong>expérience</strong> ?
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbot-input-field" placeholder="Posez une question...">
+                <button id="chatbot-send"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

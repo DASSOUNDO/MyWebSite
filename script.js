@@ -396,7 +396,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'nav-research': 'Recherche',
             'nav-education': 'Formation',
             'nav-contact': 'Contact',
-            'hero-title': 'Logiciel Embarqué, Cybersécurité et IA.',
+            'hero-title': 'Logiciel Embarqué, Cybersécurité, Data & IA.',
             'hero-description': 'Ingénieur et chercheur alliant compétences académiques et industrielles en logiciel embarqué, cybersécurité, intelligence artificielle, développement logiciel et innovation technologique.',
             'btn-download-cv': 'Télécharger CV (PDF)',
             'btn-download-Recommendation': 'Recommendation (PDF)',
@@ -419,7 +419,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'nav-research': 'Research',
             'nav-education': 'Education',
             'nav-contact': 'Contact',
-            'hero-title': 'Embedded Software, Cybersecurity, and AI.',
+            'hero-title': 'Embedded Software, Cybersecurity, Data & AI.',
             'hero-description': 'Engineer and researcher combining academic and industrial expertise in embedded software, cybersecurity, artificial intelligence, software development, and technological innovation.',
             'btn-download-cv': 'Download CV (PDF)',
             'btn-download-recommendation': 'Recommandation (PDF)',
@@ -566,3 +566,62 @@ window.getCurrentLanguage = getCurrentLanguage;
 
 // Pour mon gif animé
 
+// Chatbot Logic
+document.addEventListener('DOMContentLoaded', () => {
+    const chatToggle = document.getElementById('chatbot-toggle');
+    const chatWindow = document.getElementById('chatbot-window');
+    const chatClose = document.getElementById('chatbot-close');
+    const chatInput = document.getElementById('chatbot-input-field');
+    const chatSend = document.getElementById('chatbot-send');
+    const chatMessages = document.getElementById('chatbot-messages');
+
+    if(chatToggle && chatWindow) {
+        chatToggle.addEventListener('click', () => {
+            chatWindow.classList.toggle('active');
+        });
+
+        chatClose.addEventListener('click', () => {
+            chatWindow.classList.remove('active');
+        });
+
+        const addMessage = (text, isUser = false) => {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            msgDiv.innerHTML = text;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        };
+
+        const handleUserInput = () => {
+            const text = chatInput.value.trim();
+            if(!text) return;
+            
+            addMessage(text, true);
+            chatInput.value = '';
+
+            // Simulate typing delay
+            setTimeout(() => {
+                respondToUser(text.toLowerCase());
+            }, 600);
+        };
+
+        chatSend.addEventListener('click', handleUserInput);
+        chatInput.addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') handleUserInput();
+        });
+
+        const respondToUser = (input) => {
+            if(input.includes('projet') || input.includes('dasia')) {
+                addMessage("Dassoundo a travaillé sur plusieurs projets impressionnants, dont <strong>DASIA</strong>, une plateforme GenIA B2B. <br><br>👉 <a href='#projets' class='chat-link' onclick='document.getElementById(\"projets\").scrollIntoView({behavior: \"smooth\"});'>Voir ses projets</a>");
+            } else if(input.includes('compétence') || input.includes('ia') || input.includes('embarqué') || input.includes('data') || input.includes('skill')) {
+                addMessage("Il possède une double compétence rare : <strong>Logiciel Embarqué</strong> (ROS2, STM32) et <strong>Data & IA</strong> (GenAI, LangChain, RAG). <br><br>👉 <a href='#competences' class='chat-link' onclick='document.getElementById(\"competences\").scrollIntoView({behavior: \"smooth\"});'>Voir ses compétences</a>");
+            } else if(input.includes('expérience') || input.includes('cv') || input.includes('entreprise') || input.includes('stage')) {
+                addMessage("Il a de l'expérience chez Renault Group, Thales, et a fondé la startup DASIA. Vous pouvez télécharger son CV en haut de la page. <br><br>👉 <a href='#experience' class='chat-link' onclick='document.getElementById(\"experience\").scrollIntoView({behavior: \"smooth\"});'>Voir ses expériences</a>");
+            } else if(input.includes('contact') || input.includes('mail') || input.includes('linkedin') || input.includes('github')) {
+                addMessage("Vous pouvez le contacter via LinkedIn ou Github ! <br><br>👉 <a href='#contact' class='chat-link' onclick='document.getElementById(\"contact\").scrollIntoView({behavior: \"smooth\"});'>Aller en bas de page</a>");
+            } else {
+                addMessage("Je suis un assistant conçu pour orienter les recruteurs. Demandez-moi ses <strong>compétences</strong>, ses <strong>projets</strong> ou son <strong>expérience</strong> !");
+            }
+        };
+    }
+});
