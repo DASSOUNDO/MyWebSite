@@ -1,28 +1,28 @@
 :root {
   /* --- Couleurs principales --- */
-  --primary-blue: #1e40af;    /* Bleu principal profond et pro */
-  --warm-blue: #2563eb;       /* Bleu vif pour les accents et liens */
-  --light-blue: #e0f2fe;      /* Bleu très clair, fond doux */
-  --dark-blue: #0f172a;       /* Bleu nuit, idéal pour titres sombres */
+  --primary-blue: #0f172a;    /* Bleu nuit profond (Slate 900) pour un look plus premium */
+  --warm-blue: #2563eb;       /* Bleu vif (Blue 600) pour les accents */
+  --light-blue: #eff6ff;      /* Bleu très clair (Blue 50) */
+  --dark-blue: #020617;       /* Noir bleuté ultra sombre (Slate 950) */
 
   /* --- Couleurs neutres --- */
   --white: #ffffff;
-  --gray-50: #f8fafc;         /* Fond clair neutre */
-  --gray-100: #f1f5f9;        /* Lignes et cartes claires */
-  --gray-300: #d1d5db;
-  --gray-600: #475569;        /* Texte secondaire */
-  --gray-800: #1e293b;        /* Texte principal */
-  --gray-900: #0f172a;        /* Très foncé, contrasté */
+  --gray-50: #f8fafc;         
+  --gray-100: #f1f5f9;        
+  --gray-300: #cbd5e1;
+  --gray-600: #64748b;        /* Texte secondaire adouci */
+  --gray-800: #1e293b;        /* Texte principal élégant */
+  --gray-900: #0f172a;        
 
   /* --- Accents complémentaires --- */
-  --accent-green: #10b981;    /* Pour validation, réussite */
-  --accent-orange: #f59e0b;   /* Pour mise en valeur douce */
-  --accent-red: #ef4444;      /* Pour erreurs ou attention */
+  --accent-green: #059669;    
+  --accent-orange: #d97706;   
+  --accent-red: #dc2626;      
 
   /* --- Ombres et transitions --- */
-  --shadow: rgba(15, 23, 42, 0.08); /* Plus douce */
-  --shadow-hover: rgba(30, 64, 175, 0.15); /* Plus moderne, légère teinte bleutée */
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Transition plus fluide et pro */
+  --shadow: 0 4px 20px rgba(15, 23, 42, 0.05); /* Ombre très douce et diffuse */
+  --shadow-hover: 0 20px 40px rgba(37, 99, 235, 0.1); /* Lévitation douce bleutée */
+  --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); /* Plus fluide et "snappy" */
 }
 
 
@@ -34,10 +34,17 @@
 
 body {
     font-family: 'Inter', sans-serif;
-    line-height: 1.6;
+    line-height: 1.7;
     color: var(--gray-800);
     background-color: var(--white);
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: -0.02em;
 }
 
 .container {
@@ -51,11 +58,13 @@ body {
     position: fixed;
     top: 0;
     width: 100%;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     z-index: 1000;
     transition: var(--transition);
-    border-bottom: 1px solid var(--gray-100);
+    border-bottom: 1px solid rgba(241, 245, 249, 0.5);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
 }
 
 .nav-container {
@@ -151,10 +160,21 @@ body {
     min-height: 100vh;
     display: flex;
     align-items: center;
-    background: linear-gradient(-45deg, #ffffff, #f8fafc, #e0f2fe, #f1f5f9);
-    background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
+    background: radial-gradient(circle at top left, #e0f2fe 0%, transparent 40%),
+                radial-gradient(circle at bottom right, #eff6ff 0%, transparent 40%),
+                var(--gray-50);
     padding-top: 80px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232563eb' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.6;
+    pointer-events: none;
 }
 
 .hero-content {
@@ -165,15 +185,19 @@ body {
 }
 
 .hero-title {
-    font-size: 3rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    line-height: 1.2;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1.25rem;
+    line-height: 1.1;
+    color: var(--dark-blue);
 }
 
 .highlight {
-    color: var(--primary-blue);
+    background: linear-gradient(135deg, var(--warm-blue), #0ea5e9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     display: block;
+    margin-top: 0.5rem;
 }
 
 .hero-description {
@@ -204,15 +228,16 @@ body {
 }
 
 .btn-primary {
-    background: var(--primary-blue);
+    background: linear-gradient(135deg, var(--primary-blue), var(--warm-blue));
     color: white;
-    box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
 .btn-primary:hover {
-    background: var(--dark-blue);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(30, 64, 175, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35);
+    background: linear-gradient(135deg, var(--dark-blue), var(--primary-blue));
 }
 
 .btn-secondary {
@@ -305,12 +330,14 @@ body {
     height: 100%;
     border-radius: 50%;
     object-fit: cover;
-    border: 5px solid var(--light-blue);
+    border: 6px solid var(--white);
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1);
     transition: var(--transition);
 }
 
 .profile-img:hover {
-    transform: scale(1.05);
+    transform: scale(1.02);
+    box-shadow: 0 25px 50px rgba(37, 99, 235, 0.15);
 }
 
 /* Hero Image Raised */
