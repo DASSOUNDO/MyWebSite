@@ -207,60 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 
-    document.querySelector('.download-btn[data-type="cv"]').addEventListener('click', function(e) {
-    e.preventDefault();
-
-    // Configuration de tes documents
-    // const cvList = [
-      //   { label: "CV_Adébayo_DASSOUNDO-recherche", file: "CV_Adébayo_DASSOUNDO.pdf" },
-       //  { label: "CV_Adébayo_DASSOUNDO-Master2-IA", file: "CV_Adébayo_DASSOUNDO-Master2-IA.pdf" },
-    // ];
-
-    // Configuration de tes documentsgit ba
-    const cvList = [
-        { label: "CV_Sergio", file: "CV_Sergio.pdf" },
-        { label: "CV_détailler_Sergio", file: "CV_détailler_Sergio.pdf" },
-    ];
-
-    // On crée dynamiquement une petite fenêtre de choix
-    let menuHtml = `
-        <div id="cv-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:9999;">
-            <div style="background:white; padding:20px; border-radius:10px; min-width:250px; text-align:center;">
-                <h3 style="margin-bottom:15px; color:#333;">Choisir une version</h3>
-                ${cvList.map((cv, index) => `
-                    <button class="btn-select-cv" data-file="${cv.file}" style="display:block; width:100%; margin:10px 0; padding:10px; cursor:pointer; border:1px solid #ddd; border-radius:5px; background:#f9f9f9;">
-                        ${cv.label}
-                    </button>
-                `).join('')}
-                <button id="close-cv-modal" style="margin-top:10px; background:none; border:none; color:red; cursor:pointer;">Annuler</button>
-            </div>
-        </div>
-    `;
-
-    document.body.insertAdjacentHTML('beforeend', menuHtml);
-
-    // Gestion du clic sur une option
-    document.querySelectorAll('.btn-select-cv').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const fileName = this.getAttribute('data-file');
-            const link = document.createElement('a');
-            link.href = `cv/${fileName}`;
-            link.download = fileName;
-            link.click();
-            document.getElementById('cv-modal').remove();
-        });
-    });
-
-    // Fermer la modale
-    document.getElementById('close-cv-modal').onclick = () => document.getElementById('cv-modal').remove();
-});
-
-
-
-
-    
-
-   /* function downloadCV() {
+    function downloadCV() {
         try {
             // Télécharger le fichier PDF directement
             const link = document.createElement('a');
@@ -275,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Fallback: essayer d'ouvrir le fichier dans un nouvel onglet
             window.open('cv/CV_Adébayo_DASSOUNDO.pdf', '_blank');
         }
-    }*/
+    }
 
 
 
