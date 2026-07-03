@@ -498,22 +498,24 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Export pour utilisation externe (doit rester dans cette closure : currentLang/changeLanguage y sont déclarés)
+    window.changeLanguage = changeLanguage;
+    window.getCurrentLanguage = function() {
+        return currentLang;
+    };
 });
-
-// Fonction pour obtenir la langue courante
-function getCurrentLanguage() {
-    return currentLang;
-}
-
-// Export pour utilisation externe
-window.changeLanguage = changeLanguage;
-window.getCurrentLanguage = getCurrentLanguage;
 
 
 
 // Pour mon gif animé
 
 // Chatbot Logic
+window.chatScrollTo = function(id) {
+    const target = document.getElementById(id);
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     const chatToggle = document.getElementById('chatbot-toggle');
     const chatWindow = document.getElementById('chatbot-window');
@@ -522,53 +524,245 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatSend = document.getElementById('chatbot-send');
     const chatMessages = document.getElementById('chatbot-messages');
 
-    if(chatToggle && chatWindow) {
-        chatToggle.addEventListener('click', () => {
-            chatWindow.classList.toggle('active');
+    if (!chatToggle || !chatWindow) return;
+
+    const stripAccents = (str) => str.normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const normalize = (str) => stripAccents(str.toLowerCase());
+
+    const lang = () => (typeof getCurrentLanguage === 'function' ? getCurrentLanguage() : 'fr');
+
+    const link = (id, label) =>
+        `<a href="#${id}" class="chat-link" onclick="chatScrollTo('${id}');return false;">${label}</a>`;
+
+    // Base de connaissances construite à partir du contenu réel du site (index.html)
+    const INTENTS = [
+        {
+            id: 'greeting',
+            bonus: 0,
+            keywords: ['bonjour', 'salut', 'coucou', 'bonsoir', 'hello', 'hi', 'hey'],
+            fr: "Bonjour 👋 Je suis l'assistant du profil d'Adébayo (Sergio) DASSOUNDO. Demandez-moi ses <strong>compétences</strong>, <strong>projets</strong>, <strong>expérience</strong>, <strong>recherche</strong>, <strong>formation</strong> ou comment le <strong>contacter</strong>.",
+            en: "Hello 👋 I'm Adébayo (Sergio) DASSOUNDO's profile assistant. Ask me about his <strong>skills</strong>, <strong>projects</strong>, <strong>experience</strong>, <strong>research</strong>, <strong>education</strong>, or how to <strong>contact</strong> him.",
+            suggestions: true
+        },
+        {
+            id: 'thanks',
+            bonus: 0,
+            keywords: ['merci', 'thanks', 'thank you', 'sympa', 'super'],
+            fr: "Avec plaisir 😊 N'hésitez pas si vous avez d'autres questions sur son profil !",
+            en: "You're welcome 😊 Feel free to ask if you have more questions about his profile!"
+        },
+        {
+            id: 'help',
+            bonus: 1,
+            keywords: ['aide', 'help', 'menu', 'sujets', 'topics', 'que peux tu faire', 'what can you do'],
+            fr: "Je peux vous renseigner sur : compétences, projets, expérience, recherche, formation, leadership, centres d'intérêt et contact.",
+            en: "I can help with: skills, projects, experience, research, education, leadership, interests, and contact.",
+            suggestions: true
+        },
+        {
+            id: 'about',
+            bonus: 2,
+            keywords: ['qui es tu', 'who are you', 'presente toi', 'a propos', 'about him', 'qui est adebayo', 'qui est sergio', 'qui est dassoundo', 'profil'],
+            fr: `<strong>Adébayo (Sergio) DASSOUNDO</strong> est ingénieur et chercheur, spécialisé en <strong>Logiciel Embarqué, Cybersécurité, Data & IA</strong>. Basé entre 🇫🇷 France et 🇨🇦 Canada. <br><br>👉 ${link('accueil', "Voir le profil")}`,
+            en: `<strong>Adébayo (Sergio) DASSOUNDO</strong> is an engineer and researcher specialized in <strong>Embedded Software, Cybersecurity, Data & AI</strong>. Based between 🇫🇷 France and 🇨🇦 Canada. <br><br>👉 ${link('accueil', "View profile")}`
+        },
+        {
+            id: 'skills',
+            bonus: 3,
+            keywords: ['competence', 'competences', 'skill', 'skills', 'stack', 'techno', 'technologie', 'langage de programmation', 'savoir faire', 'genai', 'langchain', 'rag', 'machine learning'],
+            fr: `Il possède une double compétence rare : <strong>Systèmes Embarqués</strong> (ROS2, STM32, dSPACE, MATLAB/Simulink) et <strong>Data & IA / GenAI</strong> (LangChain, RAG, pgvector, LLM), avec en plus de la <strong>Cybersécurité</strong>, l'électronique et la gestion de projet Agile. <br><br>👉 ${link('competences', "Voir ses compétences")}`,
+            en: `He has a rare double skillset: <strong>Embedded Systems</strong> (ROS2, STM32, dSPACE, MATLAB/Simulink) and <strong>Data & AI / GenAI</strong> (LangChain, RAG, pgvector, LLM), plus <strong>Cybersecurity</strong>, electronics and Agile project management. <br><br>👉 ${link('competences', "View skills")}`
+        },
+        {
+            id: 'experience',
+            bonus: 3,
+            keywords: ['experience', 'entreprise', 'entreprises', 'stage', 'stages', 'emploi', 'job', 'poste', 'carriere', 'career', 'apprenti', 'apprentissage', 'parcours professionnel', 'travail'],
+            fr: `Il a travaillé chez <strong>Renault Group</strong> (prototypage SW châssis), <strong>Thales</strong> (projet de fin d'études), l'<strong>Université de Sherbrooke</strong> (recherche embarquée au Canada), et a fondé la start-up <strong>DASIA</strong>. Il a aussi de l'expérience en électronique (Digital-Tech) et en fabrication mécanique. <br><br>👉 ${link('experience', "Voir ses expériences")}`,
+            en: `He has worked at <strong>Renault Group</strong> (chassis SW prototyping), <strong>Thales</strong> (final year project), the <strong>Université de Sherbrooke</strong> (embedded research in Canada), and founded the start-up <strong>DASIA</strong>. He also has experience in electronics (Digital-Tech) and mechanical manufacturing. <br><br>👉 ${link('experience', "View experience")}`
+        },
+        {
+            id: 'cv',
+            bonus: 4,
+            keywords: ['cv', 'resume', 'telecharger cv', 'download resume'],
+            fr: `Vous pouvez télécharger son <strong>CV</strong> directement en haut de la page (bouton "Télécharger CV"). <br><br>👉 ${link('accueil', "Aller en haut de page")}`,
+            en: `You can download his <strong>CV</strong> right at the top of the page ("Download CV" button). <br><br>👉 ${link('accueil', "Go to top")}`
+        },
+        {
+            id: 'renault',
+            bonus: 6,
+            keywords: ['renault', 'ampere'],
+            fr: `Chez <strong>Renault Group</strong> (Ampere Software Technology), il est ingénieur apprenti en <strong>prototypage logiciel châssis</strong> (2024–2026) : portage temps réel vers ROS2, solution hybride dSPACE–ROS2, CI/CD GitLab. <br><br>👉 ${link('projets', "Voir le détail du projet")}`,
+            en: `At <strong>Renault Group</strong> (Ampere Software Technology), he's a work-study engineer in <strong>chassis software prototyping</strong> (2024–2026): real-time porting to ROS2, hybrid dSPACE–ROS2 solution, GitLab CI/CD. <br><br>👉 ${link('projets', "View project details")}`
+        },
+        {
+            id: 'thales',
+            bonus: 6,
+            keywords: ['thales'],
+            fr: `Chez <strong>Thales</strong>, il réalise son <strong>projet de fin d'études</strong> (2025–2026) : architectures logicielles distribuées et algorithmes de coordination multi-robots autonomes (UML, C++, Python, ROS2). <br><br>👉 ${link('projets', "Voir le détail du projet")}`,
+            en: `At <strong>Thales</strong>, he's completing his <strong>final year project</strong> (2025–2026): distributed software architectures and multi-robot coordination algorithms (UML, C++, Python, ROS2). <br><br>👉 ${link('projets', "View project details")}`
+        },
+        {
+            id: 'dasia',
+            bonus: 6,
+            keywords: ['dasia'],
+            fr: `<strong>DASIA</strong> est sa start-up : une plateforme SaaS GenAI sécurisée déployant des agents IA sur-mesure pour les PME/ETI (RAG, LangChain, Gemini, pgvector, architecture Zero-Trust). Démo en ligne disponible. <br><br>👉 ${link('projets', "Voir le projet DASIA")}`,
+            en: `<strong>DASIA</strong> is his start-up: a secure GenAI SaaS platform deploying custom AI agents for SMEs (RAG, LangChain, Gemini, pgvector, Zero-Trust architecture). Live demo available. <br><br>👉 ${link('projets', "View the DASIA project")}`
+        },
+        {
+            id: 'sherbrooke',
+            bonus: 6,
+            keywords: ['sherbrooke', 'canada', 'bioreacteur', 'bioreactor'],
+            fr: `À l'<strong>Université de Sherbrooke</strong> (Canada, 2025), il a mené un stage de recherche sur le contrôle temps réel d'un bioréacteur de décellularisation de tissus biologiques (Python, capteurs/pompes/valves). <br><br>👉 ${link('recherche', "Voir cette recherche")}`,
+            en: `At the <strong>Université de Sherbrooke</strong> (Canada, 2025), he did a research internship on real-time control of a tissue decellularization bioreactor (Python, sensors/pumps/valves). <br><br>👉 ${link('recherche', "View this research")}`
+        },
+        {
+            id: 'eseo',
+            bonus: 5,
+            keywords: ['eseo'],
+            fr: `L'<strong>ESEO</strong> est sa grande école d'ingénieurs en France (2023–2026), spécialisation Logiciel Embarqué & Cybersécurité. Il y a aussi réalisé des projets d'électronique (Altium, SolidWorks) et est membre des clubs Robot, ESE'Auto et Football. <br><br>👉 ${link('education', "Voir sa formation")}`,
+            en: `<strong>ESEO</strong> is his engineering school in France (2023–2026), specializing in Embedded Software & Cybersecurity. He also worked on electronics projects there (Altium, SolidWorks) and is a member of the Robot, ESE'Auto and Football clubs. <br><br>👉 ${link('education', "View education")}`
+        },
+        {
+            id: 'projects',
+            bonus: 3,
+            keywords: ['projet', 'projets', 'project', 'projects', 'realisation'],
+            fr: `Parmi ses projets principaux : <strong>DASIA</strong> (plateforme SaaS GenAI), le prototypage logiciel châssis chez <strong>Renault</strong>, la coordination multi-robots chez <strong>Thales</strong>, et le contrôle de bioréacteur à <strong>Sherbrooke</strong>. <br><br>👉 ${link('projets', "Voir tous ses projets")}`,
+            en: `Key projects include: <strong>DASIA</strong> (GenAI SaaS platform), chassis software prototyping at <strong>Renault</strong>, multi-robot coordination at <strong>Thales</strong>, and bioreactor control at <strong>Sherbrooke</strong>. <br><br>👉 ${link('projets', "View all projects")}`
+        },
+        {
+            id: 'research',
+            bonus: 4,
+            keywords: ['recherche', 'research', 'publication', 'laboratoire'],
+            fr: `Ses travaux de recherche portent sur : la décellularisation automatisée de tissus (Sherbrooke), l'architecture ROS2 pour le prototypage châssis (Ampere/Renault), un agent IA embarqué de supervision automobile (Edge AI, CAN/LIN), et une application de gestion de projets (Python/UML). <br><br>👉 ${link('recherche', "Voir ses recherches")}`,
+            en: `His research covers: automated tissue decellularization (Sherbrooke), ROS2 architecture for chassis prototyping (Ampere/Renault), an embedded AI agent for automotive supervision (Edge AI, CAN/LIN), and a project management application (Python/UML). <br><br>👉 ${link('recherche', "View his research")}`
+        },
+        {
+            id: 'education',
+            bonus: 3,
+            keywords: ['formation', 'etude', 'etudes', 'diplome', 'ecole', 'universite', 'education', 'degree', 'school', 'cpge'],
+            fr: `Diplôme d'ingénieur en <strong>Logiciel Embarqué & Cybersécurité</strong> à l'ESEO (2023–2026), programme de recherche à l'<strong>Université de Sherbrooke</strong> (2025), formation en gestion/entrepreneuriat, et classes préparatoires (CPGE Maths/Physique) à l'École Polytechnique du Bénin. <br><br>👉 ${link('education', "Voir sa formation")}`,
+            en: `Engineering degree in <strong>Embedded Software & Cybersecurity</strong> at ESEO (2023–2026), research program at the <strong>Université de Sherbrooke</strong> (2025), management/entrepreneurship training, and prep school (CPGE Math/Physics) at École Polytechnique du Bénin. <br><br>👉 ${link('education', "View education")}`
+        },
+        {
+            id: 'leadership',
+            bonus: 4,
+            keywords: ['leadership', 'association', 'benevole', 'benevolat', 'president', 'foot', 'football', 'ong', 'jpa', 'club'],
+            fr: `Il a été <strong>Président de la Fondation Jeunesse Locale</strong> (ONG JPA, Bénin), entraîneur d'une équipe de football U12, et membre des clubs Robot, ESE'Auto et Football de l'ESEO. <br><br>👉 ${link('leadership', "Voir son leadership")}`,
+            en: `He was <strong>President of the Fondation Jeunesse Locale</strong> (JPA NGO, Benin), coached a U12 football team, and is a member of ESEO's Robot, ESE'Auto and Football clubs. <br><br>👉 ${link('leadership', "View leadership")}`
+        },
+        {
+            id: 'interests',
+            bonus: 4,
+            keywords: ['interet', 'interets', 'hobby', 'hobbies', 'loisir', 'loisirs', 'passion', 'sport', 'aeronautique', 'automobile', 'voyage', 'humanitaire'],
+            fr: `Ses centres d'intérêt : <strong>Sport, Automobile, Aéronautique, Humanitaire et Voyage</strong>. <br><br>👉 ${link('interets', "Voir ses centres d'intérêt")}`,
+            en: `His interests: <strong>Sport, Automotive, Aeronautics, Humanitarian work and Travel</strong>. <br><br>👉 ${link('interets', "View his interests")}`
+        },
+        {
+            id: 'contact',
+            bonus: 4,
+            keywords: ['contact', 'email', 'mail', 'joindre', 'contacter', 'telephone', 'linkedin', 'github', 'reseau'],
+            fr: `Vous pouvez le contacter par email à <a href="mailto:sergiodassoundo2@gmail.com" class="chat-link">sergiodassoundo2@gmail.com</a>, sur <a href="https://www.linkedin.com/in/ad%C3%A9bayo-dassoundo-a9323a2a3/" target="_blank" class="chat-link">LinkedIn</a> ou <a href="https://github.com/DASSOUNDO" target="_blank" class="chat-link">GitHub</a>. <br><br>👉 ${link('contact', "Voir la section contact")}`,
+            en: `You can reach him by email at <a href="mailto:sergiodassoundo2@gmail.com" class="chat-link">sergiodassoundo2@gmail.com</a>, on <a href="https://www.linkedin.com/in/ad%C3%A9bayo-dassoundo-a9323a2a3/" target="_blank" class="chat-link">LinkedIn</a> or <a href="https://github.com/DASSOUNDO" target="_blank" class="chat-link">GitHub</a>. <br><br>👉 ${link('contact', "View contact section")}`
+        },
+        {
+            id: 'location',
+            bonus: 5,
+            keywords: ['ou habite', 'localisation', 'ou es tu', 'where is he', 'where are you', 'basé', 'base'],
+            fr: `Il est basé entre 🇫🇷 <strong>France</strong> et 🇨🇦 <strong>Canada</strong>. <br><br>👉 ${link('contact', "Voir la section contact")}`,
+            en: `He's based between 🇫🇷 <strong>France</strong> and 🇨🇦 <strong>Canada</strong>. <br><br>👉 ${link('contact', "View contact section")}`
+        }
+    ];
+
+    const TOPIC_CHIPS = [
+        { fr: 'Compétences', en: 'Skills', query: 'compétences' },
+        { fr: 'Projets', en: 'Projects', query: 'projets' },
+        { fr: 'Expérience', en: 'Experience', query: 'expérience' },
+        { fr: 'Recherche', en: 'Research', query: 'recherche' },
+        { fr: 'Formation', en: 'Education', query: 'formation' },
+        { fr: 'Contact', en: 'Contact', query: 'contact' }
+    ];
+
+    const addMessage = (text, isUser = false) => {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+        msgDiv.innerHTML = text;
+        chatMessages.appendChild(msgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        return msgDiv;
+    };
+
+    const addSuggestions = () => {
+        const wrap = document.createElement('div');
+        wrap.className = 'chat-suggestions';
+        TOPIC_CHIPS.forEach(chip => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'chat-suggestion-btn';
+            btn.textContent = lang() === 'en' ? chip.en : chip.fr;
+            btn.addEventListener('click', () => {
+                wrap.remove();
+                addMessage(btn.textContent, true);
+                setTimeout(() => respondToUser(normalize(chip.query)), 500);
+            });
+            wrap.appendChild(btn);
         });
+        chatMessages.appendChild(wrap);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    };
 
-        chatClose.addEventListener('click', () => {
-            chatWindow.classList.remove('active');
-        });
+    const respondToUser = (input) => {
+        let best = null;
+        let bestScore = 0;
 
-        const addMessage = (text, isUser = false) => {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
-            msgDiv.innerHTML = text;
-            chatMessages.appendChild(msgDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        };
-
-        const handleUserInput = () => {
-            const text = chatInput.value.trim();
-            if(!text) return;
-            
-            addMessage(text, true);
-            chatInput.value = '';
-
-            // Simulate typing delay
-            setTimeout(() => {
-                respondToUser(text.toLowerCase());
-            }, 600);
-        };
-
-        chatSend.addEventListener('click', handleUserInput);
-        chatInput.addEventListener('keypress', (e) => {
-            if(e.key === 'Enter') handleUserInput();
-        });
-
-        const respondToUser = (input) => {
-            if(input.includes('projet') || input.includes('dasia')) {
-                addMessage("Dassoundo a travaillé sur plusieurs projets impressionnants, dont <strong>DASIA</strong>, une plateforme GenIA B2B. <br><br>👉 <a href='#projets' class='chat-link' onclick='document.getElementById(\"projets\").scrollIntoView({behavior: \"smooth\"});'>Voir ses projets</a>");
-            } else if(input.includes('compétence') || input.includes('ia') || input.includes('embarqué') || input.includes('data') || input.includes('skill')) {
-                addMessage("Il possède une double compétence rare : <strong>Logiciel Embarqué</strong> (ROS2, STM32) et <strong>Data & IA</strong> (GenAI, LangChain, RAG). <br><br>👉 <a href='#competences' class='chat-link' onclick='document.getElementById(\"competences\").scrollIntoView({behavior: \"smooth\"});'>Voir ses compétences</a>");
-            } else if(input.includes('expérience') || input.includes('cv') || input.includes('entreprise') || input.includes('stage')) {
-                addMessage("Il a de l'expérience chez Renault Group, Thales, et a fondé la startup DASIA. Vous pouvez télécharger son CV en haut de la page. <br><br>👉 <a href='#experience' class='chat-link' onclick='document.getElementById(\"experience\").scrollIntoView({behavior: \"smooth\"});'>Voir ses expériences</a>");
-            } else if(input.includes('contact') || input.includes('mail') || input.includes('linkedin') || input.includes('github')) {
-                addMessage("Vous pouvez le contacter via LinkedIn ou Github ! <br><br>👉 <a href='#contact' class='chat-link' onclick='document.getElementById(\"contact\").scrollIntoView({behavior: \"smooth\"});'>Aller en bas de page</a>");
-            } else {
-                addMessage("Je suis un assistant conçu pour orienter les recruteurs. Demandez-moi ses <strong>compétences</strong>, ses <strong>projets</strong> ou son <strong>expérience</strong> !");
+        INTENTS.forEach(intent => {
+            let score = 0;
+            intent.keywords.forEach(kw => {
+                if (input.includes(normalize(kw))) score += kw.length + (intent.bonus || 0);
+            });
+            if (score > bestScore) {
+                bestScore = score;
+                best = intent;
             }
-        };
-    }
+        });
+
+        if (best) {
+            addMessage(lang() === 'en' ? best.en : best.fr);
+            if (best.suggestions) addSuggestions();
+        } else {
+            addMessage(
+                lang() === 'en'
+                    ? "I'm here to guide recruiters through this profile. Ask me about <strong>skills</strong>, <strong>projects</strong>, <strong>experience</strong>, <strong>research</strong>, <strong>education</strong> or <strong>contact</strong>!"
+                    : "Je suis un assistant conçu pour orienter les recruteurs. Demandez-moi ses <strong>compétences</strong>, ses <strong>projets</strong>, son <strong>expérience</strong>, sa <strong>recherche</strong>, sa <strong>formation</strong> ou son <strong>contact</strong> !"
+            );
+            addSuggestions();
+        }
+    };
+
+    chatToggle.addEventListener('click', () => {
+        chatWindow.classList.toggle('active');
+    });
+
+    chatClose.addEventListener('click', () => {
+        chatWindow.classList.remove('active');
+    });
+
+    const handleUserInput = () => {
+        const text = chatInput.value.trim();
+        if (!text) return;
+
+        addMessage(text, true);
+        chatInput.value = '';
+
+        setTimeout(() => {
+            respondToUser(normalize(text));
+        }, 600);
+    };
+
+    chatSend.addEventListener('click', handleUserInput);
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleUserInput();
+    });
+
+    // Suggestions de sujets dès l'ouverture du chat
+    addSuggestions();
 });

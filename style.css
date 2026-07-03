@@ -3807,3 +3807,30 @@ h1, h2, h3, h4, h5, h6 {
     text-decoration: underline;
     cursor: pointer;
 }
+
+.chat-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-self: flex-start;
+    max-width: 100%;
+}
+
+.chat-suggestion-btn {
+    background: white;
+    border: 1px solid var(--gray-100);
+    color: var(--primary-blue);
+    padding: 6px 12px;
+    border-radius: 14px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.chat-suggestion-btn:hover {
+    background: var(--warm-blue);
+    color: white;
+    border-color: var(--warm-blue);
+}
