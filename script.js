@@ -1,524 +1,293 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Navigation mobile
+    const root = document.documentElement;
+    const navbar = document.querySelector('.navbar');
     const hamburger = document.querySelector('.hamburger');
     const navMenu = document.querySelector('.nav-menu');
-    
-    if (hamburger) {
-        hamburger.addEventListener('click', function() {
-            hamburger.classList.toggle('active');
-            navMenu.classList.toggle('active');
-        });
-    }
+    const progress = document.querySelector('.scroll-progress');
+    const backToTop = document.querySelector('.back-to-top');
 
-    // Smooth scroll pour les liens de navigation
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-                // Fermer le menu mobile si ouvert
-                if (navMenu) navMenu.classList.remove('active');
-                if (hamburger) hamburger.classList.remove('active');
-            }
-        });
-    });
-
-    // Projets dépliables
-    const projectCards = document.querySelectorAll('.project-card');
-    
-    projectCards.forEach(card => {
-        const header = card.querySelector('.project-header');
-        
-        if (header) {
-            header.addEventListener('click', function() {
-                // Fermer tous les autres projets
-                projectCards.forEach(otherCard => {
-                    if (otherCard !== card) {
-                        otherCard.classList.remove('active');
-                    }
-                });
-                
-                // Toggle le projet actuel
-                card.classList.toggle('active');
-            });
-        }
-    });
-
-    // Recherche dépliable (même logique que les projets)
-    const researchCards = document.querySelectorAll('.research-card');
-    
-    researchCards.forEach(card => {
-        const header = card.querySelector('.research-header');
-        
-        if (header) {
-            header.addEventListener('click', function() {
-                // Fermer toutes les autres recherches
-                researchCards.forEach(otherCard => {
-                    if (otherCard !== card) {
-                        otherCard.classList.remove('active');
-                    }
-                });
-                
-                // Toggle la recherche actuelle
-                card.classList.toggle('active');
-            });
-        }
-    });
-
-    // Animation au scroll
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
+    const storage = {
+        get(key) { try { return localStorage.getItem(key); } catch (e) { return null; } },
+        set(key, value) { try { localStorage.setItem(key, value); } catch (e) {} }
     };
 
-    const observer = new IntersectionObserver(function(entries) {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('fade-in');
-                
-                // Animation spéciale pour les éléments de timeline
-                if (entry.target.classList.contains('timeline-item')) {
-                    entry.target.classList.add('animate');
-                }
-                
-                // Animation pour les highlights
-                if (entry.target.classList.contains('highlight-item')) {
-                    setTimeout(() => {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }, 200);
-                }
-            }
-        });
-    }, observerOptions);
+    // Navigation mobile
+    const closeMenu = () => {
+        navMenu.classList.remove('active');
+        hamburger.classList.remove('active');
+        hamburger.setAttribute('aria-expanded', 'false');
+    };
 
-    // Observer les éléments à animer
-    document.querySelectorAll('.skill-category, .overview-card, .tech-category, .company-item, .project-card, .research-card, .contact-item, .timeline-item, .highlight-item, .education-card').forEach(el => {
-        observer.observe(el);
-        
-        // Préparer les highlight-items pour l'animation
-        if (el.classList.contains('highlight-item')) {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
-            el.style.transition = 'all 0.6s ease';
-        }
+    hamburger.addEventListener('click', () => {
+        const open = navMenu.classList.toggle('active');
+        hamburger.classList.toggle('active', open);
+        hamburger.setAttribute('aria-expanded', String(open));
     });
 
-    // Animation en cascade pour les catégories tech
-    const techObserver = new IntersectionObserver(function(entries) {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const techCategories = document.querySelectorAll('.tech-category');
-                techCategories.forEach((category, index) => {
-                    setTimeout(() => {
-                        category.classList.add('fade-in');
-                    }, index * 100);
-                });
-                techObserver.unobserve(entry.target);
-            }
-        });
-    }, {
-        threshold: 0.1
+    navMenu.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
+
+    // Thème clair / sombre
+    const themeBtn = document.querySelector('.theme-toggle');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+    const isDark = () => (root.getAttribute('data-theme') || (prefersDark.matches ? 'dark' : 'light')) === 'dark';
+    const syncThemeIcon = () => {
+        themeBtn.querySelector('i').className = isDark() ? 'fas fa-sun' : 'fas fa-moon';
+    };
+
+    themeBtn.addEventListener('click', () => {
+        const next = isDark() ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        storage.set('preferred-theme', next);
+        syncThemeIcon();
     });
+    prefersDark.addEventListener('change', syncThemeIcon);
+    syncThemeIcon();
 
-    const skillsSection = document.querySelector('.skills');
-    if (skillsSection) {
-        techObserver.observe(skillsSection);
-    }
+    // Scroll : barre de progression, navbar, retour en haut, lien actif
+    const sections = Array.from(document.querySelectorAll('main section[id]'));
+    const navLinks = Array.from(document.querySelectorAll('.nav-link'));
 
-    // Navigation active
-    window.addEventListener('scroll', function() {
-        const sections = document.querySelectorAll('section[id]');
-        const navLinks = document.querySelectorAll('.nav-link');
-        const navProfileImg = document.querySelector('.nav-profile-img');
-        
+    const onScroll = () => {
+        const y = window.scrollY;
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        progress.style.transform = `scaleX(${max > 0 ? y / max : 0})`;
+        navbar.classList.toggle('scrolled', y > 10);
+        backToTop.classList.toggle('visible', y > 700);
+
         let current = '';
         sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            const sectionHeight = section.clientHeight;
-            if (pageYOffset >= (sectionTop - 200)) {
-                current = section.getAttribute('id');
-            }
+            if (y >= section.offsetTop - 140) current = section.id;
         });
-
+        // Les sous-sections sans lien de menu héritent du lien précédent
+        if (current === 'leadership') current = 'education';
         navLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href') === `#${current}`) {
-                link.classList.add('active');
-            }
+            link.classList.toggle('active', link.getAttribute('href') === `#${current}`);
         });
+    };
 
-        // Afficher/masquer la photo selon la section
-        if (current === 'axes' || current === 'competences' || current === 'projets' || current === 'recherche' || current === 'education' || current === 'contact') {
-            navProfileImg.classList.add('show');
-        } else {
-            navProfileImg.classList.remove('show');
-        }
-    });
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
 
-    // Boutons de téléchargement
-    const downloadButtons = document.querySelectorAll('.download-btn');
-    
-    downloadButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const type = this.getAttribute('data-type');
-            handleDownload(type);
-        });
-    });
+    backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-    function handleDownload(type) {
-        // Effet visuel du bouton
-        const button = document.querySelector(`[data-type="${type}"]`);
-        const originalText = button.innerHTML;
-        
-        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Téléchargement...';
-        button.disabled = true;
-
-        // Simulation du téléchargement
-        setTimeout(() => {
-            button.innerHTML = '<i class="fas fa-check"></i> Téléchargé !';
-            
-            setTimeout(() => {
-                button.innerHTML = originalText;
-                button.disabled = false;
-            }, 2000);
-
-            // Logique de téléchargement selon le type
-            switch(type) {
-                case 'cv':
-                    downloadCV();
-                    break;
-                case 'recommandations':
-                    downloadRecommendation(); 
-                    break;
-                case 'competences':
-                    downloadCompetences();
-                    break;
-                case 'projets':
-                    downloadProjets();
-                    break;
-               
-            }
-        }, 1000);
+    // Apparition au scroll
+    const reveals = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+        reveals.forEach(el => observer.observe(el));
+    } else {
+        reveals.forEach(el => el.classList.add('is-visible'));
     }
 
+    // Cartes projets dépliables
+    document.querySelectorAll('.project-toggle').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const card = btn.closest('.project-card');
+            const open = card.classList.toggle('open');
+            btn.setAttribute('aria-expanded', String(open));
+        });
+    });
 
-    function downloadCV() {
-        // CV académique dans la langue affichée
-        const file = currentLang === 'en' ? 'CV_These_DASSOUNDO_EN.pdf' : 'CV_These_DASSOUNDO.pdf';
-        try {
+    // Filtres de projets
+    const chips = document.querySelectorAll('.filter-chip');
+    const filterable = document.querySelectorAll('#projects-grid .project-card');
+    chips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            const filter = chip.dataset.filter;
+            chips.forEach(c => c.classList.toggle('active', c === chip));
+            filterable.forEach(card => {
+                const show = filter === 'all' || card.dataset.category === filter;
+                card.classList.toggle('is-hidden', !show);
+                if (show) card.classList.add('is-visible');
+            });
+        });
+    });
+
+    // Menu des recommandations
+    const recoToggle = document.getElementById('reco-toggle');
+    const recoMenu = document.getElementById('reco-menu');
+    const setReco = open => {
+        recoMenu.hidden = !open;
+        recoToggle.setAttribute('aria-expanded', String(open));
+    };
+    recoToggle.addEventListener('click', e => {
+        e.stopPropagation();
+        setReco(recoMenu.hidden);
+    });
+    document.addEventListener('click', e => {
+        if (!recoMenu.hidden && !recoMenu.contains(e.target)) setReco(false);
+    });
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') { setReco(false); closeMenu(); }
+    });
+
+    // Téléchargement du CV académique dans la langue affichée
+    document.querySelectorAll('.download-btn[data-type="cv"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const file = currentLang === 'en' ? 'CV_These_DASSOUNDO_EN.pdf' : 'CV_These_DASSOUNDO.pdf';
             const link = document.createElement('a');
             link.href = `cv/${file}`;
             link.download = file;
-            link.target = '_blank'; // Ouvre dans un nouvel onglet si le téléchargement échoue
+            link.target = '_blank';
             document.body.appendChild(link);
             link.click();
-            document.body.removeChild(link);
-        } catch (error) {
-            console.error('Erreur lors du téléchargement du CV:', error);
-            window.open(`cv/${file}`, '_blank');
-        }
-    }
-
-
-
-    document.querySelector('.download-btn[data-type="Recommendation"]').addEventListener('click', function(e) {
-    const btn = e.currentTarget;
-    
-    // Si le menu existe déjà, on le ferme
-    if (document.getElementById('reco-menu')) {
-        document.getElementById('reco-menu').remove();
-        return;
-    }
-
-    // Liste de tes documents (ajoute autant que tu veux ici)
-    const docs = [
-        { name: "Recommendation-1_Adébayo_DASSOUNDO", file: "Recommendation-1_Adébayo_DASSOUNDO.pdf" },
-        { name: "Recommendation-2_Adébayo_DASSOUNDO", file: "Recommendation-2_Adébayo_DASSOUNDO.pdf" },
-    ];
-
-    // Création du menu
-    const menu = document.createElement('div');
-    menu.id = 'reco-menu';
-    menu.style.cssText = `
-        position: absolute;
-        background: #ffffff;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        padding: 10px;
-        z-index: 1000;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        margin-top: 10px;
-    `;
-
-    // Ajout des liens dans le menu
-    docs.forEach(doc => {
-        const item = document.createElement('a');
-        item.href = `Recommendation/${doc.file}`;
-        item.download = doc.file;
-        item.textContent = doc.name;
-        item.style.cssText = `
-            color: #333;
-            text-decoration: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            transition: background 0.2s;
-            font-size: 14px;
-            border: 1px solid #eee;
-        `;
-        item.onmouseover = () => item.style.background = '#f5f5f5';
-        item.onmouseout = () => item.style.background = 'transparent';
-        
-        menu.appendChild(item);
-    });
-
-    // Positionnement du menu par rapport au bouton
-    btn.parentElement.style.position = 'relative';
-    btn.parentElement.appendChild(menu);
-
-    // Fermer le menu si on clique ailleurs
-    setTimeout(() => {
-        window.onclick = (event) => {
-            if (!menu.contains(event.target) && event.target !== btn) {
-                menu.remove();
-                window.onclick = null;
-            }
-        };
-    }, 100);
-});
-
-    
-        
-    /*function downloadRecommendation() {
-        try {
-                // Télécharger le fichier PDF directement
-                const link = document.createElement('a');
-                link.href = 'recommendation/Recommendation_Adébayo_DASSOUNDO.pdf'; // Changé de 'documents/' à 'resume/'
-                link.download = 'Recommendation_Adébayo_DASSOUNDO.pdf';
-                link.target = '_blank'; // Ouvre dans un nouvel onglet si le téléchargement échoue
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            } catch (error) {
-                console.error('Erreur lors du téléchargement de la recommendation:', error);
-                // Fallback: essayer d'ouvrir le fichier dans un nouvel onglet
-                window.open('recommendation/Recommendation_Adébayo_DASSOUNDO.pdf', '_blank');
-            }
-    }*/
-
-
-    function downloadCompetences() {
-        try {
-            // Télécharger le fichier PDF directement
-            const link = document.createElement('a');
-            link.href = 'documents/Adébayo_DASSOUNDO_Competences.pdf';
-            link.download = 'Adébayo_DASSOUNDO_Competences.pdf';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } catch (error) {
-            console.error('Erreur lors du téléchargement des compétences:', error);
-            alert('Erreur lors du téléchargement du dossier de compétences. Veuillez réessayer.');
-        }
-    }
-
-    // Animation au chargement
-    window.addEventListener('load', function() {
-        document.body.classList.add('loaded');
+            link.remove();
+        });
     });
 
     // Traductions
     const translations = {
         fr: {
-            'nav-home': 'Accueil',
             'nav-axes': 'Axes',
-            'nav-skills': 'Compétences',
+            'nav-experience': 'Parcours',
             'nav-projects': 'Projets',
             'nav-research': 'Recherche',
+            'nav-skills': 'Compétences',
             'nav-education': 'Formation',
             'nav-contact': 'Contact',
+            'hero-status': 'Candidat au doctorat (Ph.D.) – IA agentique, systèmes multi-agents et aide à la décision',
             'hero-title': 'IA agentique, Systèmes multi-agents & Logiciel embarqué.',
             'hero-subtitle': 'Ingénieur IA / RAG – FastAPI chez Yieloo · Master of Science Data & IA – Epitech · Ingénieur ESEO (Logiciel embarqué & Cybersécurité)',
             'hero-description': "Ingénieur et chercheur alliant science des données et intelligence artificielle (IA générative, RAG, agents et systèmes multi-agents, LLM), logiciel embarqué, cybersécurité et développement logiciel, avec une expérience académique et industrielle (Renault, Thales, Université de Sherbrooke) et une orientation marquée vers l'innovation technologique.",
-            'hero-status': '🎓 Candidat au doctorat (Ph.D.) – IA agentique, systèmes multi-agents et aide à la décision pour infrastructures critiques',
             'btn-download-cv': 'Télécharger CV (PDF)',
             'btn-download-Recommendation': 'Recommandations (PDF)',
-            'btn-download-skills': 'Dossier Compétences (PDF)',
-            'btn-location': '🇫🇷 France & 🇨🇦 Canada',
+            'btn-axes': 'Mes axes de recherche',
+            'btn-location': 'France & Canada',
+            'fact-research': "projets de recherche en cours (2026) sur les systèmes multi-agents et l'IA souveraine",
+            'fact-agents': 'agents spécialisés et LLM orchestrés sur la plateforme DASIA',
+            'fact-countries': 'pays de formation et de travail : Bénin, France, Canada',
+            'fact-industry': 'expérience industrielle en automobile, défense et aéroportuaire',
             'axes-title': 'Axes de recherche',
             'axes-intro': "Mes travaux portent sur la conception de systèmes intelligents autonomes et collaboratifs capables d'assister ou d'automatiser la prise de décision dans des environnements complexes et réglementés. Chaque axe ci-dessous est relié aux projets où je l'ai mis en pratique.",
-            'skills-title': 'Mes Compétences',
-            'main-skills': 'Compétences clés',
-            'certifications': 'Certifications (7)',
-            'programming-languages': 'Langages de programmation principaux',
+            'proof': 'Mis en pratique :',
+            'diagram-label': 'Architecture étudiée',
+            'diagram-title': "Système multi-agents LLM pour l'aide à la décision en conformité réglementaire",
+            'diagram-hint': 'Faire défiler le schéma',
             'experience-title': 'Expérience professionnelle',
+            'current': 'en cours',
             'projects-title': 'Principaux projets techniques et professionnels',
+            'projects-note': 'Certains projets réalisés en entreprise sont soumis à des clauses de confidentialité : seuls les aspects techniques généraux et les compétences mises en œuvre sont présentés.',
+            'filter-all': 'Tous',
+            'filter-ai': 'IA & agents',
+            'filter-embedded': 'Embarqué & robotique',
+            'filter-engineering': 'Ingénierie & industrie',
+            'details': 'Détails',
+            'live-demo': 'Démo en direct',
             'research-title': 'Mes principaux projets de recherche',
+            'ongoing': 'En cours · 2026',
+            'personal-research': 'Recherche appliquée personnelle',
+            'skills-title': 'Compétences',
+            'certifications': 'Certifications (7)',
+            'certs-linkedin': 'Voir sur LinkedIn',
+            'tech-details': 'Détail technique par domaine',
             'education-title': 'Formation',
-            'contact-title': 'Contact'
+            'leadership-title': 'Qualités personnelles et leadership',
+            'clubs-title': 'Vie associative · ESEO Angers (2023 – 2026)',
+            'interests-title': 'Centres d’intérêt',
+            'contact-title': 'Contact',
+            'contact-text': 'Ouvert aux opportunités de doctorat (Ph.D.) en IA agentique, systèmes multi-agents et aide à la décision. Références académiques et industrielles disponibles sur demande.',
+            'footer-rights': 'Tous droits réservés.',
+            'footer-dev': 'Site conçu et développé par moi-même — code source sur'
         },
         en: {
-            'nav-home': 'Home',
             'nav-axes': 'Research axes',
-            'nav-skills': 'Skills',
+            'nav-experience': 'Experience',
             'nav-projects': 'Projects',
             'nav-research': 'Research',
+            'nav-skills': 'Skills',
             'nav-education': 'Education',
             'nav-contact': 'Contact',
+            'hero-status': 'Ph.D. candidate – agentic AI, multi-agent systems and decision support',
             'hero-title': 'Agentic AI, Multi-Agent Systems & Embedded Software.',
             'hero-subtitle': 'AI / RAG – FastAPI Engineer at Yieloo · Master of Science in Data & AI – Epitech · ESEO Engineer (Embedded Software & Cybersecurity)',
             'hero-description': 'Engineer and researcher combining data science and artificial intelligence (generative AI, RAG, agents and multi-agent systems, LLMs), embedded software, cybersecurity and software development, with academic and industrial experience (Renault, Thales, Université de Sherbrooke) and a strong drive for technological innovation.',
-            'hero-status': '🎓 Ph.D. candidate – agentic AI, multi-agent systems and decision support for critical infrastructures',
             'btn-download-cv': 'Download CV (PDF)',
             'btn-download-Recommendation': 'Recommendations (PDF)',
-            'btn-download-skills': 'Skills Portfolio (PDF)',
-            'btn-location': '🇫🇷 France & 🇨🇦 Canada',
+            'btn-axes': 'My research axes',
+            'btn-location': 'France & Canada',
+            'fact-research': 'ongoing research projects (2026) on multi-agent systems and sovereign AI',
+            'fact-agents': 'specialized agents and LLMs orchestrated on the DASIA platform',
+            'fact-countries': 'countries of study and work: Benin, France, Canada',
+            'fact-industry': 'industrial experience in automotive, defense and airports',
             'axes-title': 'Research Axes',
             'axes-intro': 'My work focuses on designing autonomous, collaborative intelligent systems that assist or automate decision-making in complex, regulated environments. Each axis below is linked to the projects where I applied it.',
-            'skills-title': 'My Skills',
-            'main-skills': 'Core Skills',
-            'certifications': 'Certifications (7)',
-            'programming-languages': 'Main Programming Languages',
+            'proof': 'Applied in:',
+            'diagram-label': 'Architecture under study',
+            'diagram-title': 'LLM multi-agent system for regulatory-compliance decision support',
+            'diagram-hint': 'Scroll the diagram',
             'experience-title': 'Professional Experience',
+            'current': 'ongoing',
             'projects-title': 'Main Technical & Professional Projects',
+            'projects-note': 'Some industry projects are covered by confidentiality agreements: only general technical aspects and the skills involved are presented.',
+            'filter-all': 'All',
+            'filter-ai': 'AI & agents',
+            'filter-embedded': 'Embedded & robotics',
+            'filter-engineering': 'Engineering & industry',
+            'details': 'Details',
+            'live-demo': 'Live demo',
             'research-title': 'My Main Research Projects',
+            'ongoing': 'Ongoing · 2026',
+            'personal-research': 'Independent applied research',
+            'skills-title': 'Skills',
+            'certifications': 'Certifications (7)',
+            'certs-linkedin': 'View on LinkedIn',
+            'tech-details': 'Technical detail by domain',
             'education-title': 'Education',
-            'contact-title': 'Contact'
+            'leadership-title': 'Personal Qualities & Leadership',
+            'clubs-title': 'Student clubs · ESEO Angers (2023 – 2026)',
+            'interests-title': 'Interests',
+            'contact-title': 'Contact',
+            'contact-text': 'Open to Ph.D. opportunities in agentic AI, multi-agent systems and decision support. Academic and industry references available on request.',
+            'footer-rights': 'All rights reserved.',
+            'footer-dev': 'Designed and built by me — source code on'
         }
     };
 
-    // Langue courante - déclarée en global - CHANGED DEFAULT TO ENGLISH
-    let currentLang = 'en';
+    let currentLang = 'fr';
 
-    // Fonction pour initialiser la langue
-    function initializeLanguage() {
-        const savedLang = localStorage.getItem('preferred-language');
-        const browserLang = navigator.language.startsWith('en') ? 'en' : 'fr';
-        const initialLang = savedLang || 'fr'; // Default to English instead of browser language
-        
-        if (initialLang !== currentLang) {
-            changeLanguage(initialLang);
-        }
-    }
-
-    // Fonction pour changer la langue
     function changeLanguage(newLang) {
         if (!translations[newLang]) return;
-        
-        console.log(`Changement de langue vers: ${newLang}`);
-        
-        // Animation de transition
         document.body.classList.add('lang-switching');
-        
+
         setTimeout(() => {
             currentLang = newLang;
-            
-            // Mettre à jour tous les éléments avec data-lang
             document.querySelectorAll('[data-lang]').forEach(element => {
-                const key = element.getAttribute('data-lang');
-                if (translations[currentLang][key]) {
-                    element.textContent = translations[currentLang][key];
-                }
+                const value = translations[currentLang][element.getAttribute('data-lang')];
+                if (value) element.textContent = value;
             });
-            
-            // Mettre à jour les boutons de langue
             document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.getAttribute('data-lang-code') === currentLang) {
-                    btn.classList.add('active');
-                }
+                btn.classList.toggle('active', btn.getAttribute('data-lang-code') === currentLang);
             });
-            
-            // Sauvegarder la préférence
-            localStorage.setItem('preferred-language', currentLang);
-            
-            // Mettre à jour l'attribut lang du document
             document.documentElement.lang = currentLang;
-            
-            // Animation de fin
+            storage.set('preferred-language', currentLang);
             document.body.classList.remove('lang-switching');
-            document.body.classList.add('lang-switched');
-            
-            setTimeout(() => {
-                document.body.classList.remove('lang-switched');
-            }, 500);
-            
-            console.log(`Langue changée vers: ${currentLang}`);
         }, 150);
     }
 
-    // Gestionnaire de changement de langue - amélioré
-    const langButtons = document.querySelectorAll('.lang-btn');
-    
-    console.log('Boutons de langue trouvés:', langButtons.length);
-    
-    langButtons.forEach((button, index) => {
-        console.log(`Bouton ${index}:`, button.getAttribute('data-lang-code'));
-        
-        button.addEventListener('click', function(e) {
+    document.querySelectorAll('.lang-btn').forEach(button => {
+        button.addEventListener('click', e => {
             e.preventDefault();
-            const newLang = this.getAttribute('data-lang-code');
-            console.log(`Clic sur bouton langue: ${newLang}, langue actuelle: ${currentLang}`);
-            
-            if (newLang && newLang !== currentLang) {
-                changeLanguage(newLang);
-            }
+            const newLang = button.getAttribute('data-lang-code');
+            if (newLang && newLang !== currentLang) changeLanguage(newLang);
         });
     });
 
-    // Initialiser la langue après le chargement
-    initializeLanguage();
+    const savedLang = storage.get('preferred-language');
+    if (savedLang && savedLang !== currentLang) changeLanguage(savedLang);
 
-    // Company logo click effects
-    const companyLogos = document.querySelectorAll('.company-logo');
-    
-    companyLogos.forEach(logo => {
-        logo.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Remove active class from all logos
-            companyLogos.forEach(otherLogo => {
-                otherLogo.classList.remove('logo-clicked');
-            });
-            
-            // Add active class to clicked logo
-            this.classList.add('logo-clicked');
-            
-            // Remove the class after animation
-            setTimeout(() => {
-                this.classList.remove('logo-clicked');
-            }, 3000);
-        });
-        
-        // Add hover effect enhancement
-        logo.addEventListener('mouseenter', function() {
-            this.style.zIndex = '20';
-        });
-        
-        logo.addEventListener('mouseleave', function() {
-            if (!this.classList.contains('logo-clicked')) {
-                this.style.zIndex = '1';
-            }
-        });
-    });
-
-    // Export pour utilisation externe (doit rester dans cette closure : currentLang/changeLanguage y sont déclarés)
+    // Export pour le chatbot (currentLang/changeLanguage sont déclarés dans cette closure)
     window.changeLanguage = changeLanguage;
     window.getCurrentLanguage = function() {
         return currentLang;
     };
 });
-
-
-
-// Pour mon gif animé
 
 // Chatbot Logic
 window.chatScrollTo = function(id) {
