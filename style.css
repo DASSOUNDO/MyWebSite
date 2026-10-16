@@ -1012,13 +1012,6 @@ button {
     object-fit: contain;
 }
 
-.logo-text {
-    font-family: var(--font-head);
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.06em;
-    color: #0b1220;
-}
 
 .exp-body {
     padding: 18px 22px;
@@ -1980,9 +1973,6 @@ body.lang-switching [data-lang] {
         border-radius: 12px;
     }
 
-    .logo-text {
-        font-size: 0.55rem;
-    }
 
     .exp-body {
         padding: 14px 16px;
