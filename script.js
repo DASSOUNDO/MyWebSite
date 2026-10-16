@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Afficher/masquer la photo selon la section
-        if (current === 'competences' || current === 'projets' || current === 'recherche' || current === 'education' || current === 'contact') {
+        if (current === 'axes' || current === 'competences' || current === 'projets' || current === 'recherche' || current === 'education' || current === 'contact') {
             navProfileImg.classList.add('show');
         } else {
             navProfileImg.classList.remove('show');
@@ -208,19 +208,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     function downloadCV() {
+        // CV académique dans la langue affichée
+        const file = currentLang === 'en' ? 'CV_These_DASSOUNDO_EN.pdf' : 'CV_These_DASSOUNDO.pdf';
         try {
-            // Télécharger le fichier PDF directement
             const link = document.createElement('a');
-            link.href = 'cv/CV_Adébayo_DASSOUNDO.pdf'; // Changé de 'documents/' à 'resume/'
-            link.download = 'CV_Adébayo_DASSOUNDO.pdf';
+            link.href = `cv/${file}`;
+            link.download = file;
             link.target = '_blank'; // Ouvre dans un nouvel onglet si le téléchargement échoue
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         } catch (error) {
             console.error('Erreur lors du téléchargement du CV:', error);
-            // Fallback: essayer d'ouvrir le fichier dans un nouvel onglet
-            window.open('cv/CV_Adébayo_DASSOUNDO.pdf', '_blank');
+            window.open(`cv/${file}`, '_blank');
         }
     }
 
@@ -338,47 +338,57 @@ document.addEventListener('DOMContentLoaded', function() {
     const translations = {
         fr: {
             'nav-home': 'Accueil',
+            'nav-axes': 'Axes',
             'nav-skills': 'Compétences',
             'nav-projects': 'Projets',
             'nav-research': 'Recherche',
             'nav-education': 'Formation',
             'nav-contact': 'Contact',
-            'hero-title': 'Logiciel Embarqué, Cybersécurité, Data & IA.',
-            'hero-description': 'Ingénieur et chercheur alliant compétences académiques et industrielles en logiciel embarqué, cybersécurité, intelligence artificielle, développement logiciel et innovation technologique.',
+            'hero-title': 'IA agentique, Systèmes multi-agents & Logiciel embarqué.',
+            'hero-subtitle': 'Ingénieur IA / RAG – FastAPI chez Yieloo · Master of Science Data & IA – Epitech · Ingénieur ESEO (Logiciel embarqué & Cybersécurité)',
+            'hero-description': "Ingénieur et chercheur alliant science des données et intelligence artificielle (IA générative, RAG, agents et systèmes multi-agents, LLM), logiciel embarqué, cybersécurité et développement logiciel, avec une expérience académique et industrielle (Renault, Thales, Université de Sherbrooke) et une orientation marquée vers l'innovation technologique.",
+            'hero-status': '🎓 Candidat au doctorat (Ph.D.) – IA agentique, systèmes multi-agents et aide à la décision pour infrastructures critiques',
             'btn-download-cv': 'Télécharger CV (PDF)',
-            'btn-download-Recommendation': 'Recommendation (PDF)',
+            'btn-download-Recommendation': 'Recommandations (PDF)',
             'btn-download-skills': 'Dossier Compétences (PDF)',
             'btn-location': '🇫🇷 France & 🇨🇦 Canada',
+            'axes-title': 'Axes de recherche',
+            'axes-intro': "Mes travaux portent sur la conception de systèmes intelligents autonomes et collaboratifs capables d'assister ou d'automatiser la prise de décision dans des environnements complexes et réglementés. Chaque axe ci-dessous est relié aux projets où je l'ai mis en pratique.",
             'skills-title': 'Mes Compétences',
-            'main-skills': 'Grandes Compétences',
-            'certifications': 'Certifications (6)',
+            'main-skills': 'Compétences clés',
+            'certifications': 'Certifications (7)',
             'programming-languages': 'Langages de programmation principaux',
-            'experience-title': 'Expérience Professionnelle',
-            'projects-title': 'Mes Projets',
-            'research-title': 'Mes Axes de Recherche',
+            'experience-title': 'Expérience professionnelle',
+            'projects-title': 'Principaux projets techniques et professionnels',
+            'research-title': 'Mes principaux projets de recherche',
             'education-title': 'Formation',
             'contact-title': 'Contact'
         },
         en: {
             'nav-home': 'Home',
+            'nav-axes': 'Research axes',
             'nav-skills': 'Skills',
             'nav-projects': 'Projects',
             'nav-research': 'Research',
             'nav-education': 'Education',
             'nav-contact': 'Contact',
-            'hero-title': 'Embedded Software, Cybersecurity, Data & AI.',
-            'hero-description': 'Engineer and researcher combining academic and industrial expertise in embedded software, cybersecurity, artificial intelligence, software development, and technological innovation.',
+            'hero-title': 'Agentic AI, Multi-Agent Systems & Embedded Software.',
+            'hero-subtitle': 'AI / RAG – FastAPI Engineer at Yieloo · Master of Science in Data & AI – Epitech · ESEO Engineer (Embedded Software & Cybersecurity)',
+            'hero-description': 'Engineer and researcher combining data science and artificial intelligence (generative AI, RAG, agents and multi-agent systems, LLMs), embedded software, cybersecurity and software development, with academic and industrial experience (Renault, Thales, Université de Sherbrooke) and a strong drive for technological innovation.',
+            'hero-status': '🎓 Ph.D. candidate – agentic AI, multi-agent systems and decision support for critical infrastructures',
             'btn-download-cv': 'Download CV (PDF)',
-            'btn-download-recommendation': 'Recommandation (PDF)',
+            'btn-download-Recommendation': 'Recommendations (PDF)',
             'btn-download-skills': 'Skills Portfolio (PDF)',
             'btn-location': '🇫🇷 France & 🇨🇦 Canada',
+            'axes-title': 'Research Axes',
+            'axes-intro': 'My work focuses on designing autonomous, collaborative intelligent systems that assist or automate decision-making in complex, regulated environments. Each axis below is linked to the projects where I applied it.',
             'skills-title': 'My Skills',
             'main-skills': 'Core Skills',
-            'certifications': 'Certifications (6)',
+            'certifications': 'Certifications (7)',
             'programming-languages': 'Main Programming Languages',
             'experience-title': 'Professional Experience',
-            'projects-title': 'My Projects',
-            'research-title': 'My Research Areas',
+            'projects-title': 'Main Technical & Professional Projects',
+            'research-title': 'My Main Research Projects',
             'education-title': 'Education',
             'contact-title': 'Contact'
         }
@@ -563,22 +573,43 @@ document.addEventListener('DOMContentLoaded', () => {
             id: 'about',
             bonus: 2,
             keywords: ['qui es tu', 'who are you', 'presente toi', 'a propos', 'about him', 'qui est adebayo', 'qui est sergio', 'qui est dassoundo', 'profil'],
-            fr: `<strong>Adébayo (Sergio) DASSOUNDO</strong> est ingénieur et chercheur, spécialisé en <strong>Logiciel Embarqué, Cybersécurité, Data & IA</strong>. Basé entre 🇫🇷 France et 🇨🇦 Canada. <br><br>👉 ${link('accueil', "Voir le profil")}`,
-            en: `<strong>Adébayo (Sergio) DASSOUNDO</strong> is an engineer and researcher specialized in <strong>Embedded Software, Cybersecurity, Data & AI</strong>. Based between 🇫🇷 France and 🇨🇦 Canada. <br><br>👉 ${link('accueil', "View profile")}`
+            fr: `<strong>Adébayo (Sergio) DASSOUNDO</strong> est ingénieur et chercheur en <strong>IA agentique, systèmes multi-agents, logiciel embarqué et cybersécurité</strong>. Il est actuellement Ingénieur IA / RAG chez <strong>Yieloo</strong> et en Master of Science Data & IA à <strong>Epitech</strong>. Basé entre 🇫🇷 France et 🇨🇦 Canada. <br><br>👉 ${link('accueil', "Voir le profil")}`,
+            en: `<strong>Adébayo (Sergio) DASSOUNDO</strong> is an engineer and researcher in <strong>agentic AI, multi-agent systems, embedded software and cybersecurity</strong>. He is currently an AI / RAG Engineer at <strong>Yieloo</strong> and a Master of Science in Data & AI student at <strong>Epitech</strong>. Based between 🇫🇷 France and 🇨🇦 Canada. <br><br>👉 ${link('accueil', "View profile")}`
+        },
+        {
+            id: 'phd',
+            bonus: 5,
+            keywords: ['these', 'doctorat', 'phd', 'ph.d', 'axe', 'axes', 'multi-agent', 'multi agents', 'multiagent', 'agentique', 'agentic', 'aide a la decision', 'decision support', 'souverain', 'sovereign', 'infrastructures critiques', 'critical infrastructure'],
+            fr: `Il candidate à un <strong>doctorat (Ph.D.)</strong> en IA agentique et systèmes multi-agents. Ses axes : <strong>systèmes multi-agents & IA distribuée</strong>, <strong>agents autonomes basés sur les LLM</strong>, <strong>aide à la décision en environnement critique</strong>, <strong>IA fiable, explicable et résiliente</strong>, et <strong>IA souveraine</strong>. Deux projets de recherche 2026 en cours les illustrent. <br><br>👉 ${link('axes', "Voir ses axes de recherche")}`,
+            en: `He is applying for a <strong>Ph.D.</strong> in agentic AI and multi-agent systems. His axes: <strong>multi-agent systems & distributed AI</strong>, <strong>LLM-based autonomous agents</strong>, <strong>decision support in critical environments</strong>, <strong>trustworthy, explainable and resilient AI</strong>, and <strong>sovereign AI</strong>. Two ongoing 2026 research projects illustrate them. <br><br>👉 ${link('axes', "View research axes")}`
         },
         {
             id: 'skills',
             bonus: 3,
-            keywords: ['competence', 'competences', 'skill', 'skills', 'stack', 'techno', 'technologie', 'langage de programmation', 'savoir faire', 'genai', 'langchain', 'rag', 'machine learning'],
-            fr: `Il possède une double compétence rare : <strong>Systèmes Embarqués</strong> (ROS2, STM32, dSPACE, MATLAB/Simulink) et <strong>Data & IA / GenAI</strong> (LangChain, RAG, pgvector, LLM), avec en plus de la <strong>Cybersécurité</strong>, l'électronique et la gestion de projet Agile. <br><br>👉 ${link('competences', "Voir ses compétences")}`,
-            en: `He has a rare double skillset: <strong>Embedded Systems</strong> (ROS2, STM32, dSPACE, MATLAB/Simulink) and <strong>Data & AI / GenAI</strong> (LangChain, RAG, pgvector, LLM), plus <strong>Cybersecurity</strong>, electronics and Agile project management. <br><br>👉 ${link('competences', "View skills")}`
+            keywords: ['competence', 'competences', 'skill', 'skills', 'stack', 'techno', 'technologie', 'langage de programmation', 'savoir faire', 'genai', 'langchain', 'langgraph', 'rag', 'fastapi', 'machine learning'],
+            fr: `Il combine <strong>IA générative & agents</strong> (RAG agentique, LangChain/LangGraph, routage multi-LLM, faithfulness scoring, FastAPI, pgvector), <strong>Systèmes Embarqués</strong> (ROS2, STM32, dSPACE, MATLAB/Simulink) et <strong>Cybersécurité</strong> (OAuth2, AES-256-GCM, TLS/SSH, multi-tenant). <br><br>👉 ${link('competences', "Voir ses compétences")}`,
+            en: `He combines <strong>Generative AI & agents</strong> (agentic RAG, LangChain/LangGraph, multi-LLM routing, faithfulness scoring, FastAPI, pgvector), <strong>Embedded Systems</strong> (ROS2, STM32, dSPACE, MATLAB/Simulink) and <strong>Cybersecurity</strong> (OAuth2, AES-256-GCM, TLS/SSH, multi-tenant). <br><br>👉 ${link('competences', "View skills")}`
         },
         {
             id: 'experience',
             bonus: 3,
             keywords: ['experience', 'entreprise', 'entreprises', 'stage', 'stages', 'emploi', 'job', 'poste', 'carriere', 'career', 'apprenti', 'apprentissage', 'parcours professionnel', 'travail'],
-            fr: `Il a travaillé chez <strong>Renault Group</strong> (prototypage SW châssis), <strong>Thales</strong> (projet de fin d'études), l'<strong>Université de Sherbrooke</strong> (recherche embarquée au Canada), et a fondé la start-up <strong>DASIA</strong>. Il a aussi de l'expérience en électronique (Digital-Tech) et en fabrication mécanique. <br><br>👉 ${link('experience', "Voir ses expériences")}`,
-            en: `He has worked at <strong>Renault Group</strong> (chassis SW prototyping), <strong>Thales</strong> (final year project), the <strong>Université de Sherbrooke</strong> (embedded research in Canada), and founded the start-up <strong>DASIA</strong>. He also has experience in electronics (Digital-Tech) and mechanical manufacturing. <br><br>👉 ${link('experience', "View experience")}`
+            fr: `Il est actuellement <strong>Ingénieur IA / RAG chez Yieloo</strong> (2026–2028). Avant cela : <strong>Renault Group</strong> (intégration SW châssis, 2024–2026), <strong>Thales</strong> (projet de fin d'études), l'<strong>Université de Sherbrooke</strong> (recherche embarqué & IA au Canada), et co-fondation de <strong>DASIA</strong> (plateforme multi-agents). <br><br>👉 ${link('experience', "Voir ses expériences")}`,
+            en: `He is currently an <strong>AI / RAG Engineer at Yieloo</strong> (2026–2028). Before that: <strong>Renault Group</strong> (chassis SW integration, 2024–2026), <strong>Thales</strong> (final year project), the <strong>Université de Sherbrooke</strong> (embedded & AI research in Canada), and co-founded <strong>DASIA</strong> (multi-agent platform). <br><br>👉 ${link('experience', "View experience")}`
+        },
+        {
+            id: 'yieloo',
+            bonus: 6,
+            keywords: ['yieloo', 'aeroport', 'airport'],
+            fr: `Chez <strong>Yieloo</strong> (éditeur de logiciels pour l'aéroportuaire), il fait partie du <strong>comité IA</strong> : stratégie d'intégration de l'IA, analyse des risques techniques et réglementaires, cadrage avec les clients (aéroports, laboratoires) et développement de modèles RAG exposés via FastAPI. <br><br>👉 ${link('projets', "Voir le détail")}`,
+            en: `At <strong>Yieloo</strong> (software publisher for the airport sector), he sits on the <strong>AI committee</strong>: AI integration strategy, technical and regulatory risk assessment, scoping with clients (airports, labs), and building RAG models exposed via FastAPI. <br><br>👉 ${link('projets', "View details")}`
+        },
+        {
+            id: 'epitech',
+            bonus: 6,
+            keywords: ['epitech', 'master', 'msc'],
+            fr: `Il suit le <strong>Master of Science Intelligence Artificielle</strong> (parcours Science des Données & IA) à <strong>Epitech</strong> (2026–2028), en alternance chez Yieloo : LLM, RAG et systèmes multi-agents autonomes. <br><br>👉 ${link('education', "Voir sa formation")}`,
+            en: `He is enrolled in the <strong>Master of Science in Artificial Intelligence</strong> (Data Science & AI track) at <strong>Epitech</strong> (2026–2028), work-study at Yieloo: LLMs, RAG and autonomous multi-agent systems. <br><br>👉 ${link('education', "View education")}`
         },
         {
             id: 'cv',
@@ -591,22 +622,22 @@ document.addEventListener('DOMContentLoaded', () => {
             id: 'renault',
             bonus: 6,
             keywords: ['renault', 'ampere'],
-            fr: `Chez <strong>Renault Group</strong> (Ampere Software Technology), il est ingénieur apprenti en <strong>prototypage logiciel châssis</strong> (2024–2026) : portage temps réel vers ROS2, solution hybride dSPACE–ROS2, CI/CD GitLab. <br><br>👉 ${link('projets', "Voir le détail du projet")}`,
-            en: `At <strong>Renault Group</strong> (Ampere Software Technology), he's a work-study engineer in <strong>chassis software prototyping</strong> (2024–2026): real-time porting to ROS2, hybrid dSPACE–ROS2 solution, GitLab CI/CD. <br><br>👉 ${link('projets', "View project details")}`
+            fr: `Chez <strong>Renault Group</strong> (Ampere Software Technology), il a été ingénieur développement SW et intégration <strong>châssis SW prototype véhicule</strong> (2024–2026) : portage vers ROS2/NUC, solution hybride dSPACE–ROS2, CI/CD GitLab, tests sur véhicules prototypes. <br><br>👉 ${link('projets', "Voir le détail du projet")}`,
+            en: `At <strong>Renault Group</strong> (Ampere Software Technology), he was a software development and <strong>prototype vehicle chassis SW integration</strong> engineer (2024–2026): porting to ROS2/NUC, hybrid dSPACE–ROS2 solution, GitLab CI/CD, tests on prototype vehicles. <br><br>👉 ${link('projets', "View project details")}`
         },
         {
             id: 'thales',
             bonus: 6,
             keywords: ['thales'],
-            fr: `Chez <strong>Thales</strong>, il réalise son <strong>projet de fin d'études</strong> (2025–2026) : architectures logicielles distribuées et algorithmes de coordination multi-robots autonomes (UML, C++, Python, ROS2). <br><br>👉 ${link('projets', "Voir le détail du projet")}`,
-            en: `At <strong>Thales</strong>, he's completing his <strong>final year project</strong> (2025–2026): distributed software architectures and multi-robot coordination algorithms (UML, C++, Python, ROS2). <br><br>👉 ${link('projets', "View project details")}`
+            fr: `Chez <strong>Thales</strong>, il a réalisé son <strong>projet de fin d'études</strong> (2025–2026) : architectures logicielles et algorithmes de recherche et de découverte en environnement inconnu pour robots autonomes (UML, C++, Python, simulation). <br><br>👉 ${link('projets', "Voir le détail du projet")}`,
+            en: `At <strong>Thales</strong>, he completed his <strong>final year project</strong> (2025–2026): software architectures and search-and-discovery algorithms in unknown environments for autonomous robots (UML, C++, Python, simulation). <br><br>👉 ${link('projets', "View project details")}`
         },
         {
             id: 'dasia',
             bonus: 6,
             keywords: ['dasia'],
-            fr: `<strong>DASIA</strong> est sa start-up : une plateforme SaaS GenAI sécurisée déployant des agents IA sur-mesure pour les PME/ETI (RAG, LangChain, Gemini, pgvector, architecture Zero-Trust). Démo en ligne disponible. <br><br>👉 ${link('projets', "Voir le projet DASIA")}`,
-            en: `<strong>DASIA</strong> is his start-up: a secure GenAI SaaS platform deploying custom AI agents for SMEs (RAG, LangChain, Gemini, pgvector, Zero-Trust architecture). Live demo available. <br><br>👉 ${link('projets', "View the DASIA project")}`
+            fr: `<strong>DASIA</strong> est la start-up qu'il a co-fondée : une plateforme multi-agents (6 agents spécialisés) avec routeur intelligent entre 7 LLM, RAG agentique LangGraph exposé via FastAPI avec faithfulness scoring, et sécurité multi-tenant. Démo en ligne disponible. <br><br>👉 ${link('projets', "Voir le projet DASIA")}`,
+            en: `<strong>DASIA</strong> is the start-up he co-founded: a multi-agent platform (6 specialized agents) with a smart router across 7 LLMs, agentic RAG with LangGraph exposed via FastAPI with faithfulness scoring, and multi-tenant security. Live demo available. <br><br>👉 ${link('projets', "View the DASIA project")}`
         },
         {
             id: 'sherbrooke',
@@ -619,36 +650,36 @@ document.addEventListener('DOMContentLoaded', () => {
             id: 'eseo',
             bonus: 5,
             keywords: ['eseo'],
-            fr: `L'<strong>ESEO</strong> est sa grande école d'ingénieurs en France (2023–2026), spécialisation Logiciel Embarqué & Cybersécurité. Il y a aussi réalisé des projets d'électronique (Altium, SolidWorks) et est membre des clubs Robot, ESE'Auto et Football. <br><br>👉 ${link('education', "Voir sa formation")}`,
-            en: `<strong>ESEO</strong> is his engineering school in France (2023–2026), specializing in Embedded Software & Cybersecurity. He also worked on electronics projects there (Altium, SolidWorks) and is a member of the Robot, ESE'Auto and Football clubs. <br><br>👉 ${link('education', "View education")}`
+            fr: `L'<strong>ESEO</strong> est sa grande école d'ingénieurs en France (2023–2026), spécialisation Logiciel Embarqué & Cybersécurité. Il y a réalisé des projets d'électronique (Altium, SolidWorks), a été ambassadeur des Relations Internationales et membre des clubs Robot, ESE'Auto et Football. <br><br>👉 ${link('education', "Voir sa formation")}`,
+            en: `<strong>ESEO</strong> is his engineering school in France (2023–2026), specializing in Embedded Software & Cybersecurity. He worked on electronics projects there (Altium, SolidWorks), served as International Relations ambassador and was a member of the Robot, ESE'Auto and Football clubs. <br><br>👉 ${link('education', "View education")}`
         },
         {
             id: 'projects',
             bonus: 3,
             keywords: ['projet', 'projets', 'project', 'projects', 'realisation'],
-            fr: `Parmi ses projets principaux : <strong>DASIA</strong> (plateforme SaaS GenAI), le prototypage logiciel châssis chez <strong>Renault</strong>, la coordination multi-robots chez <strong>Thales</strong>, et le contrôle de bioréacteur à <strong>Sherbrooke</strong>. <br><br>👉 ${link('projets', "Voir tous ses projets")}`,
-            en: `Key projects include: <strong>DASIA</strong> (GenAI SaaS platform), chassis software prototyping at <strong>Renault</strong>, multi-robot coordination at <strong>Thales</strong>, and bioreactor control at <strong>Sherbrooke</strong>. <br><br>👉 ${link('projets', "View all projects")}`
+            fr: `Parmi ses projets principaux : l'IA RAG pour l'aéroportuaire chez <strong>Yieloo</strong>, la plateforme multi-agents <strong>DASIA</strong>, l'intégration logicielle châssis chez <strong>Renault</strong>, l'exploration autonome chez <strong>Thales</strong>, et le contrôle de bioréacteur à <strong>Sherbrooke</strong>. <br><br>👉 ${link('projets', "Voir tous ses projets")}`,
+            en: `Key projects include: RAG AI for the airport sector at <strong>Yieloo</strong>, the <strong>DASIA</strong> multi-agent platform, chassis software integration at <strong>Renault</strong>, autonomous exploration at <strong>Thales</strong>, and bioreactor control at <strong>Sherbrooke</strong>. <br><br>👉 ${link('projets', "View all projects")}`
         },
         {
             id: 'research',
             bonus: 4,
             keywords: ['recherche', 'research', 'publication', 'laboratoire'],
-            fr: `Ses travaux de recherche portent sur : la décellularisation automatisée de tissus (Sherbrooke), l'architecture ROS2 pour le prototypage châssis (Ampere/Renault), un agent IA embarqué de supervision automobile (Edge AI, CAN/LIN), et une application de gestion de projets (Python/UML). <br><br>👉 ${link('recherche', "Voir ses recherches")}`,
-            en: `His research covers: automated tissue decellularization (Sherbrooke), ROS2 architecture for chassis prototyping (Ampere/Renault), an embedded AI agent for automotive supervision (Edge AI, CAN/LIN), and a project management application (Python/UML). <br><br>👉 ${link('recherche', "View his research")}`
+            fr: `Ses projets de recherche : un <strong>système multi-agents LLM d'aide à la décision en conformité réglementaire</strong> (2026), une <strong>architecture d'IA locale, fiable et souveraine pour infrastructures critiques</strong> (2026), la décellularisation automatisée (Sherbrooke, 2025) et l'architecture ROS2 pour le prototypage châssis (Ampere, 2024–2025). <br><br>👉 ${link('recherche', "Voir ses recherches")}`,
+            en: `His research projects: an <strong>LLM multi-agent system for regulatory-compliance decision support</strong> (2026), a <strong>local, trustworthy and sovereign AI architecture for critical infrastructures</strong> (2026), automated decellularization (Sherbrooke, 2025) and ROS2 architecture for chassis prototyping (Ampere, 2024–2025). <br><br>👉 ${link('recherche', "View his research")}`
         },
         {
             id: 'education',
             bonus: 3,
             keywords: ['formation', 'etude', 'etudes', 'diplome', 'ecole', 'universite', 'education', 'degree', 'school', 'cpge'],
-            fr: `Diplôme d'ingénieur en <strong>Logiciel Embarqué & Cybersécurité</strong> à l'ESEO (2023–2026), programme de recherche à l'<strong>Université de Sherbrooke</strong> (2025), formation en gestion/entrepreneuriat, et classes préparatoires (CPGE Maths/Physique) à l'École Polytechnique du Bénin. <br><br>👉 ${link('education', "Voir sa formation")}`,
-            en: `Engineering degree in <strong>Embedded Software & Cybersecurity</strong> at ESEO (2023–2026), research program at the <strong>Université de Sherbrooke</strong> (2025), management/entrepreneurship training, and prep school (CPGE Math/Physics) at École Polytechnique du Bénin. <br><br>👉 ${link('education', "View education")}`
+            fr: `<strong>Master of Science IA</strong> à Epitech (2026–2028), diplôme d'ingénieur en <strong>Logiciel Embarqué & Cybersécurité</strong> à l'ESEO (2023–2026), programme de recherche à l'<strong>Université de Sherbrooke</strong> (2025), formation en gestion/entrepreneuriat, et CPGE Maths/Physique à l'École Polytechnique du Bénin. <br><br>👉 ${link('education', "Voir sa formation")}`,
+            en: `<strong>Master of Science in AI</strong> at Epitech (2026–2028), engineering degree in <strong>Embedded Software & Cybersecurity</strong> at ESEO (2023–2026), research program at the <strong>Université de Sherbrooke</strong> (2025), management/entrepreneurship training, and CPGE Math/Physics at École Polytechnique du Bénin. <br><br>👉 ${link('education', "View education")}`
         },
         {
             id: 'leadership',
             bonus: 4,
-            keywords: ['leadership', 'association', 'benevole', 'benevolat', 'president', 'foot', 'football', 'ong', 'jpa', 'club'],
-            fr: `Il a été <strong>Président de la Fondation Jeunesse Locale</strong> (ONG JPA, Bénin), entraîneur d'une équipe de football U12, et membre des clubs Robot, ESE'Auto et Football de l'ESEO. <br><br>👉 ${link('leadership', "Voir son leadership")}`,
-            en: `He was <strong>President of the Fondation Jeunesse Locale</strong> (JPA NGO, Benin), coached a U12 football team, and is a member of ESEO's Robot, ESE'Auto and Football clubs. <br><br>👉 ${link('leadership', "View leadership")}`
+            keywords: ['leadership', 'association', 'benevole', 'benevolat', 'president', 'ambassadeur', 'ambassador', 'foot', 'football', 'ong', 'jpa', 'club'],
+            fr: `Il a été <strong>Ambassadeur Relations Internationales</strong> de l'ESEO, <strong>Président de la Fondation Jeunesse Locale</strong> (ONG JPA, Bénin), entraîneur d'une équipe de football U12, et membre des clubs Robot, ESE'Auto et Football de l'ESEO. <br><br>👉 ${link('leadership', "Voir son leadership")}`,
+            en: `He was ESEO's <strong>International Relations Ambassador</strong>, <strong>President of the Fondation Jeunesse Locale</strong> (JPA NGO, Benin), coached a U12 football team, and was a member of ESEO's Robot, ESE'Auto and Football clubs. <br><br>👉 ${link('leadership', "View leadership")}`
         },
         {
             id: 'interests',
@@ -674,6 +705,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     const TOPIC_CHIPS = [
+        { fr: 'Axes de recherche', en: 'Research axes', query: 'doctorat' },
         { fr: 'Compétences', en: 'Skills', query: 'compétences' },
         { fr: 'Projets', en: 'Projects', query: 'projets' },
         { fr: 'Expérience', en: 'Experience', query: 'expérience' },
