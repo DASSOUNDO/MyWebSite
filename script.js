@@ -110,6 +110,31 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Aperçu entreprise : survol en CSS, tap sur écran tactile, Entrée au clavier
+    const logoWraps = document.querySelectorAll('.logo-wrap');
+    const noHover = window.matchMedia('(hover: none)');
+    const closePreviews = except => logoWraps.forEach(w => { if (w !== except) w.classList.remove('show'); });
+
+    logoWraps.forEach(wrap => {
+        const tile = wrap.querySelector('.logo-tile');
+        tile.addEventListener('click', e => {
+            if (!noHover.matches) return;
+            e.stopPropagation();
+            closePreviews(wrap);
+            wrap.classList.toggle('show');
+        });
+        tile.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                closePreviews(wrap);
+                wrap.classList.toggle('show');
+            }
+        });
+    });
+    document.addEventListener('click', e => {
+        if (!e.target.closest('.logo-wrap')) closePreviews();
+    });
+
     // Menu des recommandations
     const recoToggle = document.getElementById('reco-toggle');
     const recoMenu = document.getElementById('reco-menu');
@@ -125,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!recoMenu.hidden && !recoMenu.contains(e.target)) setReco(false);
     });
     document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') { setReco(false); closeMenu(); }
+        if (e.key === 'Escape') { setReco(false); closeMenu(); closePreviews(); }
     });
 
     // Téléchargement du CV académique dans la langue affichée

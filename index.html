@@ -28,7 +28,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=5">
+    <link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
     <div class="scroll-progress" aria-hidden="true"></div>
@@ -327,7 +327,20 @@
 
             <ol class="exp-timeline">
                 <li class="exp-item reveal">
-                    <div class="logo-tile logo-tile-full"><img loading="lazy" src="company/yieloo.jpg" alt="Yieloo"></div>
+                    <div class="logo-wrap">
+                        <div class="logo-tile logo-tile-full" tabindex="0" role="button" aria-label="Yieloo : aperçu" aria-describedby="pv-yieloo"><img loading="lazy" src="company/yieloo.jpg" alt="Yieloo"></div>
+                        <div class="company-preview" id="pv-yieloo">
+                            <div class="preview-card">
+                                <div class="preview-cover has-photo"><img src="images/covers/yieloo-avion.jpg" alt="" loading="lazy"></div>
+                                <div class="preview-body">
+                                    <strong>Yieloo</strong>
+                                    <span class="preview-sector">Logiciel · Aéroportuaire · France</span>
+                                    <p>Éditeur de logiciels pour le secteur aéroportuaire : aéronautique, laboratoires d'essai et de calibration.</p>
+                                    <p>J'y intègre l'IA aux outils métiers : comité IA, analyse de risques, RAG et API FastAPI.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="exp-body">
                         <div class="exp-head">
                             <h3>Ingénieur IA / RAG – FastAPI (apprenti)</h3>
@@ -339,7 +352,21 @@
                 </li>
 
                 <li class="exp-item reveal">
-                    <a class="logo-tile logo-tile-full" href="https://dasia.vercel.app/" target="_blank" rel="noopener" aria-label="DASIA"><img loading="lazy" src="company/dasia-logo.png" alt="DASIA"></a>
+                    <div class="logo-wrap">
+                        <div class="logo-tile logo-tile-full" tabindex="0" role="button" aria-label="DASIA : aperçu" aria-describedby="pv-dasia"><img loading="lazy" src="company/dasia-logo.png" alt="DASIA"></div>
+                        <div class="company-preview" id="pv-dasia">
+                            <div class="preview-card">
+                                <div class="preview-cover" style="--brand: #6d5dfc"><span class="preview-logo"><img src="company/dasia-logo.png" alt="" loading="lazy"></span></div>
+                                <div class="preview-body">
+                                    <strong>DASIA</strong>
+                                    <span class="preview-sector">Start-up · IA générative · France</span>
+                                    <p>Start-up que j'ai co-fondée : des agents IA sur-mesure et sécurisés pour les PME et ETI.</p>
+                                    <p>6 agents spécialisés, routeur entre 7 LLM et RAG agentique vérifié par un LLM-juge.</p>
+                                    <a class="preview-link" href="https://dasia.vercel.app/" target="_blank" rel="noopener">Voir la démo <i class="fas fa-arrow-right"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="exp-body">
                         <div class="exp-head">
                             <h3>Ingénieur IA Générative (Freelance / Co-fondateur)</h3>
@@ -351,7 +378,20 @@
                 </li>
 
                 <li class="exp-item reveal">
-                    <div class="logo-tile"><img loading="lazy" src="company/Renault.png" alt="Renault Group"></div>
+                    <div class="logo-wrap">
+                        <div class="logo-tile" tabindex="0" role="button" aria-label="Renault Group · Ampere : aperçu" aria-describedby="pv-renault"><img loading="lazy" src="company/Renault.png" alt="Renault Group · Ampere"></div>
+                        <div class="company-preview" id="pv-renault">
+                            <div class="preview-card">
+                                <div class="preview-cover" style="--brand: #efdf00"><span class="preview-logo preview-logo-dark"><img src="company/Renault.png" alt="" loading="lazy"></span></div>
+                                <div class="preview-body">
+                                    <strong>Renault Group · Ampere</strong>
+                                    <span class="preview-sector">Automobile · Logiciel embarqué · France</span>
+                                    <p>Constructeur automobile français ; Ampere est son entité dédiée au véhicule électrique et au logiciel.</p>
+                                    <p>J'y ai porté le logiciel de contrôle châssis vers ROS2 et l'ai validé sur véhicules prototypes.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="exp-body">
                         <div class="exp-head">
                             <h3>Ingénieur développement SW et intégration Châssis SW Prototype Véhicule</h3>
@@ -363,7 +403,20 @@
                 </li>
 
                 <li class="exp-item reveal">
-                    <div class="logo-tile"><img loading="lazy" src="company/uds.png" alt="Université de Sherbrooke"></div>
+                    <div class="logo-wrap">
+                        <div class="logo-tile" tabindex="0" role="button" aria-label="Université de Sherbrooke : aperçu" aria-describedby="pv-uds"><img loading="lazy" src="company/uds.png" alt="Université de Sherbrooke"></div>
+                        <div class="company-preview" id="pv-uds">
+                            <div class="preview-card">
+                                <div class="preview-cover" style="--brand: #018849"><span class="preview-logo"><img src="company/uds.png" alt="" loading="lazy"></span></div>
+                                <div class="preview-body">
+                                    <strong>Université de Sherbrooke</strong>
+                                    <span class="preview-sector">Université · Recherche · Québec, Canada</span>
+                                    <p>Université québécoise reconnue pour sa recherche en génie et ses partenariats industriels.</p>
+                                    <p>Stage de recherche : contrôle embarqué et IA pour un bioréacteur de décellularisation.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="exp-body">
                         <div class="exp-head">
                             <h3>Stage de recherche en systèmes embarqués & IA</h3>
@@ -375,7 +428,20 @@
                 </li>
 
                 <li class="exp-item reveal">
-                    <div class="logo-tile"><img loading="lazy" src="company/thales.png" alt="Thales"></div>
+                    <div class="logo-wrap">
+                        <div class="logo-tile" tabindex="0" role="button" aria-label="Thales : aperçu" aria-describedby="pv-thales"><img loading="lazy" src="company/thales.png" alt="Thales"></div>
+                        <div class="company-preview" id="pv-thales">
+                            <div class="preview-card">
+                                <div class="preview-cover" style="--brand: #242a75"><span class="preview-logo"><img src="company/thales.png" alt="" loading="lazy"></span></div>
+                                <div class="preview-body">
+                                    <strong>Thales</strong>
+                                    <span class="preview-sector">Défense · Aéronautique · Cybersécurité · France</span>
+                                    <p>Groupe technologique de premier plan en défense, aéronautique, spatial et cybersécurité.</p>
+                                    <p>Projet de fin d'études : algorithmes d'exploration autonome en environnement inconnu.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="exp-body">
                         <div class="exp-head">
                             <h3>Projet de fin d’études</h3>
@@ -387,7 +453,20 @@
                 </li>
 
                 <li class="exp-item reveal">
-                    <div class="logo-tile"><img loading="lazy" src="company/ESEO-logo-couleur-positif.png" alt="ESEO"></div>
+                    <div class="logo-wrap">
+                        <div class="logo-tile" tabindex="0" role="button" aria-label="ESEO : aperçu" aria-describedby="pv-eseo"><img loading="lazy" src="company/ESEO-logo-couleur-positif.png" alt="ESEO"></div>
+                        <div class="company-preview" id="pv-eseo">
+                            <div class="preview-card">
+                                <div class="preview-cover" style="--brand: #0096d6"><span class="preview-logo"><img src="company/ESEO-logo-couleur-positif.png" alt="" loading="lazy"></span></div>
+                                <div class="preview-body">
+                                    <strong>ESEO</strong>
+                                    <span class="preview-sector">École d'ingénieurs · Angers, France</span>
+                                    <p>Grande école d'ingénieurs du numérique, des systèmes embarqués et de l'électronique.</p>
+                                    <p>Diplôme d'ingénieur en Logiciel embarqué & Cybersécurité, projets et vie associative.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="exp-body">
                         <div class="exp-head">
                             <h3>Projets d’ingénierie</h3>
@@ -398,7 +477,20 @@
                 </li>
 
                 <li class="exp-item reveal">
-                    <div class="logo-tile"><img loading="lazy" src="company/digit.png" alt="Digital-Tech"></div>
+                    <div class="logo-wrap">
+                        <div class="logo-tile" tabindex="0" role="button" aria-label="Digital-Tech : aperçu" aria-describedby="pv-digit"><img loading="lazy" src="company/digit.png" alt="Digital-Tech"></div>
+                        <div class="company-preview" id="pv-digit">
+                            <div class="preview-card">
+                                <div class="preview-cover" style="--brand: #e6007e"><span class="preview-logo"><img src="company/digit.png" alt="" loading="lazy"></span></div>
+                                <div class="preview-body">
+                                    <strong>Digital-Tech</strong>
+                                    <span class="preview-sector">Électronique · IoT · Bénin</span>
+                                    <p>Entreprise d'électronique et d'objets connectés au Bénin.</p>
+                                    <p>Cartes d'alimentation, microcontrôleurs C/C++ et bus UART, SPI, I2C, CAN.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="exp-body">
                         <div class="exp-head">
                             <h3>Stagiaire en électronique & objets connectés</h3>
@@ -409,7 +501,20 @@
                 </li>
 
                 <li class="exp-item reveal">
-                    <div class="logo-tile"><img loading="lazy" src="company/jpa.png" alt="ONG JPA"></div>
+                    <div class="logo-wrap">
+                        <div class="logo-tile" tabindex="0" role="button" aria-label="ONG JPA : aperçu" aria-describedby="pv-jpa"><img loading="lazy" src="company/jpa.png" alt="ONG JPA"></div>
+                        <div class="company-preview" id="pv-jpa">
+                            <div class="preview-card">
+                                <div class="preview-cover" style="--brand: #1a9bd7"><span class="preview-logo"><img src="company/jpa.png" alt="" loading="lazy"></span></div>
+                                <div class="preview-body">
+                                    <strong>ONG JPA</strong>
+                                    <span class="preview-sector">Associatif · Jeunesse · Bénin</span>
+                                    <p>Organisation non gouvernementale engagée auprès de la jeunesse au Bénin.</p>
+                                    <p>Président de la Fondation Jeunesse Locale : événements communautaires et équipes de bénévoles.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="exp-body">
                         <div class="exp-head">
                             <h3>Président de la Fondation Jeunesse Locale</h3>
@@ -420,7 +525,20 @@
                 </li>
 
                 <li class="exp-item reveal">
-                    <div class="logo-tile"><img loading="lazy" src="company/cppe.jpg" alt="CPPE"></div>
+                    <div class="logo-wrap">
+                        <div class="logo-tile" tabindex="0" role="button" aria-label="CPPE : aperçu" aria-describedby="pv-cppe"><img loading="lazy" src="company/cppe.jpg" alt="CPPE"></div>
+                        <div class="company-preview" id="pv-cppe">
+                            <div class="preview-card">
+                                <div class="preview-cover" style="--brand: #1f3a5f"><span class="preview-logo"><img src="company/cppe.jpg" alt="" loading="lazy"></span></div>
+                                <div class="preview-body">
+                                    <strong>CPPE</strong>
+                                    <span class="preview-sector">Formation · Fabrication mécanique · Bénin</span>
+                                    <p>Centre de perfectionnement des personnes d'entreprises.</p>
+                                    <p>Usinage sur machines-outils, maintenance préventive, lecture de plans et soudure.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="exp-body">
                         <div class="exp-head">
                             <h3>Stagiaire en fabrication mécanique sur machines-outils</h3>
@@ -1096,6 +1214,6 @@
         </div>
     </div>
 
-    <script src="script.js?v=5"></script>
+    <script src="script.js?v=6"></script>
 </body>
 </html>
