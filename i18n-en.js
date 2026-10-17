@@ -416,7 +416,7 @@ const I18N_EN = {
         "Veille IA": "AI watch",
         "Humanitaire": "Humanitarian work",
         "Voyage": "Travel",
-        "Ingénieur IA / RAG – FastAPI @ Yieloo · MSc Data & IA @ Epitech": "AI / RAG – FastAPI Engineer @ Yieloo · MSc Data & AI @ Epitech",
+        "Ingénieur IA / RAG – FastAPI @ Yieloo · Co-fondateur @ DASIA · Master of Science Data & IA @ Epitech": "AI / RAG – FastAPI Engineer @ Yieloo · Co-founder @ DASIA · Master of Science in Data & AI @ Epitech",
         "Robots terrestres (Roboteam) — Robobotics,": "Ground robots (Roboteam) — Robobotics,",
         "Bioréacteur de culture cellulaire — Habin Zhang,": "Cell-culture bioreactor — Habin Zhang,",
         "Microcontrôleur RP2350 (macro) — Profpcde,": "RP2350 microcontroller (macro) — Profpcde,",
