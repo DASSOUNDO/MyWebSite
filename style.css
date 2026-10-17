@@ -504,6 +504,19 @@ dd {
     text-decoration: none;
 }
 
+.menu-flag {
+    display: inline-grid;
+    place-items: center;
+    min-width: 28px;
+    padding: 2px 6px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-radius: 6px;
+}
+
 .reco-menu i {
     color: var(--warn);
 }

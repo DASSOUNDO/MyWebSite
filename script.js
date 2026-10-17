@@ -178,36 +178,28 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!e.target.closest('.logo-wrap')) closePreviews();
     });
 
-    // Menu des recommandations
-    const recoToggle = document.getElementById('reco-toggle');
-    const recoMenu = document.getElementById('reco-menu');
-    const setReco = open => {
-        recoMenu.hidden = !open;
-        recoToggle.setAttribute('aria-expanded', String(open));
+    // Menus déroulants (CV FR/EN, recommandations)
+    const dropdowns = Array.from(document.querySelectorAll('[data-dropdown]')).map(toggle => ({
+        toggle,
+        menu: document.getElementById(toggle.dataset.dropdown)
+    }));
+    const setDropdown = (dd, open) => {
+        dd.menu.hidden = !open;
+        dd.toggle.setAttribute('aria-expanded', String(open));
     };
-    recoToggle.addEventListener('click', e => {
-        e.stopPropagation();
-        setReco(recoMenu.hidden);
+    const closeDropdowns = except => dropdowns.forEach(dd => { if (dd !== except) setDropdown(dd, false); });
+    dropdowns.forEach(dd => {
+        dd.toggle.addEventListener('click', e => {
+            e.stopPropagation();
+            closeDropdowns(dd);
+            setDropdown(dd, dd.menu.hidden);
+        });
     });
     document.addEventListener('click', e => {
-        if (!recoMenu.hidden && !recoMenu.contains(e.target)) setReco(false);
+        dropdowns.forEach(dd => { if (!dd.menu.hidden && !dd.menu.contains(e.target)) setDropdown(dd, false); });
     });
     document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') { setReco(false); closeMenu(); closePreviews(); }
-    });
-
-    // Téléchargement du CV académique dans la langue affichée
-    document.querySelectorAll('.download-btn[data-type="cv"]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const file = currentLang === 'en' ? 'CV_These_DASSOUNDO_EN.pdf' : 'CV_These_DASSOUNDO.pdf';
-            const link = document.createElement('a');
-            link.href = `cv/${file}`;
-            link.download = file;
-            link.target = '_blank';
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-        });
+        if (e.key === 'Escape') { closeDropdowns(); closeMenu(); closePreviews(); }
     });
 
     // Traductions

@@ -28,7 +28,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=13">
+    <link rel="stylesheet" href="style.css?v=14">
 </head>
 <body>
     <a class="skip-link" href="#contenu" data-lang="skip-link">Aller au contenu</a>
@@ -87,12 +87,19 @@
                 </p>
 
                 <div class="hero-buttons">
-                    <button class="btn btn-primary download-btn" data-type="cv" type="button">
-                        <i class="fas fa-download"></i>
-                        <span data-lang="btn-download-cv">Télécharger CV (PDF)</span>
-                    </button>
                     <div class="reco-wrapper">
-                        <button class="btn btn-secondary" id="reco-toggle" type="button" aria-expanded="false" aria-controls="reco-menu">
+                        <button class="btn btn-primary" id="cv-toggle" type="button" aria-expanded="false" aria-controls="cv-menu" data-dropdown="cv-menu">
+                            <i class="fas fa-download"></i>
+                            <span data-lang="btn-download-cv">Télécharger CV (PDF)</span>
+                            <i class="fas fa-chevron-down btn-caret"></i>
+                        </button>
+                        <div class="reco-menu" id="cv-menu" hidden>
+                            <a href="cv/CV_These_DASSOUNDO.pdf" download><span class="menu-flag">FR</span> CV en français</a>
+                            <a href="cv/CV_These_DASSOUNDO_EN.pdf" download><span class="menu-flag">EN</span> CV in English</a>
+                        </div>
+                    </div>
+                    <div class="reco-wrapper">
+                        <button class="btn btn-secondary" id="reco-toggle" type="button" aria-expanded="false" aria-controls="reco-menu" data-dropdown="reco-menu">
                             <i class="fas fa-envelope-open-text"></i>
                             <span data-lang="btn-download-Recommendation">Recommandations (PDF)</span>
                             <i class="fas fa-chevron-down btn-caret"></i>
@@ -1164,7 +1171,8 @@
                     <p data-lang="contact-text">Ouvert aux opportunités de doctorat (Ph.D.) en IA agentique, systèmes multi-agents et aide à la décision. Références académiques et industrielles disponibles sur demande.</p>
                     <div class="hero-buttons">
                         <a class="btn btn-primary" href="mailto:sergiodassoundo2@gmail.com"><i class="fas fa-envelope"></i> sergiodassoundo2@gmail.com</a>
-                        <button class="btn btn-secondary download-btn" data-type="cv" type="button"><i class="fas fa-download"></i> <span data-lang="btn-download-cv">Télécharger CV (PDF)</span></button>
+                        <a class="btn btn-secondary" href="cv/CV_These_DASSOUNDO.pdf" download><i class="fas fa-download"></i> CV (FR)</a>
+                        <a class="btn btn-secondary" href="cv/CV_These_DASSOUNDO_EN.pdf" download><i class="fas fa-download"></i> CV (EN)</a>
                     </div>
                 </div>
                 <ul class="contact-list">
@@ -1226,6 +1234,6 @@
     </div>
 
     <script src="i18n-en.js?v=1"></script>
-    <script src="script.js?v=10"></script>
+    <script src="script.js?v=11"></script>
 </body>
 </html>
