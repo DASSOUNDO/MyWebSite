@@ -28,8 +28,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Thème clair / sombre
     const themeBtn = document.querySelector('.theme-toggle');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-    const isDark = () => (root.getAttribute('data-theme') || (prefersDark.matches ? 'dark' : 'light')) === 'dark';
+    // Clair par défaut : le sombre ne s'active que sur choix du visiteur (mémorisé)
+    const isDark = () => root.getAttribute('data-theme') === 'dark';
     const syncThemeIcon = () => {
         themeBtn.querySelector('i').className = isDark() ? 'fas fa-sun' : 'fas fa-moon';
     };
@@ -40,7 +40,6 @@ document.addEventListener('DOMContentLoaded', function() {
         storage.set('preferred-theme', next);
         syncThemeIcon();
     });
-    prefersDark.addEventListener('change', syncThemeIcon);
     syncThemeIcon();
 
     // Scroll : barre de progression, navbar, retour en haut, lien actif
