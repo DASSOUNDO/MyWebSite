@@ -261,6 +261,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'interests-title': 'Centres d’intérêt',
             'contact-title': 'Contact',
             'contact-text': 'Ouvert aux opportunités de doctorat (Ph.D.) en IA agentique, systèmes multi-agents et aide à la décision. Références académiques et industrielles disponibles sur demande.',
+            'skip-link': 'Aller au contenu',
             'footer-rights': 'Tous droits réservés.',
             'photo-credits': 'Crédits photos',
             'footer-dev': 'Site conçu et développé par moi-même — code source sur'
@@ -314,6 +315,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'interests-title': 'Interests',
             'contact-title': 'Contact',
             'contact-text': 'Open to Ph.D. opportunities in agentic AI, multi-agent systems and decision support. Academic and industry references available on request.',
+            'skip-link': 'Skip to content',
             'footer-rights': 'All rights reserved.',
             'photo-credits': 'Photo credits',
             'footer-dev': 'Designed and built by me — source code on'

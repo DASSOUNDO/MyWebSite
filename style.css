@@ -10,20 +10,20 @@
     --surface-2: #f3f6fb;
     --text: #0b1220;
     --text-2: #3c4a60;
-    --muted: #64748b;
+    --muted: #526077;
     --border: #e1e7f0;
-    --accent: #2563eb;
+    --accent: #1d4ed8;
     --accent-soft: rgba(37, 99, 235, 0.08);
     --accent-line: rgba(37, 99, 235, 0.35);
     --btn-bg: #2563eb;
     --btn-bg-hover: #1d4ed8;
     --on-accent: #ffffff;
-    --ok: #059669;
+    --ok: #047857;
     --ok-soft: rgba(5, 150, 105, 0.1);
     --warn: #c2410c;
     --warn-soft: rgba(194, 65, 12, 0.08);
     --nav-bg: rgba(255, 255, 255, 0.68);
-    --glass-bg: rgba(255, 255, 255, 0.6);
+    --glass-bg: rgba(255, 255, 255, 0.74);
     --glass-bg-strong: rgba(255, 255, 255, 0.82);
     --glass-edge: rgba(15, 23, 42, 0.08);
     --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.9);
@@ -63,7 +63,7 @@
         --warn: #fb923c;
         --warn-soft: rgba(251, 146, 60, 0.12);
         --nav-bg: rgba(10, 16, 29, 0.62);
-        --glass-bg: rgba(18, 27, 46, 0.55);
+        --glass-bg: rgba(18, 27, 46, 0.68);
         --glass-bg-strong: rgba(18, 27, 46, 0.82);
         --glass-edge: rgba(255, 255, 255, 0.08);
         --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.06);
@@ -96,7 +96,7 @@
     --warn: #fb923c;
     --warn-soft: rgba(251, 146, 60, 0.12);
     --nav-bg: rgba(10, 16, 29, 0.62);
-    --glass-bg: rgba(18, 27, 46, 0.55);
+    --glass-bg: rgba(18, 27, 46, 0.68);
     --glass-bg-strong: rgba(18, 27, 46, 0.82);
     --glass-edge: rgba(255, 255, 255, 0.08);
     --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.06);
@@ -127,7 +127,7 @@ html {
 body {
     font-family: var(--font-body);
     font-size: 16px;
-    line-height: 1.65;
+    line-height: 1.7;
     color: var(--text);
     background: var(--bg);
     -webkit-font-smoothing: antialiased;
@@ -190,6 +190,43 @@ body::before {
         radial-gradient(40vw 40vw at 8% 18%, var(--halo-1), transparent 70%),
         radial-gradient(36vw 36vw at 92% 42%, var(--halo-2), transparent 70%),
         radial-gradient(44vw 44vw at 30% 92%, var(--halo-3), transparent 70%);
+}
+
+/* ---------- Lisibilité ---------- */
+
+h2,
+.section-intro {
+    text-wrap: balance;
+}
+
+p,
+li,
+dd {
+    text-wrap: pretty;
+}
+
+::selection {
+    background: rgba(37, 99, 235, 0.22);
+    color: inherit;
+}
+
+.skip-link {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 2000;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: var(--btn-bg);
+    color: var(--on-accent);
+    font-weight: 600;
+    transform: translateY(-160%);
+    transition: transform 0.2s ease;
+}
+
+.skip-link:focus {
+    transform: none;
+    text-decoration: none;
 }
 
 /* ---------- Scroll progress ---------- */
@@ -545,11 +582,11 @@ body::before {
 }
 
 .hero-subtitle {
-    font-family: var(--font-mono);
-    font-size: 0.82rem;
-    color: var(--muted);
+    font-size: 0.98rem;
+    font-weight: 500;
+    color: var(--text-2);
     margin-bottom: 18px;
-    line-height: 1.7;
+    line-height: 1.6;
 }
 
 .hero-description {
@@ -697,7 +734,7 @@ body::before {
 }
 
 .fact-label {
-    font-size: 0.86rem;
+    font-size: 0.92rem;
     color: var(--muted);
     line-height: 1.5;
 }
@@ -747,7 +784,7 @@ body::before {
     display: inline-flex;
     align-items: center;
     padding: 3px 10px;
-    font-size: 0.74rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: var(--accent);
     background: var(--accent-soft);
@@ -768,7 +805,7 @@ body::before {
 }
 
 .tag {
-    font-size: 0.76rem;
+    font-size: 0.82rem;
     font-weight: 500;
     color: var(--text-2);
     padding: 3px 9px;
@@ -837,9 +874,9 @@ body::before {
 .project-content li {
     position: relative;
     padding-left: 16px;
-    font-size: 0.9rem;
+    font-size: 0.98rem;
     color: var(--text-2);
-    line-height: 1.55;
+    line-height: 1.6;
 }
 
 .axis-card li::before,
@@ -865,13 +902,13 @@ body::before {
 .axis-proof {
     margin-top: auto;
     padding-top: 18px;
-    font-size: 0.82rem;
+    font-size: 0.88rem;
     color: var(--muted);
 }
 
 .axis-proof span {
     font-family: var(--font-mono);
-    font-size: 0.74rem;
+    font-size: 0.78rem;
     text-transform: uppercase;
     letter-spacing: 0.04em;
 }
@@ -899,7 +936,7 @@ body::before {
 
 .diagram-label {
     font-family: var(--font-mono);
-    font-size: 0.74rem;
+    font-size: 0.78rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--accent);
@@ -1225,12 +1262,12 @@ body::before {
 
 .preview-sector {
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: 0.78rem;
     color: var(--accent);
 }
 
 .preview-body p {
-    font-size: 0.86rem;
+    font-size: 0.92rem;
     line-height: 1.5;
     color: var(--text-2);
 }
@@ -1460,20 +1497,20 @@ body::before {
     align-items: center;
     gap: 8px;
     font-family: var(--font-mono);
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     color: var(--muted);
     white-space: nowrap;
 }
 
 .exp-org {
-    font-size: 0.88rem;
+    font-size: 0.94rem;
     font-weight: 500;
     color: var(--accent);
     margin-top: 2px;
 }
 
 .exp-body p:not(.exp-org) {
-    font-size: 0.9rem;
+    font-size: 0.98rem;
     color: var(--text-2);
     margin-top: 6px;
 }
@@ -1489,7 +1526,7 @@ body::before {
 
 .filter-chip {
     padding: 8px 16px;
-    font-size: 0.86rem;
+    font-size: 0.9rem;
     font-weight: 500;
     color: var(--text-2);
     background: var(--surface);
@@ -1544,7 +1581,7 @@ body::before {
     flex-wrap: wrap;
     gap: 10px;
     font-family: var(--font-mono);
-    font-size: 0.76rem;
+    font-size: 0.8rem;
     color: var(--muted);
 }
 
@@ -1559,7 +1596,7 @@ body::before {
 }
 
 .project-summary {
-    font-size: 0.92rem;
+    font-size: 1rem;
     color: var(--text-2);
 }
 
@@ -1698,7 +1735,7 @@ body::before {
 }
 
 .skill-tag {
-    font-size: 0.82rem;
+    font-size: 0.88rem;
     font-weight: 500;
     color: var(--text);
     padding: 5px 11px;
@@ -1717,7 +1754,7 @@ body::before {
     display: flex;
     align-items: center;
     gap: 12px;
-    font-size: 0.88rem;
+    font-size: 0.93rem;
     color: var(--text);
     line-height: 1.4;
 }
@@ -1736,7 +1773,7 @@ body::before {
 .cert-list em {
     display: block;
     font-style: normal;
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     color: var(--muted);
 }
 
@@ -1821,13 +1858,13 @@ body::before {
 }
 
 .tech-category dt {
-    font-size: 0.84rem;
+    font-size: 0.92rem;
     font-weight: 600;
     color: var(--text);
 }
 
 .tech-category dd {
-    font-size: 0.8rem;
+    font-size: 0.88rem;
     color: var(--muted);
     margin-bottom: 8px;
 }
@@ -1849,7 +1886,7 @@ body::before {
 
 .edu-year {
     font-family: var(--font-mono);
-    font-size: 0.82rem;
+    font-size: 0.86rem;
     color: var(--accent);
     padding-top: 22px;
     text-align: right;
@@ -1869,14 +1906,14 @@ body::before {
 }
 
 .edu-track {
-    font-size: 0.92rem;
+    font-size: 0.98rem;
     font-weight: 500;
     color: var(--accent);
     margin-top: 2px;
 }
 
 .edu-school {
-    font-size: 0.86rem;
+    font-size: 0.9rem;
     color: var(--muted);
     margin: 6px 0 8px;
 }
@@ -1886,7 +1923,7 @@ body::before {
 }
 
 .edu-card p:last-child {
-    font-size: 0.9rem;
+    font-size: 0.98rem;
     color: var(--text-2);
 }
 
