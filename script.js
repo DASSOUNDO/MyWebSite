@@ -324,12 +324,66 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let currentLang = 'fr';
 
+    // Traduction du contenu : chaque nœud texte et attribut garde son original français,
+    // remplacé par l'anglais de I18N_EN (i18n-en.js) puis restauré au retour en FR.
+    const originalText = new WeakMap();
+    const originalAttrs = new WeakMap();
+    const originalMeta = {
+        title: document.title,
+        description: document.querySelector('meta[name="description"]').content
+    };
+    const TRANSLATED_ATTRS = ['aria-label', 'title', 'placeholder', 'alt'];
+
+    function translateContent(lang) {
+        const dict = typeof I18N_EN !== 'undefined' ? I18N_EN : null;
+        if (!dict) return;
+        const toEn = lang === 'en';
+
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+        let node;
+        while ((node = walker.nextNode())) {
+            const parent = node.parentElement;
+            if (!parent || parent.closest('script, style, [data-lang]')) continue;
+            if (!originalText.has(node)) {
+                // Un nœud créé pendant que l'anglais est affiché (ex. chatbot) est déjà dans la bonne langue
+                if (!toEn) continue;
+                originalText.set(node, node.textContent);
+            }
+            const original = originalText.get(node);
+            const key = original.replace(/\s+/g, ' ').trim();
+            const en = toEn && dict.text[key];
+            if (en) {
+                const lead = original.match(/^\s*/)[0];
+                const trail = original.match(/\s*$/)[0];
+                node.textContent = lead + en + trail;
+            } else {
+                node.textContent = original;
+            }
+        }
+
+        document.querySelectorAll(TRANSLATED_ATTRS.map(a => `[${a}]`).join(',')).forEach(el => {
+            if (!originalAttrs.has(el)) {
+                const saved = {};
+                TRANSLATED_ATTRS.forEach(a => { if (el.hasAttribute(a)) saved[a] = el.getAttribute(a); });
+                originalAttrs.set(el, saved);
+            }
+            const saved = originalAttrs.get(el);
+            Object.entries(saved).forEach(([a, value]) => {
+                el.setAttribute(a, (toEn && dict.attr[value]) || value);
+            });
+        });
+
+        document.title = toEn ? dict.meta.title : originalMeta.title;
+        document.querySelector('meta[name="description"]').content = toEn ? dict.meta.description : originalMeta.description;
+    }
+
     function changeLanguage(newLang) {
         if (!translations[newLang]) return;
         document.body.classList.add('lang-switching');
 
         setTimeout(() => {
             currentLang = newLang;
+            translateContent(currentLang);
             document.querySelectorAll('[data-lang]').forEach(element => {
                 const value = translations[currentLang][element.getAttribute('data-lang')];
                 if (value) element.textContent = value;
