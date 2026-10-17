@@ -1471,7 +1471,7 @@ button {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px;
-    align-items: start;
+    align-items: stretch;
 }
 
 .project-card,
@@ -1519,6 +1519,17 @@ button {
 .project-summary {
     font-size: 0.92rem;
     color: var(--text-2);
+}
+
+/* Tags et « Détails » alignés en bas de chaque carte d'une même rangée */
+.project-card > .project-tags,
+.research-card > .project-tags {
+    margin-top: auto;
+    padding-top: 4px;
+}
+
+.project-card.open > .project-tags {
+    margin-top: 0;
 }
 
 .project-link {
@@ -1607,7 +1618,7 @@ button {
     display: grid;
     grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
     gap: 20px;
-    align-items: start;
+    align-items: stretch;
 }
 
 .skill-groups {
@@ -1687,11 +1698,18 @@ button {
     color: var(--muted);
 }
 
+.certs-card {
+    display: flex;
+    flex-direction: column;
+}
+
 .certs-more {
+    margin-top: auto;
+    padding-top: 18px;
+    width: fit-content;
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    margin-top: 18px;
     font-size: 0.86rem;
     font-weight: 600;
 }
