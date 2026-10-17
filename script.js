@@ -523,9 +523,9 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             id: 'interests',
             bonus: 4,
-            keywords: ['interet', 'interets', 'hobby', 'hobbies', 'loisir', 'loisirs', 'passion', 'sport', 'aeronautique', 'automobile', 'voyage', 'humanitaire'],
-            fr: `Ses centres d'intérêt : <strong>Sport, Automobile, Aéronautique, Humanitaire et Voyage</strong>. <br><br>👉 ${link('interets', "Voir ses centres d'intérêt")}`,
-            en: `His interests: <strong>Sport, Automotive, Aeronautics, Humanitarian work and Travel</strong>. <br><br>👉 ${link('interets', "View his interests")}`
+            keywords: ['interet', 'interets', 'hobby', 'hobbies', 'loisir', 'loisirs', 'passion', 'sport', 'veille', 'voyage', 'humanitaire'],
+            fr: `Ses centres d'intérêt : <strong>Sport, Veille IA, Humanitaire et Voyage</strong>. <br><br>👉 ${link('interets', "Voir ses centres d'intérêt")}`,
+            en: `His interests: <strong>Sport, AI watch, Humanitarian work and Travel</strong>. <br><br>👉 ${link('interets', "View his interests")}`
         },
         {
             id: 'contact',
