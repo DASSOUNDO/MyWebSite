@@ -70,20 +70,63 @@ document.addEventListener('DOMContentLoaded', function() {
 
     backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-    // Apparition au scroll
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Compteur animé des chiffres clés (« 6 · 7 » compte chaque nombre)
+    const countUp = el => {
+        const target = el.textContent;
+        if (reduceMotion || !/\d/.test(target) || /[A-Za-z]/.test(target)) return;
+        const start = performance.now();
+        const duration = 1200;
+        const tick = now => {
+            const t = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - t, 3);
+            el.textContent = target.replace(/\d+/g, n => Math.round(Number(n) * eased));
+            if (t < 1) requestAnimationFrame(tick);
+            else el.textContent = target;
+        };
+        requestAnimationFrame(tick);
+    };
+
+    // Cascade : chaque carte d'une même grille arrive un peu après la précédente
     const reveals = document.querySelectorAll('.reveal');
+    reveals.forEach(el => {
+        const siblings = Array.from(el.parentElement.children).filter(c => c.classList.contains('reveal'));
+        const delay = Math.min(siblings.indexOf(el), 6) * 80;
+        if (delay) {
+            el.style.transitionDelay = `${delay}ms`;
+            // Le délai ne doit pas ralentir les effets de survol ensuite
+            el.addEventListener('transitionend', () => { el.style.transitionDelay = ''; }, { once: true });
+        }
+    });
+
+    const kickers = document.querySelectorAll('.section-kicker');
     if ('IntersectionObserver' in window) {
         const observer = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('is-visible');
+                    entry.target.querySelectorAll('.fact-value').forEach(countUp);
                     observer.unobserve(entry.target);
                 }
             });
         }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
         reveals.forEach(el => observer.observe(el));
+        kickers.forEach(el => observer.observe(el));
     } else {
         reveals.forEach(el => el.classList.add('is-visible'));
+        kickers.forEach(el => el.classList.add('is-visible'));
+    }
+
+    // Reflet qui suit la souris sur les cartes en verre
+    if (!reduceMotion) {
+        document.querySelectorAll('.axis-card, .project-card, .research-card, .leader-card, .skill-group').forEach(card => {
+            card.addEventListener('pointermove', e => {
+                const r = card.getBoundingClientRect();
+                card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+                card.style.setProperty('--my', `${e.clientY - r.top}px`);
+            });
+        });
     }
 
     // Cartes projets dépliables

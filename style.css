@@ -2265,6 +2265,146 @@ body.lang-switching [data-lang] {
     color: var(--on-accent);
 }
 
+/* ---------- Animations discrètes ---------- */
+
+/* Entrée du hero en cascade */
+.js .hero-text > *,
+.js .hero-image {
+    animation: hero-in 0.8s var(--ease) both;
+}
+
+.js .hero-text > :nth-child(1) { animation-delay: 0.05s; }
+.js .hero-text > :nth-child(2) { animation-delay: 0.15s; }
+.js .hero-text > :nth-child(3) { animation-delay: 0.25s; }
+.js .hero-text > :nth-child(4) { animation-delay: 0.33s; }
+.js .hero-text > :nth-child(5) { animation-delay: 0.41s; }
+.js .hero-text > :nth-child(6) { animation-delay: 0.49s; }
+.js .hero-image { animation-delay: 0.2s; }
+
+@keyframes hero-in {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: none; }
+}
+
+/* Badges de la photo qui flottent */
+.hero-badge-top { animation: badge-float 5s ease-in-out infinite alternate; }
+.hero-badge-bottom { animation: badge-float 5s ease-in-out -2.5s infinite alternate; }
+
+@keyframes badge-float {
+    from { transform: translateY(0); }
+    to { transform: translateY(-6px); }
+}
+
+/* Point « candidat » qui pulse */
+.status-dot {
+    animation: status-pulse 2.4s ease-out infinite;
+}
+
+@keyframes status-pulse {
+    0% { box-shadow: 0 0 0 0 var(--ok-soft), 0 0 0 0 rgba(5, 150, 105, 0.35); }
+    70% { box-shadow: 0 0 0 4px var(--ok-soft), 0 0 0 10px rgba(5, 150, 105, 0); }
+    100% { box-shadow: 0 0 0 4px var(--ok-soft), 0 0 0 10px rgba(5, 150, 105, 0); }
+}
+
+/* Halos du fond qui dérivent lentement */
+body::before {
+    animation: halo-drift 40s ease-in-out infinite alternate;
+}
+
+@keyframes halo-drift {
+    from { transform: translate3d(0, 0, 0) scale(1); }
+    to { transform: translate3d(-2%, -3%, 0) scale(1.06); }
+}
+
+/* Reflet qui suit la souris sur les cartes en verre */
+.axis-card,
+.project-card,
+.research-card,
+.leader-card,
+.skill-group {
+    position: relative;
+}
+
+.axis-card::after,
+.project-card::after,
+.research-card::after,
+.leader-card::after,
+.skill-group::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 50%), var(--accent-soft), transparent 65%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.axis-card:hover::after,
+.project-card:hover::after,
+.research-card:hover::after,
+.leader-card:hover::after,
+.skill-group:hover::after {
+    opacity: 1;
+}
+
+/* Icônes des axes : léger rebond au survol */
+.axis-icon {
+    transition: transform 0.35s var(--ease);
+}
+
+.axis-card:hover .axis-icon,
+.leader-card:hover .axis-icon {
+    transform: translateY(-2px) rotate(-6deg) scale(1.06);
+}
+
+/* Schéma : flux qui circulent et nœuds clés qui respirent */
+.diagram.is-visible .d-line:not(.d-dashed) {
+    stroke-dasharray: 6 6;
+    animation: d-flow 1.2s linear infinite;
+}
+
+.diagram.is-visible .d-dashed {
+    animation: d-flow 2.4s linear infinite;
+}
+
+.diagram.is-visible .d-accent {
+    animation: d-breathe 2.8s ease-in-out infinite;
+}
+
+@keyframes d-flow {
+    to { stroke-dashoffset: -24; }
+}
+
+@keyframes d-breathe {
+    0%, 100% { stroke-width: 1.5; stroke-opacity: 1; }
+    50% { stroke-width: 6; stroke-opacity: 0.35; }
+}
+
+/* Soulignement du numéro de section qui se dessine */
+.section-kicker {
+    position: relative;
+    border-bottom-color: transparent;
+}
+
+.section-kicker::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 2px;
+    width: 100%;
+    background: var(--accent);
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: transform 0.8s var(--ease) 0.15s;
+}
+
+.section-kicker.is-visible::after,
+html:not(.js) .section-kicker::after {
+    transform: scaleX(1);
+}
+
 /* ---------- Effet verre : surfaces ---------- */
 
 .axis-card,
