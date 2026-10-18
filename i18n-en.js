@@ -31,6 +31,7 @@ const I18N_EN = {
     text: {
         "Recommandation 1": "Recommendation 1",
         "Recommandation 2": "Recommendation 2",
+        "Recommandation 3": "Recommendation 3",
         "Embarqué · Cybersécurité": "Embedded · Cybersecurity",
         "Systèmes multi-agents & IA distribuée": "Multi-agent systems & distributed AI",
         "Coordination & arbitrage entre agents :": "Agent coordination & arbitration:",
