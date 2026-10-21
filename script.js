@@ -253,6 +253,11 @@ document.addEventListener('DOMContentLoaded', function() {
             'contact-title': 'Contact',
             'contact-text': 'Ouvert aux opportunités de doctorat (Ph.D.) en IA agentique, systèmes multi-agents et aide à la décision. Références académiques et industrielles disponibles sur demande.',
             'skip-link': 'Aller au contenu',
+            'kbd-esc': 'Échap',
+            'kbd-enter': 'Entrée',
+            'search-nav': 'naviguer',
+            'search-go': 'ouvrir',
+            'search-close': 'fermer',
             'footer-rights': 'Tous droits réservés.',
             'photo-credits': 'Crédits photos',
             'footer-dev': 'Site conçu et développé par moi-même — code source sur'
@@ -307,6 +312,11 @@ document.addEventListener('DOMContentLoaded', function() {
             'contact-title': 'Contact',
             'contact-text': 'Open to Ph.D. opportunities in agentic AI, multi-agent systems and decision support. Academic and industry references available on request.',
             'skip-link': 'Skip to content',
+            'kbd-esc': 'Esc',
+            'kbd-enter': 'Enter',
+            'search-nav': 'navigate',
+            'search-go': 'open',
+            'search-close': 'close',
             'footer-rights': 'All rights reserved.',
             'photo-credits': 'Photo credits',
             'footer-dev': 'Designed and built by me — source code on'
@@ -690,4 +700,256 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Suggestions de sujets dès l'ouverture du chat
     addSuggestions();
+});
+
+// Recherche dans le portfolio (Ctrl/Cmd + K ou « / »)
+document.addEventListener('DOMContentLoaded', () => {
+    const overlay = document.getElementById('search-overlay');
+    const input = document.getElementById('search-input');
+    const list = document.getElementById('search-results');
+    const openBtn = document.getElementById('search-open');
+    const closeBtn = document.getElementById('search-close');
+    if (!overlay || !input || !list) return;
+
+    const lang = () => (typeof window.getCurrentLanguage === 'function' ? window.getCurrentLanguage() : 'fr');
+    // Même longueur que le texte d'origine : les indices trouvés s'appliquent directement à l'original
+    const fold = str => str.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().normalize('NFC');
+    const foldSameLength = str => Array.from(str).map(ch => {
+        const f = fold(ch);
+        return f.length === 1 ? f : ch.toLowerCase();
+    }).join('');
+    const escapeHtml = str => str.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    const UNITS = '.axis-card, .diagram, .exp-item, .project-card, .research-card, .skill-group, .certs-card, .tech-category, .edu-item, .leader-card, .extras-card, .contact-card, .key-facts li';
+    const SUGGESTIONS = ['LangGraph', 'RAG', 'ROS2', 'Citiz', 'Renault', 'Sherbrooke', 'FastAPI', 'Power BI'];
+
+    let results = [];
+    let active = 0;
+    let lastFocus = null;
+
+    const sectionName = el => {
+        const section = el.closest('section');
+        const title = section && section.querySelector('.section-title');
+        if (title) return title.textContent.trim();
+        return lang() === 'en' ? 'Home' : 'Accueil';
+    };
+    const titleOf = el => {
+        const h = el.querySelector('h3, h4, .fact-value, figcaption strong, .section-title');
+        return (h ? h.textContent : el.textContent).replace(/\s+/g, ' ').trim().slice(0, 110);
+    };
+
+    // Texte d'un bloc, avec un espace entre éléments voisins (« Sherbrooke 2025 » et non « Sherbrooke2025 »)
+    const textOf = el => {
+        const parts = [];
+        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+        let node;
+        while ((node = walker.nextNode())) parts.push(node.textContent);
+        return parts.join(' ').replace(/\s+/g, ' ').trim();
+    };
+
+    function search(query) {
+        const terms = fold(query).split(/\s+/).filter(t => t.length > 0);
+        if (!terms.length) return [];
+        const found = [];
+        document.querySelectorAll(UNITS).forEach(el => {
+            const text = textOf(el);
+            const folded = foldSameLength(text);
+            if (!terms.every(t => folded.includes(t))) return;
+            const title = titleOf(el);
+            const foldedTitle = fold(title);
+            let score = 0;
+            terms.forEach(t => {
+                score += folded.split(t).length - 1;
+                if (foldedTitle.includes(t)) score += 6;
+            });
+            found.push({ el, text, folded, title, section: sectionName(el), score, terms });
+        });
+        return found.sort((a, b) => b.score - a.score).slice(0, 12);
+    }
+
+    // Extrait autour de la première occurrence, avec les termes surlignés
+    function snippet(r) {
+        const first = Math.min(...r.terms.map(t => r.folded.indexOf(t)).filter(i => i >= 0));
+        let start = Math.max(0, first - 60);
+        let end = Math.min(r.text.length, first + 120);
+        // Commencer et finir sur des mots entiers
+        if (start > 0) {
+            const space = r.text.indexOf(' ', start);
+            if (space !== -1 && space < first) start = space + 1;
+        }
+        if (end < r.text.length) {
+            const space = r.text.lastIndexOf(' ', end);
+            if (space > first) end = space;
+        }
+        const piece = r.text.slice(start, end);
+        const foldedPiece = r.folded.slice(start, end);
+        const marks = [];
+        r.terms.forEach(t => {
+            let i = foldedPiece.indexOf(t);
+            while (i >= 0) { marks.push([i, i + t.length]); i = foldedPiece.indexOf(t, i + t.length); }
+        });
+        marks.sort((a, b) => a[0] - b[0]);
+        let html = '', pos = 0;
+        marks.forEach(([a, b]) => {
+            if (a < pos) return;
+            html += escapeHtml(piece.slice(pos, a)) + '<mark>' + escapeHtml(piece.slice(a, b)) + '</mark>';
+            pos = b;
+        });
+        html += escapeHtml(piece.slice(pos));
+        return (start > 0 ? '… ' : '') + html + (end < r.text.length ? ' …' : '');
+    }
+
+    function render() {
+        const q = input.value.trim();
+        list.innerHTML = '';
+        if (!q) {
+            const li = document.createElement('li');
+            li.className = 'search-empty';
+            li.innerHTML = `<span>${lang() === 'en' ? 'Try for example:' : 'Essayez par exemple :'}</span>`;
+            SUGGESTIONS.forEach(word => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'search-suggestion';
+                b.textContent = word;
+                b.addEventListener('click', () => { input.value = word; update(); input.focus(); });
+                li.appendChild(b);
+            });
+            list.appendChild(li);
+            results = [];
+            return;
+        }
+        results = search(q);
+        active = 0;
+        if (!results.length) {
+            const li = document.createElement('li');
+            li.className = 'search-empty';
+            li.textContent = lang() === 'en' ? `No results for “${q}”.` : `Aucun résultat pour « ${q} ».`;
+            list.appendChild(li);
+            return;
+        }
+        results.forEach((r, i) => {
+            const li = document.createElement('li');
+            li.className = 'search-result';
+            li.id = `search-result-${i}`;
+            li.setAttribute('role', 'option');
+            li.innerHTML = `<span class="search-section">${escapeHtml(r.section)}</span>
+                <span class="search-title">${escapeHtml(r.title)}</span>
+                <span class="search-snippet">${snippet(r)}</span>`;
+            li.addEventListener('click', () => go(i));
+            li.addEventListener('mousemove', () => setActive(i));
+            list.appendChild(li);
+        });
+        setActive(0);
+    }
+
+    function setActive(i) {
+        active = i;
+        list.querySelectorAll('.search-result').forEach((li, j) => {
+            li.classList.toggle('active', j === i);
+            li.setAttribute('aria-selected', String(j === i));
+        });
+        const el = document.getElementById(`search-result-${i}`);
+        if (el) {
+            input.setAttribute('aria-activedescendant', el.id);
+            el.scrollIntoView({ block: 'nearest' });
+        }
+    }
+
+    let timer;
+    const update = () => { clearTimeout(timer); timer = setTimeout(render, 80); };
+
+    // Surlignage des mots trouvés dans la page (CSS Custom Highlight API si disponible)
+    let clearTimer;
+    function highlightInPage(el, terms) {
+        if (!('highlights' in CSS) || typeof Highlight === 'undefined') return;
+        const ranges = [];
+        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+        let node;
+        while ((node = walker.nextNode())) {
+            if (node.parentElement.closest('.company-preview')) continue;
+            const folded = foldSameLength(node.textContent);
+            terms.forEach(t => {
+                let i = folded.indexOf(t);
+                while (i >= 0) {
+                    const range = new Range();
+                    range.setStart(node, i);
+                    range.setEnd(node, i + t.length);
+                    ranges.push(range);
+                    i = folded.indexOf(t, i + t.length);
+                }
+            });
+        }
+        CSS.highlights.set('search-hit', new Highlight(...ranges));
+        clearTimeout(clearTimer);
+        clearTimer = setTimeout(() => CSS.highlights.delete('search-hit'), 6000);
+    }
+
+    function reveal(el) {
+        // Projet masqué par un filtre : revenir à « Tous »
+        if (el.classList.contains('is-hidden')) {
+            const all = document.querySelector('.filter-chip[data-filter="all"]');
+            if (all) all.click();
+        }
+        const details = el.closest('details');
+        if (details) details.open = true;
+        el.classList.add('is-visible');
+    }
+
+    function go(i) {
+        const r = results[i];
+        if (!r) return;
+        close(false);
+        reveal(r.el);
+        // Ouvre les détails d'un projet si le mot n'est pas déjà visible dans son résumé
+        const toggle = r.el.querySelector('.project-toggle');
+        const content = r.el.querySelector('.project-content');
+        if (toggle && content && !r.el.classList.contains('open')) {
+            const inDetails = r.terms.some(t => foldSameLength(content.textContent).includes(t));
+            const visible = foldSameLength(r.el.textContent.replace(content.textContent, ''));
+            if (inDetails && !r.terms.every(t => visible.includes(t))) toggle.click();
+        }
+        const target = r.el.classList.contains('exp-item') ? r.el.querySelector('.exp-body') : r.el;
+        setTimeout(() => {
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            target.classList.remove('search-flash');
+            void target.offsetWidth;
+            target.classList.add('search-flash');
+            highlightInPage(r.el, r.terms);
+        }, 60);
+    }
+
+    function open() {
+        lastFocus = document.activeElement;
+        overlay.hidden = false;
+        document.body.classList.add('search-open');
+        render();
+        requestAnimationFrame(() => { input.focus(); input.select(); });
+    }
+
+    function close(restoreFocus = true) {
+        overlay.hidden = true;
+        document.body.classList.remove('search-open');
+        if (restoreFocus && lastFocus) lastFocus.focus();
+    }
+
+    openBtn.addEventListener('click', open);
+    closeBtn.addEventListener('click', () => close());
+    overlay.addEventListener('mousedown', e => { if (e.target === overlay) close(); });
+    input.addEventListener('input', update);
+    input.addEventListener('keydown', e => {
+        if (e.key === 'ArrowDown' && results.length) { e.preventDefault(); setActive((active + 1) % results.length); }
+        else if (e.key === 'ArrowUp' && results.length) { e.preventDefault(); setActive((active - 1 + results.length) % results.length); }
+        else if (e.key === 'Enter') { e.preventDefault(); go(active); }
+        else if (e.key === 'Escape') { e.preventDefault(); close(); }
+    });
+    document.addEventListener('keydown', e => {
+        const typing = /^(input|textarea|select)$/i.test(document.activeElement.tagName) || document.activeElement.isContentEditable;
+        if ((e.key === 'k' || e.key === 'K') && (e.ctrlKey || e.metaKey)) {
+            e.preventDefault();
+            overlay.hidden ? open() : close();
+        } else if (e.key === '/' && !typing && overlay.hidden) {
+            e.preventDefault();
+            open();
+        }
+    });
 });

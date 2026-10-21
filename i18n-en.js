@@ -25,6 +25,10 @@ const I18N_EN = {
         "Retour en haut": "Back to top",
         "Assistant profil": "Profile assistant",
         "Fermer": "Close",
+        "Rechercher dans le portfolio": "Search the portfolio",
+        "Rechercher (Ctrl + K)": "Search (Ctrl + K)",
+        "Rechercher dans le portfolio…": "Search the portfolio…",
+        "Résultats": "Results",
         "Posez une question...": "Ask a question...",
         "Envoyer": "Send"
     },
