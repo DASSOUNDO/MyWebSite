@@ -1695,6 +1695,12 @@ dd {
     margin-top: 6px;
 }
 
+.research-col {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
 .research-block h4 {
     display: flex;
     align-items: center;
@@ -2631,7 +2637,19 @@ html:not(.js) .section-kicker::after {
 
     .research-cols {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: start;
     }
+
+    .research-col {
+        display: contents;
+    }
+
+    .rb-obj { order: 1; }
+    .rb-model { order: 2; }
+    .rb-dec { order: 3; }
+    .rb-ind { order: 4; }
+    .rb-lim { order: 5; }
+    .rb-also { order: 6; }
 
     .contact-card {
         grid-template-columns: 1fr;
