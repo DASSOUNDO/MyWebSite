@@ -28,7 +28,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=16">
+    <link rel="stylesheet" href="style.css?v=17">
 </head>
 <body>
     <a class="skip-link" href="#contenu" data-lang="skip-link">Aller au contenu</a>
@@ -205,7 +205,7 @@
                         <li><strong>Évaluation expérimentale :</strong> pertinence, fidélité, temps de décision, taux d'erreur vs mono-agent.</li>
                         <li><strong>Cas industriels :</strong> comité IA Yieloo (aéroports, laboratoires d'essai et de calibration).</li>
                     </ul>
-                    <div class="axis-proof"><span data-lang="proof">Mis en pratique :</span> <a href="#recherche">SMA conformité</a> · <a href="#projets">Yieloo</a></div>
+                    <div class="axis-proof"><span data-lang="proof">Mis en pratique :</span> <a href="#recherche">SMA conformité</a> · <a href="#recherche">Citiz</a> · <a href="#projets">Yieloo</a></div>
                 </article>
 
                 <article class="axis-card reveal">
@@ -743,6 +743,66 @@
             </header>
 
             <div class="research-featured">
+                <article class="research-card research-wide reveal">
+                    <div class="project-meta"><span class="badge">Recherche appliquée en IA</span><span>2026</span><span>Epitech · Citiz · Microsoft</span></div>
+                    <h3>Implantation de stations d'autopartage à Rennes : de la prédiction à la décision</h3>
+                    <p class="project-summary">Projet de recherche appliquée en IA · en collaboration avec Epitech · Citiz · Microsoft<br>Équipe de 5 · Rennes Métropole · données ouvertes réelles</p>
+                    <div class="research-cols">
+                        <div class="research-block">
+                            <h4><i class="fas fa-bullseye"></i> Objectif</h4>
+                            <ul>
+                                <li>Aider Citiz, réseau coopératif d'autopartage, à choisir où ouvrir ses prochaines stations.</li>
+                                <li>Un outil d'aide à la décision : valeur de chaque emplacement et meilleure liste d'implantations sous budget.</li>
+                            </ul>
+                        </div>
+                        <div class="research-block">
+                            <h4><i class="fas fa-brain"></i> Modèle prédictif</h4>
+                            <ul>
+                                <li>Sans donnée d'usage : apprentissage supervisé par proxy (station existante à moins de 400 m de chaque carré de 200 m).</li>
+                                <li>16 variables socio-démographiques et d'offre, sans fuite de la cible ni distance au centre.</li>
+                                <li>Validation croisée spatiale (blocs de 2 km), baselines naïves, importance par permutation.</li>
+                                <li>Random forest : AUC de 0,946 pour l'autopartage (baseline : 0,899), 98 % de bons choix dans le top 10 %.</li>
+                                <li>Vélo : pas mieux que la baseline géographique, résultat négatif assumé.</li>
+                            </ul>
+                        </div>
+                        <div class="research-block">
+                            <h4><i class="fas fa-balance-scale"></i> De la prédiction à la décision</h4>
+                            <ul>
+                                <li>Couverture maximale sous budget (algorithme glouton), avec coûts et contraintes d'équité.</li>
+                                <li>500 000 € → 14 stations, près de 43 000 nouveaux habitants desservis, 1,4× mieux qu'une approche naïve, ~138 t de CO₂ évitées par an.</li>
+                                <li>Coût de l'équité : −1,7 % d'habitants, pour deux fois plus de périphérie.</li>
+                            </ul>
+                        </div>
+                        <div class="research-block">
+                            <h4><i class="fas fa-cloud"></i> Industrialisation sur Microsoft Fabric</h4>
+                            <ul>
+                                <li>Un seul notebook : le même pipeline en local et dans Fabric.</li>
+                                <li>Lakehouse et 6 tables Delta écrites avec Spark, dont 4 scénarios × 5 budgets pré-calculés.</li>
+                                <li>Modèle sémantique Direct Lake et rapport Power BI.</li>
+                            </ul>
+                        </div>
+                        <div class="research-block">
+                            <h4><i class="fas fa-flask"></i> Limites et pistes de recherche</h4>
+                            <ul>
+                                <li>Biais hérité des choix passés, proxy imparfait de la demande.</li>
+                                <li>Décision sous incertitude, équité algorithmique.</li>
+                            </ul>
+                        </div>
+                        <div class="research-block">
+                            <h4><i class="fas fa-tools"></i> Également</h4>
+                            <ul>
+                                <li>9 sources open data (GTFS, GBFS, INSEE, OpenStreetMap), accessibilité par habitant (2SFCA).</li>
+                                <li>Application web déployée ; vie privée protégée (seuil de 11 habitants).</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="research-footer">
+                        <div class="project-tags">
+                            <span class="tag">Python</span><span class="tag">scikit-learn</span><span class="tag">GeoPandas</span><span class="tag">Streamlit</span><span class="tag">Microsoft Fabric</span><span class="tag">Spark</span><span class="tag">Power BI</span>
+                        </div>
+                        <a class="project-link" href="https://mobility-rennes.streamlit.app" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> <span data-lang="live-demo">Démo en direct</span></a>
+                    </div>
+                </article>
                 <article class="research-card reveal">
                     <div class="project-meta"><span class="badge badge-live" data-lang="ongoing">En cours · 2026</span><span data-lang="personal-research">Recherche appliquée personnelle</span></div>
                     <h3>Système multi-agents LLM pour l’aide à la décision en conformité réglementaire</h3>
@@ -1235,7 +1295,7 @@
         </div>
     </div>
 
-    <script src="i18n-en.js?v=3"></script>
-    <script src="script.js?v=12"></script>
+    <script src="i18n-en.js?v=4"></script>
+    <script src="script.js?v=13"></script>
 </body>
 </html>

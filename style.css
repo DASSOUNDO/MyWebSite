@@ -1683,6 +1683,62 @@ dd {
     background: linear-gradient(90deg, var(--btn-bg), var(--accent-line));
 }
 
+/* Carte de recherche pleine largeur (projet abouti, plusieurs rubriques) */
+.research-wide {
+    grid-column: 1 / -1;
+}
+
+.research-cols {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px 28px;
+    margin-top: 6px;
+}
+
+.research-block h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.research-block h4 i {
+    flex: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    font-size: 0.8rem;
+    color: var(--accent);
+    background: var(--accent-soft);
+}
+
+.research-block ul {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.research-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 8px;
+    padding-top: 14px;
+    border-top: 1px solid var(--glass-edge);
+}
+
+.research-footer > .project-tags {
+    margin-top: 0;
+    padding-top: 0;
+}
+
 .research-card h3 {
     font-size: 1.2rem;
 }
@@ -2573,6 +2629,10 @@ html:not(.js) .section-kicker::after {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
+    .research-cols {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .contact-card {
         grid-template-columns: 1fr;
         padding: 32px;
@@ -2613,6 +2673,7 @@ html:not(.js) .section-kicker::after {
         margin-top: 6px;
     }
 
+    .research-cols,
     .key-facts,
     .axes-grid,
     .leader-grid,
