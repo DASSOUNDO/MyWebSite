@@ -260,11 +260,15 @@ dd {
 }
 
 .nav-profile-img {
-    width: 32px;
-    height: 32px;
+    flex: none;
+    width: 34px;
+    height: 34px;
+    aspect-ratio: 1;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid var(--border);
+    object-position: center 30%;
+    border: 2px solid var(--surface);
+    box-shadow: 0 0 0 1px var(--border), var(--shadow-sm);
 }
 
 .nav-menu {
