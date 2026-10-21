@@ -2520,8 +2520,17 @@ html:not(.js) .section-kicker::after {
     border-color: var(--accent-line);
 }
 
-.search-kbd,
+.search-kbd {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    white-space: nowrap;
+}
+
+.search-kbd kbd,
 .search-dialog kbd {
+    line-height: 1.4;
+    white-space: nowrap;
     font-family: var(--font-mono);
     font-size: 0.7rem;
     font-weight: 500;

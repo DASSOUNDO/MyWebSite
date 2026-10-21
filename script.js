@@ -711,6 +711,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeBtn = document.getElementById('search-close');
     if (!overlay || !input || !list) return;
 
+    // Sur Mac, le raccourci s'affiche avec la touche Commande
+    if (/Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent)) {
+        const mod = document.querySelector('.search-mod');
+        if (mod) mod.textContent = '⌘';
+        openBtn.title = openBtn.title.replace('Ctrl', '⌘');
+    }
+
     const lang = () => (typeof window.getCurrentLanguage === 'function' ? window.getCurrentLanguage() : 'fr');
     // Même longueur que le texte d'origine : les indices trouvés s'appliquent directement à l'original
     const fold = str => str.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().normalize('NFC');
