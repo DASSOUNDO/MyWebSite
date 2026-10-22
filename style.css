@@ -2369,7 +2369,7 @@ body.lang-switching [data-lang] {
 /* Entrée du hero en cascade */
 .js .hero-text > *,
 .js .hero-image {
-    animation: hero-in 0.8s var(--ease) both;
+    animation: hero-in 0.8s var(--ease) backwards;
 }
 
 .js .hero-text > :nth-child(1) { animation-delay: 0.05s; }
