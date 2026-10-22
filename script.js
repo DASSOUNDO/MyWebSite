@@ -254,6 +254,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'contact-text': 'Ouvert aux opportunités de doctorat (Ph.D.) en IA agentique, systèmes multi-agents et aide à la décision. Références académiques et industrielles disponibles sur demande.',
             'skip-link': 'Aller au contenu',
             'ai-powered': 'IA générative · réponses basées uniquement sur ce portfolio',
+            'ai-status': 'En ligne · basé sur ce portfolio',
             'ai-how-title': 'Comment ça marche ?',
             'ai-how-1': 'Votre question part vers un proxy sécurisé (Cloudflare Worker) qui protège les clés API et limite les abus.',
             'ai-how-2': 'Le proxy fournit au modèle le contenu de ce portfolio comme seule source de vérité.',
@@ -320,6 +321,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'contact-text': 'Open to Ph.D. opportunities in agentic AI, multi-agent systems and decision support. Academic and industry references available on request.',
             'skip-link': 'Skip to content',
             'ai-powered': 'Generative AI · answers based only on this portfolio',
+            'ai-status': 'Online · grounded in this portfolio',
             'ai-how-title': 'How does it work?',
             'ai-how-1': 'Your question goes to a secure proxy (Cloudflare Worker) that protects the API keys and limits abuse.',
             'ai-how-2': 'The proxy gives the model the content of this portfolio as its only source of truth.',
@@ -737,13 +739,77 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    chatToggle.addEventListener('click', () => {
-        chatWindow.classList.toggle('active');
+    // --- Panneau latéral : ouverture / fermeture (la page se décale sur grand écran) -------------
+    const openChat = () => {
+        chatWindow.classList.add('active');
+        chatWindow.setAttribute('aria-hidden', 'false');
+        chatToggle.setAttribute('aria-expanded', 'true');
+        document.body.classList.add('chat-open');
+        setTimeout(() => chatInput.focus(), 250);
+    };
+    const closeChat = () => {
+        chatWindow.classList.remove('active');
+        chatWindow.setAttribute('aria-hidden', 'true');
+        chatToggle.setAttribute('aria-expanded', 'false');
+        document.body.classList.remove('chat-open');
+        chatToggle.focus();
+    };
+    chatToggle.addEventListener('click', () => (chatWindow.classList.contains('active') ? closeChat() : openChat()));
+    chatClose.addEventListener('click', closeChat);
+    document.addEventListener('keydown', (e) => {
+        // Échap déjà utilisé par la recherche (Ctrl K) : on ne ferme pas aussi le panneau
+        const searchOpen = !document.getElementById('search-overlay')?.hidden;
+        if (e.key === 'Escape' && !e.defaultPrevented && !searchOpen && chatWindow.classList.contains('active')) closeChat();
     });
 
-    chatClose.addEventListener('click', () => {
-        chatWindow.classList.remove('active');
+    // --- Écran d'accueil, à la manière des assistants d'IA générative -----------------------------
+    const CARD_ICONS = ['fa-bolt', 'fa-project-diagram', 'fa-graduation-cap', 'fa-industry'];
+    const renderWelcome = () => {
+        chatMessages.innerHTML = '';
+        const en = lang() === 'en';
+        const wrap = document.createElement('div');
+        wrap.className = 'chat-welcome';
+        wrap.innerHTML = `
+            <div class="chat-welcome-icon"><i class="fas fa-robot"></i></div>
+            <h3>${en ? 'How can I help you?' : 'Comment puis-je vous aider ?'}</h3>
+            <p>${en
+                ? 'Ask anything about the background, projects and research of Adébayo Sergio DASSOUNDO.'
+                : "Posez une question sur le parcours, les projets ou les recherches d'Adébayo Sergio DASSOUNDO."}</p>`;
+        const cards = document.createElement('div');
+        cards.className = 'chat-cards';
+        const chips = aiEnabled ? RECRUITER_CHIPS : TOPIC_CHIPS.slice(0, 4);
+        chips.forEach((chip, i) => {
+            const card = document.createElement('button');
+            card.type = 'button';
+            card.className = 'chat-card';
+            const label = en ? chip.en : chip.fr;
+            card.innerHTML = `<i class="fas ${CARD_ICONS[i % CARD_ICONS.length]}"></i><span>${escapeHtml(label)}</span>`;
+            card.addEventListener('click', () => {
+                if (busy) return;
+                if (aiEnabled) sendQuestion(label);
+                else {
+                    wrap.remove();
+                    addMessage(escapeHtml(label), true);
+                    setTimeout(() => respondToUser(normalize(chip.query)), 500);
+                }
+            });
+            cards.appendChild(card);
+        });
+        wrap.appendChild(cards);
+        chatMessages.appendChild(wrap);
+    };
+
+    document.getElementById('chatbot-new').addEventListener('click', () => {
+        if (busy) return;
+        history.length = 0;
+        renderWelcome();
+        chatInput.focus();
     });
+
+    // L'accueil suit le changement de langue tant que la conversation n'a pas commencé
+    document.querySelectorAll('.lang-btn').forEach(btn => btn.addEventListener('click', () => {
+        setTimeout(() => { if (chatMessages.querySelector('.chat-welcome')) renderWelcome(); }, 250);
+    }));
 
     // Question à l'IA : réponse en streaming (SSE) ; en cas d'échec, réponse du mode hors ligne
     const askAI = async (question) => {
@@ -815,6 +881,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const sendQuestion = (text) => {
         if (busy) return;
+        chatMessages.querySelector('.chat-welcome')?.remove();
         addMessage(escapeHtml(text), true);
         if (aiEnabled) askAI(text);
         else setTimeout(() => respondToUser(normalize(text)), 600);
@@ -824,8 +891,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const text = chatInput.value.trim().slice(0, 1000);
         if (!text || busy) return;
         chatInput.value = '';
+        autoGrow();
         sendQuestion(text);
     };
+
+    // Champ de saisie qui s'agrandit avec le texte ; Entrée envoie, Maj + Entrée va à la ligne
+    const autoGrow = () => {
+        chatInput.style.height = 'auto';
+        chatInput.style.height = `${Math.min(chatInput.scrollHeight, 160)}px`;
+    };
+    chatInput.addEventListener('input', autoGrow);
 
     // Liens vers une section dans les réponses : défilement (et fermeture du chat sur mobile)
     chatMessages.addEventListener('click', (e) => {
@@ -833,16 +908,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!a) return;
         e.preventDefault();
         chatScrollTo(a.dataset.section);
-        if (window.innerWidth < 640) chatWindow.classList.remove('active');
+        // Sans décalage de page (écran étroit), le panneau cache le site : on le ferme
+        if (window.innerWidth < 1100) closeChat();
     });
 
     chatSend.addEventListener('click', handleUserInput);
-    chatInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleUserInput();
+    chatInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
+            e.preventDefault();
+            handleUserInput();
+        }
     });
 
-    // Suggestions de sujets dès l'ouverture du chat
-    addSuggestions();
+    renderWelcome();
 });
 
 // Recherche dans le portfolio (Ctrl/Cmd + K ou « / »)

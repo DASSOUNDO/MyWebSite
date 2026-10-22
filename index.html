@@ -28,7 +28,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=24">
+    <link rel="stylesheet" href="style.css?v=27">
 </head>
 <body>
     <a class="skip-link" href="#contenu" data-lang="skip-link">Aller au contenu</a>
@@ -1297,45 +1297,48 @@
         </div>
     </div>
 
-    <!-- Chatbot Assistant -->
+    <!-- Assistant IA : panneau latéral -->
     <div class="chatbot-container">
-        <button class="chatbot-button" id="chatbot-toggle" type="button" aria-label="Assistant profil">
+        <button class="chatbot-button" id="chatbot-toggle" type="button" aria-label="Ouvrir l'assistant IA" aria-controls="chatbot-window" aria-expanded="false">
             <i class="fas fa-robot"></i>
         </button>
-        <div class="chatbot-window" id="chatbot-window">
+        <aside class="chatbot-window" id="chatbot-window" aria-label="Assistant Profil IA" aria-hidden="true">
             <div class="chatbot-header">
                 <div class="chatbot-title">
-                    <i class="fas fa-robot"></i>
-                    <span>Assistant Profil IA</span>
+                    <span class="chatbot-avatar"><i class="fas fa-robot"></i></span>
+                    <div>
+                        <strong>Assistant Profil IA</strong>
+                        <span class="chatbot-status"><span class="status-led" aria-hidden="true"></span> <span data-lang="ai-status">En ligne · basé sur ce portfolio</span></span>
+                    </div>
                 </div>
-                <button class="chatbot-close" id="chatbot-close" type="button" aria-label="Fermer"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="chatbot-messages" id="chatbot-messages">
-                <div class="message bot-message">
-                    Bonjour ! Je suis l'assistant virtuel de DASSOUNDO ADEBAYO. Demandez-moi ses <strong>axes de recherche</strong>, ses <strong>projets</strong> ou son <strong>expérience</strong>.
+                <div class="chatbot-actions">
+                    <button class="chatbot-icon-btn" id="chatbot-new" type="button" aria-label="Nouvelle conversation" title="Nouvelle conversation"><i class="fas fa-pen-to-square"></i></button>
+                    <button class="chatbot-icon-btn" id="chatbot-close" type="button" aria-label="Fermer" title="Fermer (Échap)"><i class="fas fa-times"></i></button>
                 </div>
             </div>
-            <div class="chatbot-info" id="chatbot-info" hidden>
-                <span class="ai-badge"><i class="fas fa-bolt"></i> <span data-lang="ai-powered">IA générative · réponses basées uniquement sur ce portfolio</span></span>
-                <details class="ai-how">
-                    <summary data-lang="ai-how-title">Comment ça marche ?</summary>
-                    <ol>
-                        <li data-lang="ai-how-1">Votre question part vers un proxy sécurisé (Cloudflare Worker) qui protège les clés API et limite les abus.</li>
-                        <li data-lang="ai-how-2">Le proxy fournit au modèle le contenu de ce portfolio comme seule source de vérité.</li>
-                        <li data-lang="ai-how-3">Gemini 3 Flash répond ; s'il est saturé, bascule automatique vers GPT-OSS 120B puis Qwen3 (Groq), chacun ayant son propre quota, et enfin vers l'assistant hors ligne.</li>
-                        <li data-lang="ai-how-4">La réponse s'affiche en temps réel, avec des liens vers les sections sources.</li>
-                    </ol>
-                    <p data-lang="ai-privacy">Aucune conversation n'est enregistrée. Ne partagez pas d'informations personnelles.</p>
-                </details>
+            <div class="chatbot-messages" id="chatbot-messages" aria-live="polite"></div>
+            <div class="chatbot-composer">
+                <div class="chatbot-input">
+                    <textarea id="chatbot-input-field" rows="1" maxlength="1000" placeholder="Posez une question sur son profil…" aria-label="Votre question"></textarea>
+                    <button id="chatbot-send" type="button" aria-label="Envoyer"><i class="fas fa-arrow-up"></i></button>
+                </div>
+                <div class="chatbot-info" id="chatbot-info" hidden>
+                    <details class="ai-how">
+                        <summary><span data-lang="ai-powered">IA générative · réponses basées uniquement sur ce portfolio</span> · <span class="ai-how-link" data-lang="ai-how-title">Comment ça marche ?</span></summary>
+                        <ol>
+                            <li data-lang="ai-how-1">Votre question part vers un proxy sécurisé (Cloudflare Worker) qui protège les clés API et limite les abus.</li>
+                            <li data-lang="ai-how-2">Le proxy fournit au modèle le contenu de ce portfolio comme seule source de vérité.</li>
+                            <li data-lang="ai-how-3">Gemini 3 Flash répond ; s'il est saturé, bascule automatique vers GPT-OSS 120B puis Qwen3 (Groq), chacun ayant son propre quota, et enfin vers l'assistant hors ligne.</li>
+                            <li data-lang="ai-how-4">La réponse s'affiche en temps réel, avec des liens vers les sections sources.</li>
+                        </ol>
+                        <p data-lang="ai-privacy">Aucune conversation n'est enregistrée. Ne partagez pas d'informations personnelles.</p>
+                    </details>
+                </div>
             </div>
-            <div class="chatbot-input">
-                <input type="text" id="chatbot-input-field" placeholder="Posez une question..." maxlength="1000">
-                <button id="chatbot-send" type="button" aria-label="Envoyer"><i class="fas fa-paper-plane"></i></button>
-            </div>
-        </div>
+        </aside>
     </div>
 
-    <script src="i18n-en.js?v=5"></script>
-    <script src="script.js?v=18"></script>
+    <script src="i18n-en.js?v=6"></script>
+    <script src="script.js?v=19"></script>
 </body>
 </html>
