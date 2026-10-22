@@ -467,10 +467,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let busy = false;
 
     const RECRUITER_CHIPS = [
+        { fr: 'Je recrute pour un doctorat ou un projet de recherche', en: "I'm recruiting for a PhD or a research project" },
+        { fr: "Je recrute pour un poste d'ingénieur IA", en: "I'm recruiting for an AI engineer role" },
         { fr: 'Résume son profil en 30 secondes', en: 'Summarize his profile in 30 seconds' },
         { fr: 'Quelles preuves en systèmes multi-agents ?', en: 'What evidence of multi-agent systems work?' },
-        { fr: 'Pourquoi ce profil pour un doctorat en IA agentique ?', en: 'Why is he a fit for a PhD in agentic AI?' },
-        { fr: 'Quelle est son expérience industrielle ?', en: 'What is his industry experience?' },
     ];
 
     const escapeHtml = (str) => str.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -741,6 +741,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Panneau latéral : ouverture / fermeture (la page se décale sur grand écran) -------------
     const openChat = () => {
+        hideTeaser(); // la bulle d'invitation n'a plus lieu d'être pour cette visite
+        teaserStore.dismiss();
         chatWindow.classList.add('active');
         chatWindow.setAttribute('aria-hidden', 'false');
         chatToggle.setAttribute('aria-expanded', 'true');
@@ -762,8 +764,47 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Escape' && !e.defaultPrevented && !searchOpen && chatWindow.classList.contains('active')) closeChat();
     });
 
+    // --- Bulle d'invitation : messages qui défilent au-dessus du bouton (masquable pour la visite) ---
+    const teaser = document.getElementById('chat-teaser');
+    const teaserText = document.getElementById('chat-teaser-text');
+    const TEASERS = [
+        { fr: 'Une question sur son profil ? Demandez à son assistant IA 👋', en: 'A question about his profile? Ask his AI assistant 👋' },
+        { fr: 'Recruteur ? Découvrez en 30 s si son profil correspond à votre poste.', en: 'Recruiter? Find out in 30 s whether his profile fits your role.' },
+        { fr: 'Réponses en 2 s, basées uniquement sur son portfolio.', en: 'Answers in 2 s, based only on his portfolio.' },
+    ];
+    const teaserStore = {
+        dismissed() { try { return sessionStorage.getItem('chat-teaser-dismissed') === '1'; } catch { return false; } },
+        dismiss() { try { sessionStorage.setItem('chat-teaser-dismissed', '1'); } catch { /* stockage indisponible */ } },
+    };
+    let teaserIndex = 0;
+    let teaserTimer = null;
+    const showTeaserText = () => {
+        const item = TEASERS[teaserIndex % TEASERS.length];
+        teaserText.classList.add('swap');
+        setTimeout(() => {
+            teaserText.textContent = lang() === 'en' ? item.en : item.fr;
+            teaserText.classList.remove('swap');
+        }, 350);
+        teaserIndex++;
+    };
+    const hideTeaser = () => {
+        if (teaser) teaser.hidden = true;
+        clearInterval(teaserTimer);
+    };
+    if (teaser && !teaserStore.dismissed()) {
+        setTimeout(() => {
+            if (chatWindow.classList.contains('active') || teaserStore.dismissed()) return;
+            teaserText.textContent = lang() === 'en' ? TEASERS[0].en : TEASERS[0].fr;
+            teaserIndex = 1;
+            teaser.hidden = false;
+            teaserTimer = setInterval(showTeaserText, 5000);
+        }, 3500);
+        document.getElementById('chat-teaser-open').addEventListener('click', () => { hideTeaser(); openChat(); });
+        document.getElementById('chat-teaser-close').addEventListener('click', () => { teaserStore.dismiss(); hideTeaser(); });
+    }
+
     // --- Écran d'accueil, à la manière des assistants d'IA générative -----------------------------
-    const CARD_ICONS = ['fa-bolt', 'fa-project-diagram', 'fa-graduation-cap', 'fa-industry'];
+    const CARD_ICONS = ['fa-graduation-cap', 'fa-briefcase', 'fa-bolt', 'fa-project-diagram'];
     const renderWelcome = () => {
         chatMessages.innerHTML = '';
         const en = lang() === 'en';
@@ -773,8 +814,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="chat-welcome-icon"><i class="fas fa-robot"></i></div>
             <h3>${en ? 'How can I help you?' : 'Comment puis-je vous aider ?'}</h3>
             <p>${en
-                ? 'Ask anything about the background, projects and research of Adébayo Sergio DASSOUNDO.'
-                : "Posez une question sur le parcours, les projets ou les recherches d'Adébayo Sergio DASSOUNDO."}</p>`;
+                ? 'Recruiter, professor or simply curious: tell me what you are looking for, and I will show you how the profile of Adébayo Sergio DASSOUNDO matches it.'
+                : "Recruteur, professeur ou simple curieux : dites-moi ce que vous recherchez, je vous montre en quoi le profil d'Adébayo Sergio DASSOUNDO y répond."}</p>`;
         const cards = document.createElement('div');
         cards.className = 'chat-cards';
         const chips = aiEnabled ? RECRUITER_CHIPS : TOPIC_CHIPS.slice(0, 4);
@@ -810,6 +851,39 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.lang-btn').forEach(btn => btn.addEventListener('click', () => {
         setTimeout(() => { if (chatMessages.querySelector('.chat-welcome')) renderWelcome(); }, 250);
     }));
+
+    // Le modèle termine par « Suggestions : q1 | q2 | q3 » : on retire cette ligne du texte
+    // (même partielle pendant le streaming) pour l'afficher en boutons de relance.
+    const splitSuggestions = (text) => {
+        const lines = text.split('\n');
+        let index = -1;
+        lines.forEach((line, i) => { if (/^\s*\**\s*(suggestions?|suggested questions)\b/i.test(line)) index = i; });
+        if (index === -1) {
+            // Ligne en cours d'écriture (« Sugg… ») : masquée en attendant la suite
+            const last = lines[lines.length - 1];
+            if (/^\s*\**\s*s(u(g(g(e(s(t)?)?)?)?)?)?$/i.test(last) && last.trim().length > 0) return { body: lines.slice(0, -1).join('\n'), suggestions: [] };
+            return { body: text, suggestions: [] };
+        }
+        const suggestions = lines[index].replace(/^[^:]*:\s*/, '').split('|')
+            .map(q => q.replace(/\*\*/g, '').trim()).filter(q => q.length > 2).slice(0, 3);
+        return { body: lines.slice(0, index).join('\n').trimEnd(), suggestions };
+    };
+
+    const addFollowups = (questions) => {
+        if (!questions.length) return;
+        const wrap = document.createElement('div');
+        wrap.className = 'chat-suggestions chat-followups';
+        questions.forEach(question => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'chat-suggestion-btn';
+            btn.textContent = question;
+            btn.addEventListener('click', () => { if (!busy) sendQuestion(question); });
+            wrap.appendChild(btn);
+        });
+        chatMessages.appendChild(wrap);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    };
 
     // Question à l'IA : réponse en streaming (SSE) ; en cas d'échec, réponse du mode hors ligne
     const askAI = async (question) => {
@@ -851,15 +925,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     else if (event === 'done') finished = true;
                     else if (data.t) {
                         answer += data.t;
-                        bubble.innerHTML = renderMarkdown(answer) + '<span class="ai-cursor" aria-hidden="true"></span>';
+                        bubble.innerHTML = renderMarkdown(splitSuggestions(answer).body) + '<span class="ai-cursor" aria-hidden="true"></span>';
                         chatMessages.scrollTop = chatMessages.scrollHeight;
                     }
                 }
             }
             if (!answer) throw new Error('empty');
+            const { body, suggestions } = splitSuggestions(answer);
             const via = provider ? `<span class="ai-provider">via ${escapeHtml(provider)}</span>` : '';
-            bubble.innerHTML = renderMarkdown(answer) + via;
-            history.push({ role: 'assistant', content: answer });
+            bubble.innerHTML = renderMarkdown(body) + via;
+            addFollowups(suggestions);
+            history.push({ role: 'assistant', content: body });
         } catch (error) {
             history.pop(); // une question sans réponse ne reste pas dans l'historique
             bubble.remove();
@@ -882,6 +958,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sendQuestion = (text) => {
         if (busy) return;
         chatMessages.querySelector('.chat-welcome')?.remove();
+        chatMessages.querySelectorAll('.chat-followups').forEach(el => el.remove());
         addMessage(escapeHtml(text), true);
         if (aiEnabled) askAI(text);
         else setTimeout(() => respondToUser(normalize(text)), 600);

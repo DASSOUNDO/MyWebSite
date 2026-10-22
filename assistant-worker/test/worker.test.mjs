@@ -88,6 +88,8 @@ test('le prompt système contient le profil et les règles anti-invention', asyn
     const system = body.systemInstruction.parts[0].text;
     assert.match(system, /Profil complet/);
     assert.match(system, /N'invente jamais/);
+    assert.match(system, /mets sa candidature en valeur/);
+    assert.match(system, /Suggestions :/);
 });
 
 test('bascule vers GPT-OSS sur Groq (profil condensé) si Gemini échoue', async () => {

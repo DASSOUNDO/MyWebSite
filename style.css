@@ -2220,6 +2220,102 @@ body.lang-switching [data-lang] {
     background: var(--btn-bg-hover);
 }
 
+/* Bulle d'invitation au-dessus du bouton de l'assistant */
+.chat-teaser {
+    position: absolute;
+    right: 0;
+    bottom: 72px;
+    width: max-content;
+    max-width: min(320px, calc(100vw - 32px));
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 4px 4px 4px 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px 16px 4px 16px;
+    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.16);
+    animation: teaser-in 0.5s var(--ease) both;
+}
+
+.chat-teaser[hidden] {
+    display: none;
+}
+
+.chat-teaser::after {
+    content: "";
+    position: absolute;
+    right: 20px;
+    bottom: -7px;
+    width: 12px;
+    height: 12px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    transform: rotate(45deg);
+}
+
+@keyframes teaser-in {
+    from { opacity: 0; transform: translateY(10px) scale(0.96); }
+    to { opacity: 1; transform: none; }
+}
+
+.chat-teaser-body {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 4px 10px 14px;
+    border: 0;
+    background: none;
+    text-align: left;
+    color: var(--text);
+    font-size: 0.88rem;
+    font-weight: 500;
+    line-height: 1.45;
+}
+
+.chat-teaser-icon {
+    flex: none;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    font-size: 0.75rem;
+    color: #ffffff;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+}
+
+.chat-teaser-text {
+    transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.chat-teaser-text.swap {
+    opacity: 0;
+    transform: translateY(4px);
+}
+
+.chat-teaser-close {
+    flex: none;
+    width: 26px;
+    height: 26px;
+    margin-top: 4px;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: var(--muted);
+    font-size: 0.75rem;
+}
+
+.chat-teaser-close:hover {
+    background: var(--surface-2);
+    color: var(--text);
+}
+
+body.chat-open .chat-teaser {
+    display: none;
+}
+
 body.chat-open .chatbot-button {
     opacity: 0;
     pointer-events: none;

@@ -28,7 +28,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=27">
+    <link rel="stylesheet" href="style.css?v=28">
 </head>
 <body>
     <a class="skip-link" href="#contenu" data-lang="skip-link">Aller au contenu</a>
@@ -1299,6 +1299,13 @@
 
     <!-- Assistant IA : panneau latéral -->
     <div class="chatbot-container">
+        <div class="chat-teaser" id="chat-teaser" hidden>
+            <button class="chat-teaser-body" id="chat-teaser-open" type="button">
+                <span class="chat-teaser-icon" aria-hidden="true"><i class="fas fa-wand-magic-sparkles"></i></span>
+                <span class="chat-teaser-text" id="chat-teaser-text" aria-live="polite"></span>
+            </button>
+            <button class="chat-teaser-close" id="chat-teaser-close" type="button" aria-label="Masquer"><i class="fas fa-times"></i></button>
+        </div>
         <button class="chatbot-button" id="chatbot-toggle" type="button" aria-label="Ouvrir l'assistant IA" aria-controls="chatbot-window" aria-expanded="false">
             <i class="fas fa-robot"></i>
         </button>
@@ -1339,6 +1346,6 @@
     </div>
 
     <script src="i18n-en.js?v=6"></script>
-    <script src="script.js?v=19"></script>
+    <script src="script.js?v=20"></script>
 </body>
 </html>
