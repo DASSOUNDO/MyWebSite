@@ -456,7 +456,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Assistant IA (proxy Cloudflare Worker, dossier assistant-worker/) -------------------
     // URL du proxy déployé, se terminant par /chat. Vide = assistant hors ligne uniquement.
-    const ASSISTANT_API = window.ASSISTANT_API_OVERRIDE || '';
+    const ASSISTANT_API = window.ASSISTANT_API_OVERRIDE || 'https://portfolio-assistant.portfolio-assistant.workers.dev/chat';
     const aiEnabled = Boolean(ASSISTANT_API);
     const PROVIDER_LABELS = { gemini: 'Gemini', groq: 'Groq' };
     const chatInfo = document.getElementById('chatbot-info');
