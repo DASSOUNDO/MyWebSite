@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'ai-how-title': 'Comment ça marche ?',
             'ai-how-1': 'Votre question part vers un proxy sécurisé (Cloudflare Worker) qui protège les clés API et limite les abus.',
             'ai-how-2': 'Le proxy fournit au modèle le contenu de ce portfolio comme seule source de vérité.',
-            'ai-how-3': "Google Gemini répond ; s'il est indisponible, bascule automatique vers Groq (Llama), puis vers l'assistant hors ligne.",
+            'ai-how-3': "Gemini 3 Flash répond ; s'il est saturé, bascule automatique vers GPT-OSS 120B puis Qwen3 (Groq), chacun ayant son propre quota, et enfin vers l'assistant hors ligne.",
             'ai-how-4': 'La réponse s\'affiche en temps réel, avec des liens vers les sections sources.',
             'ai-privacy': "Aucune conversation n'est enregistrée. Ne partagez pas d'informations personnelles.",
             'kbd-esc': 'Échap',
@@ -323,7 +323,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'ai-how-title': 'How does it work?',
             'ai-how-1': 'Your question goes to a secure proxy (Cloudflare Worker) that protects the API keys and limits abuse.',
             'ai-how-2': 'The proxy gives the model the content of this portfolio as its only source of truth.',
-            'ai-how-3': 'Google Gemini answers; if it is unavailable, it automatically fails over to Groq (Llama), then to the offline assistant.',
+            'ai-how-3': 'Gemini 3 Flash answers; if it is saturated, it automatically fails over to GPT-OSS 120B then Qwen3 (Groq), each with its own quota, and finally to the offline assistant.',
             'ai-how-4': 'The answer streams in real time, with links to the source sections.',
             'ai-privacy': 'No conversation is stored. Please do not share personal information.',
             'kbd-esc': 'Esc',
@@ -458,7 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // URL du proxy déployé, se terminant par /chat. Vide = assistant hors ligne uniquement.
     const ASSISTANT_API = window.ASSISTANT_API_OVERRIDE || '';
     const aiEnabled = Boolean(ASSISTANT_API);
-    const PROVIDER_LABELS = { gemini: 'Gemini', groq: 'Groq · Llama' };
+    const PROVIDER_LABELS = { gemini: 'Gemini', groq: 'Groq' };
     const chatInfo = document.getElementById('chatbot-info');
     if (aiEnabled && chatInfo) chatInfo.hidden = false;
     const history = [];
@@ -780,7 +780,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const raw = (block.match(/^data: (.*)$/m) || [])[1];
                     if (!raw) continue;
                     const data = JSON.parse(raw);
-                    if (event === 'meta') provider = data.provider;
+                    if (event === 'meta') provider = data.label || PROVIDER_LABELS[data.provider] || data.provider;
                     else if (event === 'error') throw new Error(data.error || 'error');
                     else if (event === 'done') finished = true;
                     else if (data.t) {
@@ -791,7 +791,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
             if (!answer) throw new Error('empty');
-            const via = provider ? `<span class="ai-provider">via ${escapeHtml(PROVIDER_LABELS[provider] || provider)}</span>` : '';
+            const via = provider ? `<span class="ai-provider">via ${escapeHtml(provider)}</span>` : '';
             bubble.innerHTML = renderMarkdown(answer) + via;
             history.push({ role: 'assistant', content: answer });
         } catch (error) {

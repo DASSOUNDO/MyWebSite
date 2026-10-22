@@ -9,7 +9,7 @@ Visiteur → portfolio (GitHub Pages) → ce proxy (Cloudflare Worker) → Gemin
 
 - **Clés API secrètes** : stockées comme secrets Cloudflare, jamais dans le code ni dans le site.
 - **Ancrage** : le modèle ne répond qu'à partir du profil généré depuis `index.html`.
-- **Résilience** : Gemini (principal), puis Groq (secours), puis l'assistant hors ligne du site.
+- **Résilience** : chaîne de modèles gratuits (Gemini 3 Flash, puis GPT-OSS 120B et Qwen3 sur Groq), chacun avec son propre quota, puis l'assistant hors ligne du site.
 - **Garde-fous** : seuls les sites listés dans `ALLOWED_ORIGINS` peuvent l'appeler, 8 questions par minute et par visiteur, taille des messages limitée, aucune conversation enregistrée.
 
 ## Déploiement (une seule fois, environ 15 minutes)
@@ -18,7 +18,7 @@ Visiteur → portfolio (GitHub Pages) → ce proxy (Cloudflare Worker) → Gemin
 - **Gemini** : https://aistudio.google.com/apikey, puis « Create API key ».
 - **Groq** : https://console.groq.com/keys, puis « Create API Key ».
 
-Vérifie au passage, dans chaque console, le nom exact d'un modèle disponible au niveau gratuit, et mets-le dans `wrangler.toml` (`GEMINI_MODEL`, `GROQ_MODEL`).
+La chaîne de modèles est réglée dans `wrangler.toml` (`PROVIDERS`). Modèles vérifiés en conditions réelles le 22/10/2026 : `gemini-3-flash-preview` (Google), `openai/gpt-oss-120b` et `qwen/qwen3.8-27b` (Groq). Si un modèle disparaît des niveaux gratuits, remplace-le simplement dans cette liste.
 
 ### 2. Créer un compte Cloudflare
 https://dash.cloudflare.com/sign-up (gratuit, sans carte bancaire).

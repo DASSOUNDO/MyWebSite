@@ -8,8 +8,7 @@ const ORIGIN = 'https://dassoundo.github.io';
 const baseEnv = () => ({
     ALLOWED_ORIGINS: `${ORIGIN},http://localhost:8765`,
     KNOWLEDGE_BASE_URL: 'https://example.test/assistant',
-    GEMINI_MODEL: 'gemini-test',
-    GROQ_MODEL: 'groq-test',
+    PROVIDERS: 'gemini:gemini-3-test|Gemini 3 Flash,groq:openai/gpt-oss-test|GPT-OSS 120B,groq:qwen/qwen-test|Qwen3',
     GEMINI_API_KEY: 'cle-gemini-secrete',
     GROQ_API_KEY: 'cle-groq-secrete',
 });
@@ -20,7 +19,7 @@ const sse = lines => new Response(lines.map(l => `data: ${l}\n\n`).join(''), { h
 
 beforeEach(() => {
     calls = [];
-    behaviour = { gemini: 'ok', groq: 'ok' };
+    behaviour = { gemini: 'ok', 'openai/gpt-oss-test': 'ok', 'qwen/qwen-test': 'ok' };
     globalThis.fetch = async (url, init = {}) => {
         url = String(url);
         calls.push({ url, init });
@@ -34,8 +33,9 @@ beforeEach(() => {
             ]);
         }
         if (url.includes('api.groq.com')) {
-            if (behaviour.groq === 'fail') return new Response('down', { status: 503 });
-            return sse([JSON.stringify({ choices: [{ delta: { content: 'Réponse Groq.' } }] }), '[DONE]']);
+            const model = JSON.parse(init.body).model;
+            if (behaviour[model] === 'fail') return new Response('quota', { status: 429 });
+            return sse([JSON.stringify({ choices: [{ delta: { content: `Réponse ${model}.` } }] }), '[DONE]']);
         }
         throw new Error(`URL inattendue : ${url}`);
     };
@@ -69,7 +69,7 @@ test('Gemini répond en streaming', async () => {
     assert.equal(response.status, 200);
     assert.equal(response.headers.get('access-control-allow-origin'), ORIGIN);
     const events = parse(text);
-    assert.deepEqual(events[0], { event: 'meta', data: { provider: 'gemini' } });
+    assert.deepEqual(events[0], { event: 'meta', data: { provider: 'gemini', label: 'Gemini 3 Flash' } });
     assert.equal(events.filter(e => e.event === 'message').map(e => e.data.t).join(''), 'Bonjour, il travaille chez Yieloo.');
     assert.equal(events.at(-1).event, 'done');
 });
@@ -90,19 +90,36 @@ test('le prompt système contient le profil et les règles anti-invention', asyn
     assert.match(system, /N'invente jamais/);
 });
 
-test('bascule vers Groq (profil condensé) si Gemini échoue', async () => {
+test('bascule vers GPT-OSS sur Groq (profil condensé) si Gemini échoue', async () => {
     behaviour.gemini = 'fail';
     const { text } = await call();
     const events = parse(text);
-    assert.deepEqual(events[0], { event: 'meta', data: { provider: 'groq' } });
-    assert.equal(events[1].data.t, 'Réponse Groq.');
+    assert.deepEqual(events[0], { event: 'meta', data: { provider: 'groq', label: 'GPT-OSS 120B' } });
+    assert.equal(events[1].data.t, 'Réponse openai/gpt-oss-test.');
     const groqBody = JSON.parse(calls.find(c => c.url.includes('groq')).init.body);
     assert.match(groqBody.messages[0].content, /Profil condensé/);
+    assert.equal(groqBody.reasoning_effort, 'low');
+});
+
+test('chaîne complète : Gemini puis GPT-OSS saturés, Qwen répond', async () => {
+    behaviour.gemini = 'fail';
+    behaviour['openai/gpt-oss-test'] = 'fail';
+    const events = parse((await call()).text);
+    assert.deepEqual(events[0], { event: 'meta', data: { provider: 'groq', label: 'Qwen3' } });
+    const qwenBody = JSON.parse(calls.filter(c => c.url.includes('groq')).at(-1).init.body);
+    assert.equal(qwenBody.reasoning_effort, undefined);
+});
+
+test('Gemini 3 : réflexion réglée sur « low »', async () => {
+    await call();
+    const body = JSON.parse(calls.find(c => c.url.includes('generativelanguage')).init.body);
+    assert.deepEqual(body.generationConfig.thinkingConfig, { thinkingLevel: 'low' });
 });
 
 test('renvoie un événement error si tous les fournisseurs échouent', async () => {
     behaviour.gemini = 'fail';
-    behaviour.groq = 'fail';
+    behaviour['openai/gpt-oss-test'] = 'fail';
+    behaviour['qwen/qwen-test'] = 'fail';
     const events = parse((await call()).text);
     assert.equal(events.at(-1).event, 'error');
 });

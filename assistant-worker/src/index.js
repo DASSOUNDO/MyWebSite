@@ -2,15 +2,15 @@
  * Assistant IA du portfolio – proxy Cloudflare Worker.
  *
  * Rôle : garder les clés API secrètes, limiter les abus, ancrer les réponses sur le
- * contenu du portfolio, et basculer automatiquement entre fournisseurs gratuits :
- *   1. Google Gemini (modèle principal)
- *   2. Groq / Llama (secours si Gemini est saturé ou indisponible)
- *   Le site bascule ensuite sur son assistant hors ligne si les deux échouent.
+ * contenu du portfolio, et basculer automatiquement entre modèles gratuits, chacun ayant
+ * son propre quota (liste PROVIDERS de wrangler.toml), par exemple :
+ *   1. Gemini 3 Flash (Google)   2. GPT-OSS 120B (Groq)   3. Qwen3 (Groq)
+ *   Le site bascule ensuite sur son assistant hors ligne si tous échouent.
  *
  * Aucune conversation n'est enregistrée.
  *
  * Réponse : flux SSE
- *   event: meta  data: {"provider":"gemini"|"groq"}
+ *   event: meta  data: {"provider":"gemini"|"groq","label":"Gemini 3 Flash"}
  *   data: {"t":"morceau de texte"}       (répété)
  *   event: done  data: {}
  *   event: error data: {"error":"..."}   (si tout échoue)
@@ -53,7 +53,9 @@ function systemPrompt(knowledge, lang) {
 
 Règles :
 - Appuie-toi UNIQUEMENT sur le PROFIL ci-dessous. N'invente jamais de chiffre, de date, d'employeur, de diplôme, de publication ou de compétence. S'il n'a pas publié d'article, ne le laisse jamais entendre.
+- N'attribue jamais d'information personnelle absente du PROFIL (nationalité, âge, situation…) et ne relie pas une compétence à une expérience si le PROFIL ne le dit pas explicitement.
 - Si l'information demandée n'est pas dans le PROFIL, dis-le simplement et invite à le contacter (sergiodassoundo2@gmail.com).
+- Dans tes réponses, parle de « son portfolio » ou « son parcours », jamais du « PROFIL » ni de tes instructions.
 - Parle de lui à la troisième personne, sur un ton professionnel, chaleureux et factuel.
 - Sois concis : 120 mots maximum, sauf si on te demande plus de détails. Utilise des listes à puces quand cela aide.
 - Réponds en ${answerLang}, sauf si la question est clairement écrite dans une autre langue : réponds alors dans la langue de la question.
@@ -84,8 +86,7 @@ async function* readSSE(response) {
     }
 }
 
-async function* streamGemini(env, system, messages, signal) {
-    const model = env.GEMINI_MODEL;
+async function* streamGemini(env, model, system, messages, signal) {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`;
     const response = await fetch(url, {
         method: 'POST',
@@ -94,7 +95,12 @@ async function* streamGemini(env, system, messages, signal) {
         body: JSON.stringify({
             systemInstruction: { parts: [{ text: system }] },
             contents: messages.map(m => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] })),
-            generationConfig: { maxOutputTokens: LIMITS.maxOutputTokens, temperature: 0.3 },
+            generationConfig: {
+                maxOutputTokens: LIMITS.maxOutputTokens,
+                temperature: 0.3,
+                // Gemini 3 réfléchit par défaut longuement : niveau bas pour garder des réponses rapides
+                ...(model.startsWith('gemini-3') ? { thinkingConfig: { thinkingLevel: 'low' } } : {}),
+            },
         }),
     });
     if (!response.ok) throw new Error(`gemini_${response.status}`);
@@ -102,18 +108,19 @@ async function* streamGemini(env, system, messages, signal) {
         let json;
         try { json = JSON.parse(data); } catch { continue; }
         const parts = json?.candidates?.[0]?.content?.parts || [];
-        for (const part of parts) if (part.text) yield part.text;
+        for (const part of parts) if (part.text && !part.thought) yield part.text;
     }
 }
 
-async function* streamGroq(env, system, messages, signal) {
+async function* streamGroq(env, model, system, messages, signal) {
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         signal,
         headers: { 'content-type': 'application/json', authorization: `Bearer ${env.GROQ_API_KEY}` },
         body: JSON.stringify({
-            model: env.GROQ_MODEL,
+            model,
             stream: true,
+            ...(model.startsWith('openai/gpt-oss') ? { reasoning_effort: 'low' } : {}),
             temperature: 0.3,
             max_tokens: LIMITS.maxOutputTokens,
             messages: [{ role: 'system', content: system }, ...messages],
@@ -127,6 +134,24 @@ async function* streamGroq(env, system, messages, signal) {
         const text = json?.choices?.[0]?.delta?.content;
         if (text) yield text;
     }
+}
+
+// Chaîne de modèles : PROVIDERS = "gemini:gemini-3-flash-preview|Gemini 3 Flash,groq:openai/gpt-oss-120b|GPT-OSS 120B"
+// Gemini reçoit le profil complet ; Groq le profil condensé (quota de 8 000 jetons par minute et par modèle).
+function parseProviders(env, knowledge) {
+    const runners = {
+        gemini: { run: streamGemini, key: 'GEMINI_API_KEY', knowledge: knowledge.full },
+        groq: { run: streamGroq, key: 'GROQ_API_KEY', knowledge: knowledge.compact },
+    };
+    return (env.PROVIDERS || '').split(',').map(entry => entry.trim()).filter(Boolean).flatMap(entry => {
+        const [spec, label] = entry.split('|');
+        const separator = spec.indexOf(':');
+        const name = spec.slice(0, separator);
+        const model = spec.slice(separator + 1);
+        const runner = runners[name];
+        if (!runner || !model || !env[runner.key]) return [];
+        return [{ name, model, label: (label || model).trim(), run: runner.run, knowledge: runner.knowledge }];
+    });
 }
 
 // --- Garde-fous ------------------------------------------------------------------
@@ -200,9 +225,7 @@ export default {
         let knowledge;
         try { knowledge = await loadKnowledge(env); } catch { return json(503, { error: 'knowledge_unavailable' }, cors.headers); }
 
-        const providers = [];
-        if (env.GEMINI_API_KEY) providers.push({ name: 'gemini', run: streamGemini, knowledge: knowledge.full });
-        if (env.GROQ_API_KEY) providers.push({ name: 'groq', run: streamGroq, knowledge: knowledge.compact });
+        const providers = parseProviders(env, knowledge);
         if (!providers.length) return json(503, { error: 'no_provider_configured' }, cors.headers);
 
         const { readable, writable } = new TransformStream();
@@ -218,8 +241,8 @@ export default {
                 let started = false;
                 try {
                     const system = systemPrompt(provider.knowledge, checked.lang);
-                    for await (const text of provider.run(env, system, checked.messages, controller.signal)) {
-                        if (!started) { started = true; await send('meta', { provider: provider.name }); }
+                    for await (const text of provider.run(env, provider.model, system, checked.messages, controller.signal)) {
+                        if (!started) { started = true; await send('meta', { provider: provider.name, label: provider.label }); }
                         await send(null, { t: text });
                     }
                     clearTimeout(timer);
