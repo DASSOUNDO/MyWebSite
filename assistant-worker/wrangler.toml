@@ -13,7 +13,7 @@ ALLOWED_ORIGINS = "https://dassoundo.github.io,http://localhost:8765"
 # Base de connaissances générée par tools/build_knowledge.py et publiée avec le site
 KNOWLEDGE_BASE_URL = "https://dassoundo.github.io/MyWebSite/assistant"
 # Modèles (niveaux gratuits) : à vérifier dans les consoles Google AI Studio et Groq
-GEMINI_MODEL = "gemini-2.5-flash"
+GEMINI_MODEL = "gemini-flash-latest"
 GROQ_MODEL = "llama-3.3-70b-versatile"
 
 # Limiteur de débit Cloudflare : 8 questions par minute et par visiteur
