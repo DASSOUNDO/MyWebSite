@@ -28,7 +28,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=23">
+    <link rel="stylesheet" href="style.css?v=24">
 </head>
 <body>
     <a class="skip-link" href="#contenu" data-lang="skip-link">Aller au contenu</a>
@@ -1315,14 +1315,27 @@
                     Bonjour ! Je suis l'assistant virtuel de DASSOUNDO ADEBAYO. Demandez-moi ses <strong>axes de recherche</strong>, ses <strong>projets</strong> ou son <strong>expérience</strong>.
                 </div>
             </div>
+            <div class="chatbot-info" id="chatbot-info" hidden>
+                <span class="ai-badge"><i class="fas fa-bolt"></i> <span data-lang="ai-powered">IA générative · réponses basées uniquement sur ce portfolio</span></span>
+                <details class="ai-how">
+                    <summary data-lang="ai-how-title">Comment ça marche ?</summary>
+                    <ol>
+                        <li data-lang="ai-how-1">Votre question part vers un proxy sécurisé (Cloudflare Worker) qui protège les clés API et limite les abus.</li>
+                        <li data-lang="ai-how-2">Le proxy fournit au modèle le contenu de ce portfolio comme seule source de vérité.</li>
+                        <li data-lang="ai-how-3">Google Gemini répond ; s'il est indisponible, bascule automatique vers Groq (Llama), puis vers l'assistant hors ligne.</li>
+                        <li data-lang="ai-how-4">La réponse s'affiche en temps réel, avec des liens vers les sections sources.</li>
+                    </ol>
+                    <p data-lang="ai-privacy">Aucune conversation n'est enregistrée. Ne partagez pas d'informations personnelles.</p>
+                </details>
+            </div>
             <div class="chatbot-input">
-                <input type="text" id="chatbot-input-field" placeholder="Posez une question...">
+                <input type="text" id="chatbot-input-field" placeholder="Posez une question..." maxlength="1000">
                 <button id="chatbot-send" type="button" aria-label="Envoyer"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
 
     <script src="i18n-en.js?v=5"></script>
-    <script src="script.js?v=15"></script>
+    <script src="script.js?v=16"></script>
 </body>
 </html>

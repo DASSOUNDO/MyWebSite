@@ -1,0 +1,24 @@
+# Configuration du proxy de l'assistant IA (Cloudflare Workers)
+# Les clés API ne sont JAMAIS écrites ici : elles se déclarent en secrets
+#   npx wrangler secret put GEMINI_API_KEY
+#   npx wrangler secret put GROQ_API_KEY
+
+name = "portfolio-assistant"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+[vars]
+# Sites autorisés à appeler l'assistant (séparés par des virgules)
+ALLOWED_ORIGINS = "https://dassoundo.github.io,http://localhost:8765"
+# Base de connaissances générée par tools/build_knowledge.py et publiée avec le site
+KNOWLEDGE_BASE_URL = "https://dassoundo.github.io/MyWebSite/assistant"
+# Modèles (niveaux gratuits) : à vérifier dans les consoles Google AI Studio et Groq
+GEMINI_MODEL = "gemini-2.5-flash"
+GROQ_MODEL = "llama-3.3-70b-versatile"
+
+# Limiteur de débit Cloudflare : 8 questions par minute et par visiteur
+[[unsafe.bindings]]
+name = "RATE_LIMITER"
+type = "ratelimit"
+namespace_id = "1001"
+simple = { limit = 8, period = 60 }

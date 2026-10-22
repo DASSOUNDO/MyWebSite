@@ -253,6 +253,13 @@ document.addEventListener('DOMContentLoaded', function() {
             'contact-title': 'Contact',
             'contact-text': 'Ouvert aux opportunités de doctorat (Ph.D.) en IA agentique, systèmes multi-agents et aide à la décision. Références académiques et industrielles disponibles sur demande.',
             'skip-link': 'Aller au contenu',
+            'ai-powered': 'IA générative · réponses basées uniquement sur ce portfolio',
+            'ai-how-title': 'Comment ça marche ?',
+            'ai-how-1': 'Votre question part vers un proxy sécurisé (Cloudflare Worker) qui protège les clés API et limite les abus.',
+            'ai-how-2': 'Le proxy fournit au modèle le contenu de ce portfolio comme seule source de vérité.',
+            'ai-how-3': "Google Gemini répond ; s'il est indisponible, bascule automatique vers Groq (Llama), puis vers l'assistant hors ligne.",
+            'ai-how-4': 'La réponse s\'affiche en temps réel, avec des liens vers les sections sources.',
+            'ai-privacy': "Aucune conversation n'est enregistrée. Ne partagez pas d'informations personnelles.",
             'kbd-esc': 'Échap',
             'kbd-enter': 'Entrée',
             'search-nav': 'naviguer',
@@ -312,6 +319,13 @@ document.addEventListener('DOMContentLoaded', function() {
             'contact-title': 'Contact',
             'contact-text': 'Open to Ph.D. opportunities in agentic AI, multi-agent systems and decision support. Academic and industry references available on request.',
             'skip-link': 'Skip to content',
+            'ai-powered': 'Generative AI · answers based only on this portfolio',
+            'ai-how-title': 'How does it work?',
+            'ai-how-1': 'Your question goes to a secure proxy (Cloudflare Worker) that protects the API keys and limits abuse.',
+            'ai-how-2': 'The proxy gives the model the content of this portfolio as its only source of truth.',
+            'ai-how-3': 'Google Gemini answers; if it is unavailable, it automatically fails over to Groq (Llama), then to the offline assistant.',
+            'ai-how-4': 'The answer streams in real time, with links to the source sections.',
+            'ai-privacy': 'No conversation is stored. Please do not share personal information.',
             'kbd-esc': 'Esc',
             'kbd-enter': 'Enter',
             'search-nav': 'navigate',
@@ -439,6 +453,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const link = (id, label) =>
         `<a href="#${id}" class="chat-link" onclick="chatScrollTo('${id}');return false;">${label}</a>`;
+
+    // --- Assistant IA (proxy Cloudflare Worker, dossier assistant-worker/) -------------------
+    // URL du proxy déployé, se terminant par /chat. Vide = assistant hors ligne uniquement.
+    const ASSISTANT_API = window.ASSISTANT_API_OVERRIDE || '';
+    const aiEnabled = Boolean(ASSISTANT_API);
+    const PROVIDER_LABELS = { gemini: 'Gemini', groq: 'Groq · Llama' };
+    const chatInfo = document.getElementById('chatbot-info');
+    if (aiEnabled && chatInfo) chatInfo.hidden = false;
+    const history = [];
+    let busy = false;
+
+    const RECRUITER_CHIPS = [
+        { fr: 'Résume son profil en 30 secondes', en: 'Summarize his profile in 30 seconds' },
+        { fr: 'Quelles preuves en systèmes multi-agents ?', en: 'What evidence of multi-agent systems work?' },
+        { fr: 'Pourquoi ce profil pour un doctorat en IA agentique ?', en: 'Why is he a fit for a PhD in agentic AI?' },
+        { fr: 'Quelle est son expérience industrielle ?', en: 'What is his industry experience?' },
+    ];
+
+    const escapeHtml = (str) => str.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    // Markdown minimal et sûr (le texte est échappé avant toute mise en forme) :
+    // **gras**, `code`, listes « - », liens vers une section (#id) ou une page https.
+    const renderMarkdown = (md) => {
+        const inline = (txt) => escapeHtml(txt)
+            .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+            .replace(/`([^`]+)`/g, '<code>$1</code>')
+            .replace(/\[([^\]]+)\]\((#[a-z-]+|https:\/\/[^\s)]+)\)/g, (m, label, href) => href.startsWith('#')
+                ? `<a href="${href}" class="chat-link" data-section="${href.slice(1)}">${label}</a>`
+                : `<a href="${href}" class="chat-link" target="_blank" rel="noopener">${label}</a>`);
+        let html = '';
+        let list = [];
+        let para = [];
+        const flushPara = () => { if (para.length) { html += `<p>${para.join('<br>')}</p>`; para = []; } };
+        const flushList = () => { if (list.length) { html += `<ul>${list.map(li => `<li>${li}</li>`).join('')}</ul>`; list = []; } };
+        md.split('\n').forEach(raw => {
+            const line = raw.trim();
+            const item = line.match(/^[-*•]\s+(.*)$/);
+            if (item) { flushPara(); list.push(inline(item[1])); }
+            else if (!line) { flushPara(); flushList(); }
+            else { flushList(); para.push(inline(line)); }
+        });
+        flushPara();
+        flushList();
+        return html;
+    };
 
     // Base de connaissances construite à partir du contenu réel du site (index.html)
     const INTENTS = [
@@ -629,15 +688,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const addSuggestions = () => {
         const wrap = document.createElement('div');
         wrap.className = 'chat-suggestions';
-        TOPIC_CHIPS.forEach(chip => {
+        const chips = aiEnabled ? RECRUITER_CHIPS : TOPIC_CHIPS;
+        chips.forEach(chip => {
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.className = 'chat-suggestion-btn';
             btn.textContent = lang() === 'en' ? chip.en : chip.fr;
             btn.addEventListener('click', () => {
+                if (busy) return;
                 wrap.remove();
-                addMessage(btn.textContent, true);
-                setTimeout(() => respondToUser(normalize(chip.query)), 500);
+                if (aiEnabled) sendQuestion(btn.textContent);
+                else {
+                    addMessage(escapeHtml(btn.textContent), true);
+                    setTimeout(() => respondToUser(normalize(chip.query)), 500);
+                }
             });
             wrap.appendChild(btn);
         });
@@ -681,17 +745,96 @@ document.addEventListener('DOMContentLoaded', () => {
         chatWindow.classList.remove('active');
     });
 
-    const handleUserInput = () => {
-        const text = chatInput.value.trim();
-        if (!text) return;
-
-        addMessage(text, true);
-        chatInput.value = '';
-
-        setTimeout(() => {
-            respondToUser(normalize(text));
-        }, 600);
+    // Question à l'IA : réponse en streaming (SSE) ; en cas d'échec, réponse du mode hors ligne
+    const askAI = async (question) => {
+        busy = true;
+        chatSend.disabled = true;
+        history.push({ role: 'user', content: question });
+        const bubble = addMessage('<span class="typing" aria-hidden="true"><span></span><span></span><span></span></span>');
+        bubble.classList.add('ai-message');
+        let answer = '';
+        let provider = '';
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 45000);
+        try {
+            const response = await fetch(ASSISTANT_API, {
+                method: 'POST',
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify({ lang: lang(), messages: history.slice(-10) }),
+                signal: controller.signal,
+            });
+            if (!response.ok || !response.body) throw new Error(response.status === 429 ? 'rate_limited' : `http_${response.status}`);
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = '';
+            let finished = false;
+            while (!finished) {
+                const { value, done } = await reader.read();
+                if (done) break;
+                buffer += decoder.decode(value, { stream: true });
+                let index;
+                while ((index = buffer.indexOf('\n\n')) >= 0) {
+                    const block = buffer.slice(0, index);
+                    buffer = buffer.slice(index + 2);
+                    const event = (block.match(/^event: (.*)$/m) || [])[1] || 'message';
+                    const raw = (block.match(/^data: (.*)$/m) || [])[1];
+                    if (!raw) continue;
+                    const data = JSON.parse(raw);
+                    if (event === 'meta') provider = data.provider;
+                    else if (event === 'error') throw new Error(data.error || 'error');
+                    else if (event === 'done') finished = true;
+                    else if (data.t) {
+                        answer += data.t;
+                        bubble.innerHTML = renderMarkdown(answer) + '<span class="ai-cursor" aria-hidden="true"></span>';
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }
+                }
+            }
+            if (!answer) throw new Error('empty');
+            const via = provider ? `<span class="ai-provider">via ${escapeHtml(PROVIDER_LABELS[provider] || provider)}</span>` : '';
+            bubble.innerHTML = renderMarkdown(answer) + via;
+            history.push({ role: 'assistant', content: answer });
+        } catch (error) {
+            history.pop(); // une question sans réponse ne reste pas dans l'historique
+            bubble.remove();
+            const fr = error.message === 'rate_limited'
+                ? 'Beaucoup de questions en peu de temps : voici une réponse du mode hors ligne.'
+                : "L'assistant IA est momentanément indisponible : voici une réponse du mode hors ligne.";
+            const en = error.message === 'rate_limited'
+                ? 'Many questions in a short time: here is an answer from offline mode.'
+                : 'The AI assistant is temporarily unavailable: here is an answer from offline mode.';
+            addMessage(`<span class="ai-note">${lang() === 'en' ? en : fr}</span>`);
+            respondToUser(normalize(question));
+        } finally {
+            clearTimeout(timer);
+            while (history.length > 10) history.shift();
+            busy = false;
+            chatSend.disabled = false;
+        }
     };
+
+    const sendQuestion = (text) => {
+        if (busy) return;
+        addMessage(escapeHtml(text), true);
+        if (aiEnabled) askAI(text);
+        else setTimeout(() => respondToUser(normalize(text)), 600);
+    };
+
+    const handleUserInput = () => {
+        const text = chatInput.value.trim().slice(0, 1000);
+        if (!text || busy) return;
+        chatInput.value = '';
+        sendQuestion(text);
+    };
+
+    // Liens vers une section dans les réponses : défilement (et fermeture du chat sur mobile)
+    chatMessages.addEventListener('click', (e) => {
+        const a = e.target.closest('a[data-section]');
+        if (!a) return;
+        e.preventDefault();
+        chatScrollTo(a.dataset.section);
+        if (window.innerWidth < 640) chatWindow.classList.remove('active');
+    });
 
     chatSend.addEventListener('click', handleUserInput);
     chatInput.addEventListener('keypress', (e) => {
