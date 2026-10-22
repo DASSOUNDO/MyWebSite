@@ -2533,6 +2533,117 @@ body.chat-open .back-to-top {
     transform: translateY(-2px);
 }
 
+/* Carte « Collez une fiche de poste », mise en avant sur toute la largeur */
+.chat-card-job {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+    margin-top: 14px;
+    padding: 16px;
+    border-color: var(--accent-line);
+    background: var(--accent-soft);
+}
+
+.chat-card-job i {
+    font-size: 1.35rem;
+}
+
+.chat-card-job span {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    color: var(--text-2);
+    font-weight: 400;
+}
+
+.chat-card-job strong {
+    color: var(--text);
+    font-weight: 600;
+}
+
+.chat-card-job + .chat-cards {
+    margin-top: 10px;
+}
+
+/* Mode fiche de poste : bandeau au-dessus du champ et bouton d'activation */
+.chat-job-banner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    padding: 8px 8px 8px 12px;
+    font-size: 0.82rem;
+    color: var(--text);
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-line);
+    border-radius: 12px;
+}
+
+.chat-job-banner[hidden] {
+    display: none;
+}
+
+.chat-job-banner > i {
+    color: var(--accent);
+}
+
+.chat-job-banner span {
+    flex: 1;
+}
+
+.chat-job-banner button {
+    flex: none;
+    width: 26px;
+    height: 26px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--muted);
+}
+
+.chat-job-banner button:hover {
+    color: var(--text);
+    background: var(--surface);
+}
+
+.chatbot-input .chat-job-toggle {
+    margin-left: -8px;
+    background: transparent;
+    color: var(--muted);
+}
+
+.chatbot-input .chat-job-toggle:hover,
+.chatbot-input .chat-job-toggle.active {
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+.chatbot-input .chat-job-toggle[hidden] {
+    display: none;
+}
+
+/* Bulle compacte d'une fiche de poste envoyée */
+.job-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.job-preview-size {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.job-preview-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 0.85rem;
+    opacity: 0.85;
+}
+
 /* Messages */
 .message {
     font-size: 0.95rem;

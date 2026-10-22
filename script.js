@@ -477,12 +477,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Markdown minimal et sûr (le texte est échappé avant toute mise en forme) :
     // **gras**, `code`, listes « - », liens vers une section (#id) ou une page https.
+    // Ligne « Voir : experience | projets » écrite sans liens : on la convertit en liens de section
+    const SECTION_LABELS = {
+        accueil: ['Accueil', 'Home'], axes: ['Axes', 'Focus areas'], experience: ['Parcours', 'Experience'],
+        projets: ['Projets', 'Projects'], recherche: ['Recherche', 'Research'], competences: ['Compétences', 'Skills'],
+        education: ['Formation', 'Education'], leadership: ['Engagement', 'Leadership'], contact: ['Contact', 'Contact'],
+    };
+    // Un lien libellé avec l'identifiant brut (« experience ») reçoit le nom de la section
+    const sectionLabel = (label) => {
+        const id = stripAccents(label.toLowerCase().trim());
+        return SECTION_LABELS[id] ? SECTION_LABELS[id][lang() === 'en' ? 1 : 0] : label;
+    };
+    const linkSeeLine = (line) => {
+        const m = line.match(/^(\**\s*(?:voir|see)\s*\**\s*:\s*)(.+)$/i);
+        if (!m || m[2].includes('](')) return line;
+        const ids = m[2].split(/[|,]/).map(t => stripAccents(t.replace(/[*#\s]/g, '').toLowerCase())).filter(id => SECTION_LABELS[id]);
+        if (!ids.length) return line;
+        return m[1] + ids.map(id => `[${SECTION_LABELS[id][lang() === 'en' ? 1 : 0]}](#${id})`).join(', ');
+    };
+
     const renderMarkdown = (md) => {
         const inline = (txt) => escapeHtml(txt)
             .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
             .replace(/`([^`]+)`/g, '<code>$1</code>')
             .replace(/\[([^\]]+)\]\((#[a-z-]+|https:\/\/[^\s)]+)\)/g, (m, label, href) => href.startsWith('#')
-                ? `<a href="${href}" class="chat-link" data-section="${href.slice(1)}">${label}</a>`
+                ? `<a href="${href}" class="chat-link" data-section="${href.slice(1)}">${sectionLabel(label)}</a>`
                 : `<a href="${href}" class="chat-link" target="_blank" rel="noopener">${label}</a>`);
         let html = '';
         let list = [];
@@ -490,7 +509,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const flushPara = () => { if (para.length) { html += `<p>${para.join('<br>')}</p>`; para = []; } };
         const flushList = () => { if (list.length) { html += `<ul>${list.map(li => `<li>${li}</li>`).join('')}</ul>`; list = []; } };
         md.split('\n').forEach(raw => {
-            const line = raw.trim();
+            const line = linkSeeLine(raw.trim());
             const item = line.match(/^[-*•]\s+(.*)$/);
             if (item) { flushPara(); list.push(inline(item[1])); }
             else if (!line) { flushPara(); flushList(); }
@@ -816,6 +835,16 @@ document.addEventListener('DOMContentLoaded', () => {
             <p>${en
                 ? 'Recruiter, professor or simply curious: tell me what you are looking for, and I will show you how the profile of Adébayo Sergio DASSOUNDO matches it.'
                 : "Recruteur, professeur ou simple curieux : dites-moi ce que vous recherchez, je vous montre en quoi le profil d'Adébayo Sergio DASSOUNDO y répond."}</p>`;
+        if (aiEnabled) {
+            const jobCard = document.createElement('button');
+            jobCard.type = 'button';
+            jobCard.className = 'chat-card chat-card-job';
+            jobCard.innerHTML = `<i class="fas fa-clipboard-list"></i><span><strong>${en ? 'Paste a job description' : 'Collez une fiche de poste'}</strong>${en
+                ? 'I will show, requirement by requirement, how his background matches it.'
+                : 'Je vous montre, exigence par exigence, en quoi son parcours y répond.'}</span>`;
+            jobCard.addEventListener('click', () => setJobMode(true));
+            wrap.appendChild(jobCard);
+        }
         const cards = document.createElement('div');
         cards.className = 'chat-cards';
         const chips = aiEnabled ? RECRUITER_CHIPS : TOPIC_CHIPS.slice(0, 4);
@@ -840,16 +869,56 @@ document.addEventListener('DOMContentLoaded', () => {
         chatMessages.appendChild(wrap);
     };
 
+    // --- Mode « fiche de poste » : le recruteur colle une offre, l'IA analyse l'adéquation -------
+    const JOB_MIN_CHARS = 400; // au-delà, un texte collé est traité comme une fiche de poste
+    const jobBanner = document.getElementById('chat-job-banner');
+    const jobToggle = document.getElementById('chatbot-job');
+    let jobMode = false;
+    const updatePlaceholder = () => {
+        const en = lang() === 'en';
+        chatInput.placeholder = jobMode
+            ? (en ? 'Paste the job description here…' : 'Collez ici la fiche de poste…')
+            : (en ? 'Ask a question about his profile…' : 'Posez une question sur son profil…');
+        document.getElementById('chat-job-banner-text').textContent = en
+            ? 'Job description mode: paste the offer, I will show how his profile matches it.'
+            : "Mode fiche de poste : collez l'offre, je montre en quoi son profil y répond.";
+    };
+    const setJobMode = (on) => {
+        jobMode = on && aiEnabled;
+        jobBanner.hidden = !jobMode;
+        jobToggle.classList.toggle('active', jobMode);
+        jobToggle.setAttribute('aria-pressed', String(jobMode));
+        updatePlaceholder();
+        if (jobMode) chatInput.focus();
+    };
+    if (aiEnabled) jobToggle.hidden = false;
+    jobToggle.addEventListener('click', () => setJobMode(!jobMode));
+    document.getElementById('chat-job-exit').addEventListener('click', () => setJobMode(false));
+    // Un long texte collé bascule automatiquement en mode fiche de poste
+    chatInput.addEventListener('paste', () => setTimeout(() => {
+        if (!jobMode && chatInput.value.trim().length >= JOB_MIN_CHARS) setJobMode(true);
+    }, 0));
+
+    // Bulle compacte pour une fiche collée : le texte complet part au modèle, pas à l'écran
+    const jobPreview = (text) => {
+        const en = lang() === 'en';
+        const excerpt = text.replace(/\s+/g, ' ').slice(0, 160);
+        return `<span class="job-preview"><strong><i class="fas fa-clipboard-list"></i> ${en ? 'Job description' : 'Fiche de poste'}</strong>`
+            + ` <span class="job-preview-size">(${text.length} ${en ? 'characters' : 'caractères'})</span>`
+            + `<span class="job-preview-text">${escapeHtml(excerpt)}${text.length > 160 ? '…' : ''}</span></span>`;
+    };
+
     document.getElementById('chatbot-new').addEventListener('click', () => {
         if (busy) return;
         history.length = 0;
+        setJobMode(false);
         renderWelcome();
         chatInput.focus();
     });
 
     // L'accueil suit le changement de langue tant que la conversation n'a pas commencé
     document.querySelectorAll('.lang-btn').forEach(btn => btn.addEventListener('click', () => {
-        setTimeout(() => { if (chatMessages.querySelector('.chat-welcome')) renderWelcome(); }, 250);
+        setTimeout(() => { updatePlaceholder(); if (chatMessages.querySelector('.chat-welcome')) renderWelcome(); }, 250);
     }));
 
     // Le modèle termine par « Suggestions : q1 | q2 | q3 » : on retire cette ligne du texte
@@ -886,7 +955,17 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Question à l'IA : réponse en streaming (SSE) ; en cas d'échec, réponse du mode hors ligne
-    const askAI = async (question) => {
+    // L'historique envoyé reste sous la limite du proxy (une fiche de poste pèse lourd) :
+    // on retire les plus anciens échanges et on commence toujours par une question.
+    const MAX_HISTORY_CHARS = 13000;
+    const trimmedHistory = () => {
+        const messages = history.slice(-10);
+        const size = () => messages.reduce((n, m) => n + m.content.length, 0);
+        while (messages.length > 1 && (size() > MAX_HISTORY_CHARS || messages[0].role !== 'user')) messages.shift();
+        return messages;
+    };
+
+    const askAI = async (question, mode = 'chat') => {
         busy = true;
         chatSend.disabled = true;
         history.push({ role: 'user', content: question });
@@ -900,7 +979,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(ASSISTANT_API, {
                 method: 'POST',
                 headers: { 'content-type': 'application/json' },
-                body: JSON.stringify({ lang: lang(), messages: history.slice(-10) }),
+                body: JSON.stringify({ lang: lang(), mode, messages: trimmedHistory() }),
                 signal: controller.signal,
             });
             if (!response.ok || !response.body) throw new Error(response.status === 429 ? 'rate_limited' : `http_${response.status}`);
@@ -946,7 +1025,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? 'Many questions in a short time: here is an answer from offline mode.'
                 : 'The AI assistant is temporarily unavailable: here is an answer from offline mode.';
             addMessage(`<span class="ai-note">${lang() === 'en' ? en : fr}</span>`);
-            respondToUser(normalize(question));
+            if (mode === 'job') {
+                // Le mode hors ligne ne sait pas analyser une offre : on oriente vers le CV et le contact
+                addMessage(lang() === 'en'
+                    ? `The detailed analysis of a job description needs the AI assistant. In the meantime, his ${link('experience', 'experience')}, ${link('projects', 'projects')} and ${link('contact', 'resume and contact details')} answer most requirements. Please try again in a minute.`
+                    : `L'analyse détaillée d'une fiche de poste demande l'assistant IA. En attendant, son ${link('experience', 'expérience')}, ses ${link('projects', 'projets')} et ${link('contact', 'son CV et ses coordonnées')} répondent à la plupart des exigences. Réessayez dans une minute.`);
+            } else respondToUser(normalize(question));
         } finally {
             clearTimeout(timer);
             while (history.length > 10) history.shift();
@@ -955,21 +1039,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const sendQuestion = (text) => {
+    const sendQuestion = (text, isJob = false) => {
         if (busy) return;
         chatMessages.querySelector('.chat-welcome')?.remove();
         chatMessages.querySelectorAll('.chat-followups').forEach(el => el.remove());
+        if (isJob) {
+            addMessage(jobPreview(text), true).classList.add('job-message');
+            askAI(text, 'job');
+            return;
+        }
         addMessage(escapeHtml(text), true);
         if (aiEnabled) askAI(text);
         else setTimeout(() => respondToUser(normalize(text)), 600);
     };
 
     const handleUserInput = () => {
-        const text = chatInput.value.trim().slice(0, 1000);
+        const isJob = aiEnabled && (jobMode || chatInput.value.trim().length >= JOB_MIN_CHARS);
+        const text = chatInput.value.trim().slice(0, isJob ? 6000 : 1000);
         if (!text || busy) return;
         chatInput.value = '';
         autoGrow();
-        sendQuestion(text);
+        // Après l'analyse, les relances redeviennent des questions classiques (la fiche reste dans l'historique)
+        if (jobMode) setJobMode(false);
+        sendQuestion(text, isJob);
     };
 
     // Champ de saisie qui s'agrandit avec le texte ; Entrée envoie, Maj + Entrée va à la ligne
