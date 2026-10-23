@@ -1011,7 +1011,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (!answer) throw new Error('empty');
             const { body, suggestions } = splitSuggestions(answer);
-            const via = provider ? `<span class="ai-provider">via ${escapeHtml(provider)}</span>` : '';
+            // Modèle utilisé : masqué derrière une petite icône, affiché au clic
+            const modelTitle = lang() === 'en' ? 'Show the model' : 'Voir le modèle';
+            const via = provider
+                ? `<details class="ai-provider"><summary title="${modelTitle}" aria-label="${modelTitle}"><i class="fas fa-microchip"></i></summary><span>${lang() === 'en' ? 'Model' : 'Modèle'} : ${escapeHtml(provider)}</span></details>`
+                : '';
             bubble.innerHTML = renderMarkdown(body) + via;
             addFollowups(suggestions);
             history.push({ role: 'assistant', content: body });

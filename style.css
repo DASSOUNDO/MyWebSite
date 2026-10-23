@@ -2718,13 +2718,41 @@ body.chat-open .back-to-top {
     background: var(--surface-2);
 }
 
+/* Modèle utilisé : icône discrète, le nom n'apparaît qu'au clic */
 .ai-provider {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 2px 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
     font-family: var(--font-mono);
     font-size: 0.7rem;
     color: var(--muted);
+}
+
+.ai-provider summary {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    list-style: none;
+    cursor: pointer;
+    border-radius: 50%;
+    opacity: 0.55;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+
+.ai-provider summary::-webkit-details-marker {
+    display: none;
+}
+
+.ai-provider summary:hover,
+.ai-provider[open] summary {
+    opacity: 1;
+    background: var(--surface-2);
+}
+
+.ai-provider span {
+    padding: 2px 8px;
     background: var(--surface-2);
     border-radius: 999px;
 }
