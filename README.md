@@ -1,78 +1,73 @@
-🌐 Portfolio – Adébayo DASSOUNDO
+# Portfolio – Adébayo Sergio DASSOUNDO
 
-Un site web portfolio moderne et interactif présentant mon parcours, mes compétences techniques et mes projets de recherche en systèmes embarqués, électronique, automatisation et intelligence artificielle.
+Portfolio d'ingénieur et de chercheur en **IA agentique, systèmes multi-agents et logiciel embarqué**, candidat au doctorat (Ph.D.). Il présente mon parcours (Renault, Thales, Yieloo, Université de Sherbrooke), mes projets (DASIA, Citiz), mes axes de recherche, et intègre un **assistant IA** qui répond aux questions des recruteurs à partir du contenu du site.
 
-🚀 Fonctionnalités principales
-🎨 Design & Expérience utilisateur
+**Site en ligne :** https://dassoundo.github.io/MyWebSite/
 
-Interface moderne et fluide avec animations élégantes
+## Fonctionnalités
 
-Entièrement responsive (ordinateur, tablette, mobile)
+### Assistant IA pour les recruteurs
+- **Panneau latéral** à la manière des IA génératives : écran d'accueil avec suggestions, réponses en temps réel (streaming), questions de relance cliquables, liens vers les sections du site.
+- **Analyse de fiche de poste** : le recruteur colle une offre, l'assistant produit une analyse d'adéquation exigence par exigence (points forts avec preuves, exigences couvertes, points à approfondir en entretien).
+- **Réponses ancrées** : le modèle ne s'appuie que sur le contenu du portfolio, avec des règles strictes contre l'invention.
+- **Résilience** : chaîne de modèles gratuits (Gemini 3 Flash, puis GPT-OSS 120B et Qwen3 via Groq), puis un assistant hors ligne par mots-clés si aucun modèle ne répond.
+- **Sécurité** : clés API conservées comme secrets côté serveur (Cloudflare Worker), origines autorisées, limitation du débit, aucune conversation enregistrée.
 
-Navigation fixe et ergonomique avec photo de profil
+### Site
+- Sections : Accueil, Axes de recherche, Parcours, Projets, Recherche, Compétences, Formation, Engagement, Contact.
+- **Bilingue FR / EN**, avec mémorisation du choix.
+- **Recherche intégrée** (`Ctrl + K` ou `/`) avec surlignage des résultats dans la page.
+- Thème clair par défaut, **thème sombre** au choix.
+- Aperçus visuels au survol des expériences, cartes de projets dépliables, animations discrètes à l'apparition.
+- Téléchargement du CV (FR / EN) et des lettres de recommandation.
+- Responsive (ordinateur, tablette, mobile) et accessible (navigation au clavier, attributs ARIA).
 
-Thème cohérent basé sur des variables CSS personnalisées
+## Technologies
 
-Mode multilingue (Français 🇫🇷 / Anglais 🇬🇧)
+| Partie | Technologies |
+| --- | --- |
+| Site | HTML5, CSS3 (variables, Grid, Flexbox), JavaScript ES6+ sans framework |
+| Interface | Font Awesome, Google Fonts (Inter, Outfit, JetBrains Mono) |
+| Assistant IA | Cloudflare Workers, Gemini API, Groq API, Server-Sent Events |
+| Outillage | Python (génération de la base de connaissances), Node.js (tests), Wrangler |
+| Hébergement | GitHub Pages |
 
-🧭 Sections principales du site
+## Structure du dépôt
 
-Accueil (Hero Section) — Présentation générale et boutons de téléchargement (CV, compétences, lettre de recommandation)
+```
+index.html              Page unique du portfolio
+style.css               Styles (thèmes clair et sombre)
+script.js               Interactions, traduction, recherche, assistant IA
+i18n-en.js              Traductions anglaises
+assistant/              Base de connaissances de l'assistant (générée)
+assistant-worker/       Proxy Cloudflare Worker de l'assistant IA (code, tests, guide)
+tools/build_knowledge.py  Génère la base de connaissances à partir d'index.html
+cv/                     CV en PDF
+Recommendation/         Lettres de recommandation en PDF
+images/, company/       Photos, logos et visuels
+```
 
-Compétences techniques — Organisation claire par domaines (Systèmes embarqués, Cybersécurité, IA, Électronique)
+## Lancer le site en local
 
-Projets — Sélection de projets scolaires, industriels et de recherche
+```bash
+python3 -m http.server 8765
+```
+Puis ouvrir http://localhost:8765. L'assistant IA fonctionne aussi en local : cette adresse est autorisée par le proxy.
 
-Recherche & Innovation — Travaux menés au Canada sur les systèmes embarqués et le contrôle intelligent
+## Mettre à jour l'assistant IA
 
-Formation académique — Parcours universitaire et programmes de recherche
+Après chaque modification du contenu du site, régénérer sa base de connaissances :
+```bash
+python3 tools/build_knowledge.py
+```
+Puis commiter les fichiers `assistant/knowledge*.md`. Le proxy les relit automatiquement toutes les 10 minutes.
 
-Contact — Informations, liens sociaux et localisation (🇫🇷 France / 🇨🇦 Canada)
+Le déploiement du proxy, la configuration des clés API et les tests sont décrits dans [assistant-worker/README.md](assistant-worker/README.md).
 
-⚙️ Fonctionnalités avancées
+## Déploiement
 
-Système de traduction dynamique (FR/EN) avec sauvegarde locale
+Le site est publié par GitHub Pages depuis la branche `web_5`.
 
-Effets d’apparition au scroll (Intersection Observer)
+## Licence
 
-Téléchargement interactif de fichiers PDF (CV, portfolio, lettre de recommandation)
-
-Cartes de projets dépliables avec transitions fluides
-
-Navigation fluide (smooth scroll et ancrages intelligents)
-
-💻 Technologies utilisées
-🧱 Frontend
-
-HTML5 — Structure sémantique moderne
-
-CSS3 / Flexbox / Grid — Mise en page réactive et animations
-
-JavaScript (ES6+) — Interaction, animation, gestion de contenu dynamique
-
-Font Awesome — Icônes vectorielles
-
-Google Fonts (Inter) — Typographie professionnelle et lisible
-
-🧩 Fonctionnalités JavaScript
-
-Menu de navigation responsive (hamburger)
-
-Gestion de traduction et de préférences utilisateur (localStorage)
-
-Animation au défilement (Intersection Observer API)
-
-Téléchargement intelligent avec feedback visuel
-
-Gestion dynamique des cartes projets et des sections
-
-🌍 Déploiement
-
-Site hébergé via GitHub Pages.
-Déploiement automatique depuis la branche web_1.
-
-🔗 Visiter le site
-
-🧠 À propos du projet
-
-Ce portfolio a pour but de mettre en avant mes compétences d’ingénieur chercheur, mon parcours en systèmes embarqués et cybersécurité, ainsi que mes travaux de recherche appliquée à l’intelligence artificielle et au contrôle intelligent.
+Code sous licence [MIT](LICENSE). Les contenus personnels (CV, lettres de recommandation, photos) ne sont pas réutilisables sans autorisation.
