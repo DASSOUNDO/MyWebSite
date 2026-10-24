@@ -2623,6 +2623,99 @@ body.chat-open .back-to-top {
     display: none;
 }
 
+/* Bouton « Joindre » du bandeau */
+.chat-job-banner .chat-job-attach {
+    width: auto;
+    padding: 0 10px;
+    border-radius: 999px;
+    color: var(--accent);
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: var(--surface);
+}
+
+.chat-job-banner .chat-job-attach:hover {
+    color: var(--accent);
+}
+
+/* Fichier joint, affiché au-dessus du champ */
+.chat-attachment {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    padding: 8px 8px 8px 12px;
+    font-size: 0.82rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.chat-attachment[hidden] {
+    display: none;
+}
+
+.chat-attachment > i {
+    color: var(--accent);
+}
+
+.chat-attachment.error {
+    color: var(--text);
+    border-color: #f59e0b;
+}
+
+.chat-attachment.error > i {
+    color: #f59e0b;
+}
+
+.chat-attachment-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+.chat-attachment.error .chat-attachment-name,
+.chat-attachment.loading .chat-attachment-name {
+    white-space: normal;
+    font-weight: 400;
+}
+
+.chat-attachment-meta {
+    flex: none;
+    color: var(--muted);
+    font-size: 0.76rem;
+}
+
+.chat-attachment button {
+    flex: none;
+    width: 26px;
+    height: 26px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--muted);
+}
+
+.chat-attachment button:hover {
+    color: var(--text);
+    background: var(--surface-2);
+}
+
+/* Glisser-déposer un fichier sur le panneau */
+.chatbot-window.dragging::after {
+    content: "";
+    position: absolute;
+    inset: 10px;
+    border: 2px dashed var(--accent);
+    border-radius: 16px;
+    background: var(--accent-soft);
+    pointer-events: none;
+    z-index: 5;
+}
+
 /* Bulle compacte d'une fiche de poste envoyée */
 .job-preview {
     display: flex;

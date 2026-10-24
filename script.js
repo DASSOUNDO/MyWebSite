@@ -839,9 +839,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const jobCard = document.createElement('button');
             jobCard.type = 'button';
             jobCard.className = 'chat-card chat-card-job';
-            jobCard.innerHTML = `<i class="fas fa-clipboard-list"></i><span><strong>${en ? 'Paste a job description' : 'Collez une fiche de poste'}</strong>${en
-                ? 'I will show, requirement by requirement, how his background matches it.'
-                : 'Je vous montre, exigence par exigence, en quoi son parcours y répond.'}</span>`;
+            jobCard.innerHTML = `<i class="fas fa-clipboard-list"></i><span><strong>${en ? 'Paste or attach a job description' : 'Collez ou joignez une fiche de poste'}</strong>${en
+                ? 'Text, PDF or Word: I will show, requirement by requirement, how his background matches it.'
+                : 'Texte, PDF ou Word : je vous montre, exigence par exigence, en quoi son parcours y répond.'}</span>`;
             jobCard.addEventListener('click', () => setJobMode(true));
             wrap.appendChild(jobCard);
         }
@@ -871,39 +871,155 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Mode « fiche de poste » : le recruteur colle une offre, l'IA analyse l'adéquation -------
     const JOB_MIN_CHARS = 400; // au-delà, un texte collé est traité comme une fiche de poste
+    const JOB_MAX_CHARS = 6000;
     const jobBanner = document.getElementById('chat-job-banner');
-    const jobToggle = document.getElementById('chatbot-job');
+    const attachBtn = document.getElementById('chatbot-attach');
+    const fileInput = document.getElementById('chatbot-file');
+    const attachBox = document.getElementById('chat-attachment');
     let jobMode = false;
+    let attachment = null; // fiche jointe : { name, text, truncated }
     const updatePlaceholder = () => {
         const en = lang() === 'en';
-        chatInput.placeholder = jobMode
+        chatInput.placeholder = attachment
+            ? (en ? 'Add a message (optional) and send…' : 'Ajoutez un message (facultatif) et envoyez…')
+            : jobMode
             ? (en ? 'Paste the job description here…' : 'Collez ici la fiche de poste…')
             : (en ? 'Ask a question about his profile…' : 'Posez une question sur son profil…');
         document.getElementById('chat-job-banner-text').textContent = en
-            ? 'Job description mode: paste the offer, I will show how his profile matches it.'
-            : "Mode fiche de poste : collez l'offre, je montre en quoi son profil y répond.";
+            ? 'Job description mode: paste the offer or attach a file (PDF, Word, text).'
+            : "Mode fiche de poste : collez l'offre ou joignez un fichier (PDF, Word, texte).";
+        document.getElementById('chat-job-attach-text').textContent = en ? 'Attach' : 'Joindre';
+        if (attachment) renderAttachment();
     };
     const setJobMode = (on) => {
         jobMode = on && aiEnabled;
         jobBanner.hidden = !jobMode;
-        jobToggle.classList.toggle('active', jobMode);
-        jobToggle.setAttribute('aria-pressed', String(jobMode));
         updatePlaceholder();
         if (jobMode) chatInput.focus();
     };
-    if (aiEnabled) jobToggle.hidden = false;
-    jobToggle.addEventListener('click', () => setJobMode(!jobMode));
-    document.getElementById('chat-job-exit').addEventListener('click', () => setJobMode(false));
+    if (aiEnabled) attachBtn.hidden = false;
+    document.getElementById('chat-job-exit').addEventListener('click', () => { clearAttachment(); setJobMode(false); });
+
+    // --- Fiche de poste jointe (PDF, Word, texte) : le texte est extrait dans le navigateur,
+    // puis envoyé comme un texte collé (compatible avec tous les modèles de la chaîne).
+    const LIBS = {
+        pdf: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
+        pdfWorker: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',
+        docx: 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js',
+    };
+    const loadedLibs = {};
+    const loadScript = (src) => loadedLibs[src] || (loadedLibs[src] = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = resolve;
+        script.onerror = () => { delete loadedLibs[src]; reject(new Error('lib')); };
+        document.head.appendChild(script);
+    }));
+
+    const extractText = async (file) => {
+        const ext = (file.name.split('.').pop() || '').toLowerCase();
+        if (ext === 'pdf' || file.type === 'application/pdf') {
+            await loadScript(LIBS.pdf);
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = LIBS.pdfWorker;
+            const pdf = await window.pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+            let text = '';
+            for (let n = 1; n <= Math.min(pdf.numPages, 10); n++) {
+                const content = await (await pdf.getPage(n)).getTextContent();
+                text += content.items.map(item => item.str + (item.hasEOL ? '\n' : ' ')).join('') + '\n';
+            }
+            return text;
+        }
+        if (ext === 'docx') {
+            await loadScript(LIBS.docx);
+            return (await window.mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() })).value;
+        }
+        if (['txt', 'md'].includes(ext) || file.type.startsWith('text/')) return file.text();
+        throw new Error('unsupported');
+    };
+
+    const renderAttachment = (state = 'ready', message = '') => {
+        const en = lang() === 'en';
+        attachBox.hidden = false;
+        attachBox.className = `chat-attachment ${state}`;
+        if (state === 'loading') {
+            attachBox.innerHTML = `<i class="fas fa-spinner fa-spin"></i><span class="chat-attachment-name">${escapeHtml(message)}</span>`;
+            return;
+        }
+        if (state === 'error') {
+            attachBox.innerHTML = `<i class="fas fa-triangle-exclamation"></i><span class="chat-attachment-name">${escapeHtml(message)}</span>`;
+            setTimeout(() => { if (!attachment && attachBox.classList.contains('error')) attachBox.hidden = true; }, 6000);
+            return;
+        }
+        const meta = `${attachment.text.length} ${en ? 'characters' : 'caractères'}${attachment.truncated ? (en ? ', shortened' : ', tronqué') : ''}`;
+        attachBox.innerHTML = `<i class="fas fa-file-lines"></i><span class="chat-attachment-name">${escapeHtml(attachment.name)}</span>`
+            + `<span class="chat-attachment-meta">${meta}</span>`
+            + `<button type="button" aria-label="${en ? 'Remove the file' : 'Retirer le fichier'}"><i class="fas fa-times"></i></button>`;
+        attachBox.querySelector('button').addEventListener('click', () => { clearAttachment(); chatInput.focus(); });
+    };
+    const clearAttachment = () => {
+        attachment = null;
+        attachBox.hidden = true;
+        attachBox.innerHTML = '';
+        updatePlaceholder();
+    };
+
+    const attachFile = async (file) => {
+        if (!file || busy || !aiEnabled) return;
+        const en = lang() === 'en';
+        attachment = null;
+        if (file.size > 10 * 1024 * 1024) {
+            renderAttachment('error', en ? 'File too large (10 MB max).' : 'Fichier trop volumineux (10 Mo max).');
+            return;
+        }
+        renderAttachment('loading', en ? `Reading ${file.name}…` : `Lecture de ${file.name}…`);
+        try {
+            const text = (await extractText(file)).replace(/[ \t]+/g, ' ').replace(/\n\s*\n\s*\n+/g, '\n\n').trim();
+            if (text.length < 80) throw new Error('empty');
+            attachment = { name: file.name, text: text.slice(0, JOB_MAX_CHARS), truncated: text.length > JOB_MAX_CHARS };
+            setJobMode(true); // met aussi à jour le texte du champ et l'affichage du fichier
+        } catch (error) {
+            const messages = {
+                unsupported: en ? 'Unsupported format: use PDF, Word (.docx) or text.' : 'Format non pris en charge : utilisez un PDF, un Word (.docx) ou un texte.',
+                empty: en ? 'No text found (scanned document?): paste the text instead.' : 'Aucun texte trouvé (document scanné ?) : collez plutôt le texte.',
+            };
+            renderAttachment('error', messages[error.message] || (en ? 'Could not read this file: paste the text instead.' : 'Lecture impossible : collez plutôt le texte.'));
+        }
+    };
+
+    attachBtn.addEventListener('click', () => fileInput.click());
+    document.getElementById('chat-job-attach').addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', () => { attachFile(fileInput.files[0]); fileInput.value = ''; });
+
+    // Glisser-déposer un fichier sur le panneau
+    let dragDepth = 0;
+    chatWindow.addEventListener('dragenter', (e) => {
+        if (!aiEnabled || ![...(e.dataTransfer?.types || [])].includes('Files')) return;
+        e.preventDefault();
+        dragDepth++;
+        chatWindow.classList.add('dragging');
+    });
+    chatWindow.addEventListener('dragover', (e) => { if (chatWindow.classList.contains('dragging')) e.preventDefault(); });
+    chatWindow.addEventListener('dragleave', () => { if (--dragDepth <= 0) { dragDepth = 0; chatWindow.classList.remove('dragging'); } });
+    chatWindow.addEventListener('drop', (e) => {
+        if (!chatWindow.classList.contains('dragging')) return;
+        e.preventDefault();
+        dragDepth = 0;
+        chatWindow.classList.remove('dragging');
+        attachFile(e.dataTransfer.files[0]);
+    });
     // Un long texte collé bascule automatiquement en mode fiche de poste
     chatInput.addEventListener('paste', () => setTimeout(() => {
         if (!jobMode && chatInput.value.trim().length >= JOB_MIN_CHARS) setJobMode(true);
     }, 0));
 
     // Bulle compacte pour une fiche collée : le texte complet part au modèle, pas à l'écran
-    const jobPreview = (text) => {
+    const jobPreview = (text, fileName = '') => {
         const en = lang() === 'en';
         const excerpt = text.replace(/\s+/g, ' ').slice(0, 160);
-        return `<span class="job-preview"><strong><i class="fas fa-clipboard-list"></i> ${en ? 'Job description' : 'Fiche de poste'}</strong>`
+        const title = fileName
+            ? `<i class="fas fa-file-lines"></i> ${escapeHtml(fileName)}`
+            : `<i class="fas fa-clipboard-list"></i> ${en ? 'Job description' : 'Fiche de poste'}`;
+        return `<span class="job-preview"><strong>${title}</strong>`
             + ` <span class="job-preview-size">(${text.length} ${en ? 'characters' : 'caractères'})</span>`
             + `<span class="job-preview-text">${escapeHtml(excerpt)}${text.length > 160 ? '…' : ''}</span></span>`;
     };
@@ -911,6 +1027,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('chatbot-new').addEventListener('click', () => {
         if (busy) return;
         history.length = 0;
+        clearAttachment();
         setJobMode(false);
         renderWelcome();
         chatInput.focus();
@@ -1043,12 +1160,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const sendQuestion = (text, isJob = false) => {
+    const sendQuestion = (text, isJob = false, fileName = '') => {
         if (busy) return;
         chatMessages.querySelector('.chat-welcome')?.remove();
         chatMessages.querySelectorAll('.chat-followups').forEach(el => el.remove());
         if (isJob) {
-            addMessage(jobPreview(text), true).classList.add('job-message');
+            addMessage(jobPreview(text, fileName), true).classList.add('job-message');
             askAI(text, 'job');
             return;
         }
@@ -1058,14 +1175,23 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const handleUserInput = () => {
-        const isJob = aiEnabled && (jobMode || chatInput.value.trim().length >= JOB_MIN_CHARS);
-        const text = chatInput.value.trim().slice(0, isJob ? 6000 : 1000);
-        if (!text || busy) return;
+        if (busy) return;
+        const typed = chatInput.value.trim();
+        let text;
+        let fileName = '';
+        if (attachment) {
+            // Fichier joint : le message éventuel du recruteur précède le texte de la fiche
+            text = ((typed ? `${typed.slice(0, 500)}\n\n` : '') + attachment.text).slice(0, JOB_MAX_CHARS);
+            fileName = attachment.name;
+        } else text = typed.slice(0, aiEnabled && (jobMode || typed.length >= JOB_MIN_CHARS) ? JOB_MAX_CHARS : 1000);
+        if (!text) return;
+        const isJob = Boolean(fileName) || (aiEnabled && (jobMode || text.length >= JOB_MIN_CHARS));
         chatInput.value = '';
         autoGrow();
+        clearAttachment();
         // Après l'analyse, les relances redeviennent des questions classiques (la fiche reste dans l'historique)
         if (jobMode) setJobMode(false);
-        sendQuestion(text, isJob);
+        sendQuestion(text, isJob, fileName);
     };
 
     // Champ de saisie qui s'agrandit avec le texte ; Entrée envoie, Maj + Entrée va à la ligne

@@ -28,7 +28,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=30">
+    <link rel="stylesheet" href="style.css?v=31">
 </head>
 <body>
     <a class="skip-link" href="#contenu" data-lang="skip-link">Aller au contenu</a>
@@ -1327,11 +1327,14 @@
             <div class="chatbot-composer">
                 <div class="chat-job-banner" id="chat-job-banner" hidden>
                     <i class="fas fa-clipboard-list"></i>
-                    <span id="chat-job-banner-text">Mode fiche de poste : collez l'offre, je montre en quoi son profil y répond.</span>
+                    <span id="chat-job-banner-text">Mode fiche de poste : collez l'offre ou joignez un fichier (PDF, Word, texte).</span>
+                    <button type="button" class="chat-job-attach" id="chat-job-attach"><i class="fas fa-paperclip"></i> <span id="chat-job-attach-text">Joindre</span></button>
                     <button type="button" id="chat-job-exit" aria-label="Quitter le mode fiche de poste" title="Quitter"><i class="fas fa-times"></i></button>
                 </div>
+                <div class="chat-attachment" id="chat-attachment" hidden></div>
                 <div class="chatbot-input">
-                    <button class="chat-job-toggle" id="chatbot-job" type="button" aria-label="Analyser une fiche de poste" title="Analyser une fiche de poste" aria-pressed="false" hidden><i class="fas fa-clipboard-list"></i></button>
+                    <button class="chat-job-toggle" id="chatbot-attach" type="button" aria-label="Joindre une fiche de poste (PDF, Word, texte)" title="Joindre une fiche de poste (PDF, Word, texte)" hidden><i class="fas fa-paperclip"></i></button>
+                    <input type="file" id="chatbot-file" accept=".pdf,.docx,.txt,.md,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" hidden>
                     <textarea id="chatbot-input-field" rows="1" maxlength="6000" placeholder="Posez une question sur son profil…" aria-label="Votre question"></textarea>
                     <button id="chatbot-send" type="button" aria-label="Envoyer"><i class="fas fa-arrow-up"></i></button>
                 </div>
@@ -1351,7 +1354,7 @@
         </aside>
     </div>
 
-    <script src="i18n-en.js?v=7"></script>
-    <script src="script.js?v=23"></script>
+    <script src="i18n-en.js?v=8"></script>
+    <script src="script.js?v=24"></script>
 </body>
 </html>

@@ -31,7 +31,7 @@ const I18N_EN = {
         "Nouvelle conversation": "New conversation",
         "Fermer (Échap)": "Close (Esc)",
         "Posez une question sur son profil…": "Ask a question about his profile…",
-        "Analyser une fiche de poste": "Analyze a job description",
+        "Joindre une fiche de poste (PDF, Word, texte)": "Attach a job description (PDF, Word, text)",
         "Quitter le mode fiche de poste": "Exit job description mode",
         "Quitter": "Exit",
         "Votre question": "Your question",
