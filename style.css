@@ -1467,6 +1467,67 @@ dd {
     to { transform: translateY(-3px); }
 }
 
+/* Animation d'arrivée sur une expérience (avion, voiture…) : discrète et jouée une seule fois */
+.exp-anim {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    transition: opacity 0.8s ease;
+}
+
+.exp-anim.done {
+    opacity: 0;
+}
+
+.exp-anim svg {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+}
+
+.exp-anim-trail {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    opacity: 0.35;
+}
+
+.exp-anim-node {
+    fill: var(--surface);
+    stroke: var(--accent);
+    stroke-width: 1.5;
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scale(0.3);
+    transition: opacity 0.3s ease, transform 0.35s var(--ease);
+}
+
+.exp-anim-node.on {
+    opacity: 0.9;
+    transform: scale(1);
+}
+
+.exp-anim-icon {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    font-size: 0.85rem;
+    color: var(--accent);
+    background: var(--surface);
+    border: 1px solid var(--accent-line);
+    border-radius: 50%;
+    box-shadow: var(--shadow-sm);
+    opacity: 0;
+    will-change: transform, opacity;
+}
+
 .exp-body {
     padding: 18px 22px;
     background: var(--surface);

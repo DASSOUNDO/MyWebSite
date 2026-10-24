@@ -1480,3 +1480,143 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+// Parcours : à l'arrivée sur chaque expérience, une petite animation part du logo et longe la carte
+// (avion pour Yieloo, voiture pour Renault…). Elle ne joue qu'une fois, puis s'efface.
+document.addEventListener('DOMContentLoaded', () => {
+    const items = document.querySelectorAll('.exp-item');
+    if (!items.length || !('IntersectionObserver' in window)) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    // route : top (bord haut), bottom (bord bas), zigzag (exploration), steps (piste de circuit)
+    // turn : orientation de l'icône (tangent = suit la trajectoire, spin = tourne sur elle-même)
+    const SCENES = {
+        'pv-yieloo': { icon: 'fa-plane', route: 'top', turn: 'tangent', maxTilt: 35, duration: 3200 },
+        'pv-dasia': { icon: 'fa-circle-nodes', route: 'top', turn: 'none', nodes: 6, duration: 3000 },
+        'pv-renault': { icon: 'fa-car-side', route: 'bottom', turn: 'tangent', maxTilt: 18, duration: 2800, accelerate: true },
+        'pv-uds': { icon: 'fa-flask', route: 'bottom', turn: 'none', nodes: 4, duration: 3000 },
+        'pv-thales': { icon: 'fa-robot', route: 'zigzag', turn: 'none', nodes: 5, duration: 3400 },
+        'pv-eseo': { icon: 'fa-microchip', route: 'steps', turn: 'none', duration: 3000 },
+        'pv-digit': { icon: 'fa-bolt', route: 'steps', turn: 'none', nodes: 4, duration: 2800 },
+        'pv-jpa': { icon: 'fa-hand-holding-heart', route: 'bottom', turn: 'none', nodes: 5, duration: 3000 },
+        'pv-cppe': { icon: 'fa-gear', route: 'bottom', turn: 'spin', duration: 3000 },
+    };
+    const SVG_NS = 'http://www.w3.org/2000/svg';
+    const ease = (t, accelerate) => accelerate ? t * t * (2 - t) * t + (1 - t) * t * t : (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
+    const buildRoute = (route, g) => {
+        const { lx, ly, x0, y0, x1, y1 } = g;
+        const start = `M ${lx} ${ly}`;
+        if (route === 'top') return `${start} C ${lx} ${y0} ${lx + 20} ${y0} ${x0 + 24} ${y0} L ${x1 - 70} ${y0} Q ${x1 - 24} ${y0} ${x1 - 6} ${y0 - 12}`;
+        const toBottom = `${start} C ${lx} ${y1} ${lx + 20} ${y1} ${x0 + 24} ${y1}`;
+        if (route === 'bottom') return `${toBottom} L ${x1 - 24} ${y1}`;
+        const span = x1 - 24 - (x0 + 24);
+        if (route === 'zigzag') {
+            let d = toBottom;
+            const waves = 6;
+            for (let k = 0; k < waves; k++) {
+                const xa = x0 + 24 + (span * (k + 0.5)) / waves;
+                const xb = x0 + 24 + (span * (k + 1)) / waves;
+                d += ` Q ${xa} ${y1 + (k % 2 ? 9 : -9)} ${xb} ${y1}`;
+            }
+            return d;
+        }
+        // steps : tracé à angles droits, comme une piste de circuit imprimé
+        let d = toBottom;
+        const steps = 8;
+        for (let k = 0; k < steps; k++) {
+            const x = x0 + 24 + (span * (k + 1)) / steps;
+            d += ` H ${x - span / steps / 2} V ${y1 + (k % 2 ? 0 : -8)} H ${x} V ${y1}`;
+        }
+        return d;
+    };
+
+    const play = (item, scene) => {
+        const logo = item.querySelector('.logo-tile');
+        const card = item.querySelector('.exp-body');
+        if (!logo || !card) return;
+        const box = item.getBoundingClientRect();
+        const l = logo.getBoundingClientRect();
+        const c = card.getBoundingClientRect();
+        const g = {
+            lx: l.left + l.width / 2 - box.left, ly: l.top + l.height / 2 - box.top,
+            x0: c.left - box.left, y0: c.top - box.top, x1: c.right - box.left, y1: c.bottom - box.top,
+        };
+
+        const layer = document.createElement('div');
+        layer.className = 'exp-anim';
+        layer.setAttribute('aria-hidden', 'true');
+        const svg = document.createElementNS(SVG_NS, 'svg');
+        svg.setAttribute('width', box.width);
+        svg.setAttribute('height', box.height);
+        const trail = document.createElementNS(SVG_NS, 'path');
+        trail.setAttribute('d', buildRoute(scene.route, g));
+        trail.setAttribute('class', 'exp-anim-trail');
+        svg.appendChild(trail);
+        layer.appendChild(svg);
+        const length = trail.getTotalLength();
+        trail.style.strokeDasharray = length;
+        trail.style.strokeDashoffset = length;
+
+        // Jalons (agents, étapes…) qui s'allument au passage de l'icône
+        const nodes = [];
+        for (let k = 1; k <= (scene.nodes || 0); k++) {
+            const at = 0.3 + (0.62 * k) / (scene.nodes + 1);
+            const p = trail.getPointAtLength(at * length);
+            const dot = document.createElementNS(SVG_NS, 'circle');
+            dot.setAttribute('cx', p.x);
+            dot.setAttribute('cy', p.y);
+            dot.setAttribute('r', 3.5);
+            dot.setAttribute('class', 'exp-anim-node');
+            svg.appendChild(dot);
+            nodes.push({ dot, at });
+        }
+
+        const mover = document.createElement('span');
+        mover.className = 'exp-anim-icon';
+        mover.innerHTML = `<i class="fas ${scene.icon}"></i>`;
+        layer.appendChild(mover);
+        item.appendChild(layer);
+
+        const begin = performance.now();
+        const frame = (now) => {
+            const raw = Math.min((now - begin) / scene.duration, 1);
+            const t = ease(raw, scene.accelerate);
+            const p = trail.getPointAtLength(t * length);
+            let angle = 0;
+            if (scene.turn === 'tangent') {
+                const q = trail.getPointAtLength(Math.min(t * length + 1, length));
+                const a = (Math.atan2(q.y - p.y, q.x - p.x) * 180) / Math.PI;
+                angle = Math.max(-scene.maxTilt, Math.min(scene.maxTilt, a));
+            } else if (scene.turn === 'spin') angle = raw * 540;
+            mover.style.transform = `translate(${p.x}px, ${p.y}px) translate(-50%, -50%) rotate(${angle}deg)`;
+            // Apparition en quittant le logo, disparition en fin de course
+            mover.style.opacity = Math.min(1, raw / 0.12, (1 - raw) / 0.15);
+            trail.style.strokeDashoffset = length * (1 - t);
+            nodes.forEach(n => n.dot.classList.toggle('on', t >= n.at));
+            if (raw < 1) requestAnimationFrame(frame);
+            else {
+                layer.classList.add('done');
+                setTimeout(() => layer.remove(), 900);
+            }
+        };
+        requestAnimationFrame(frame);
+    };
+
+    // Une seule fois par expérience, en laissant un court écart entre deux animations
+    let nextSlot = 0;
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            observer.unobserve(entry.target);
+            const id = entry.target.querySelector('.company-preview')?.id;
+            const scene = SCENES[id];
+            if (!scene) return;
+            const now = performance.now();
+            const at = Math.max(now + 450, nextSlot);
+            nextSlot = at + 900;
+            setTimeout(() => play(entry.target, scene), at - now);
+        });
+    }, { threshold: 0.7 });
+    items.forEach(item => observer.observe(item));
+});
