@@ -1122,7 +1122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const escapeHtml = str => str.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
     const UNITS = '.axis-card, .diagram, .exp-item, .project-card, .research-card, .skill-group, .certs-card, .tech-category, .edu-item, .leader-card, .extras-card, .contact-card, .key-facts li';
-    const SUGGESTIONS = ['LangGraph', 'RAG', 'ROS2', 'Citiz', 'Renault', 'Sherbrooke', 'FastAPI', 'Power BI'];
+    const SUGGESTIONS = ['LangGraph', 'RAG', 'ROS2', 'Citiz', 'Yieloo', 'Renault', 'Thales', 'Microsoft', 'Sherbrooke', 'FastAPI', 'Power BI'];
 
     let results = [];
     let active = 0;
