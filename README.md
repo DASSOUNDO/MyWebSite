@@ -18,7 +18,7 @@ Portfolio d'ingénieur et de chercheur en **IA agentique, systèmes multi-agents
 - **Bilingue FR / EN**, avec mémorisation du choix.
 - **Recherche intégrée** (`Ctrl + K` ou `/`) avec surlignage des résultats dans la page.
 - Thème clair par défaut, **thème sombre** au choix.
-- Aperçus visuels au survol des expériences, cartes de projets dépliables, animations discrètes à l'apparition.
+- Aperçus visuels au survol des expériences, animation propre à chaque expérience à son arrivée à l'écran (avion, voiture, robot…), cartes de projets dépliables.
 - Téléchargement du CV (FR / EN) et des lettres de recommandation.
 - Responsive (ordinateur, tablette, mobile) et accessible (navigation au clavier, attributs ARIA).
 
@@ -71,3 +71,5 @@ Le site est publié par GitHub Pages depuis la branche `web_5`.
 ## Licence
 
 Code sous licence [MIT](LICENSE). Les contenus personnels (CV, lettres de recommandation, photos) ne sont pas réutilisables sans autorisation.
+
+Les images animées du Parcours (`images/anim/`) proviennent de [Fluent Emoji](https://github.com/microsoft/fluentui-emoji) de Microsoft, sous licence MIT.

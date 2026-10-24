@@ -1488,21 +1488,25 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!items.length || !('IntersectionObserver' in window)) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+    // Images 3D : Fluent Emoji de Microsoft (licence MIT), dans images/anim/
     // route : top (bord haut), bottom (bord bas), zigzag (exploration), steps (piste de circuit)
-    // turn : orientation de l'icône (tangent = suit la trajectoire, spin = tourne sur elle-même)
+    // turn : orientation (tangent = suit la trajectoire, spin = tourne sur elle-même)
+    // base : rotation de l'image au repos ; flip : image retournée pour avancer vers la droite
     const SCENES = {
-        'pv-yieloo': { icon: 'fa-plane', route: 'top', turn: 'tangent', maxTilt: 35, duration: 3200 },
-        'pv-dasia': { icon: 'fa-circle-nodes', route: 'top', turn: 'none', nodes: 6, duration: 3000 },
-        'pv-renault': { icon: 'fa-car-side', route: 'bottom', turn: 'tangent', maxTilt: 18, duration: 2800, accelerate: true },
-        'pv-uds': { icon: 'fa-flask', route: 'bottom', turn: 'none', nodes: 4, duration: 3000 },
-        'pv-thales': { icon: 'fa-robot', route: 'zigzag', turn: 'none', nodes: 5, duration: 3400 },
-        'pv-eseo': { icon: 'fa-microchip', route: 'steps', turn: 'none', duration: 3000 },
-        'pv-digit': { icon: 'fa-bolt', route: 'steps', turn: 'none', nodes: 4, duration: 2800 },
-        'pv-jpa': { icon: 'fa-hand-holding-heart', route: 'bottom', turn: 'none', nodes: 5, duration: 3000 },
-        'pv-cppe': { icon: 'fa-gear', route: 'bottom', turn: 'spin', duration: 3000 },
+        'pv-yieloo': { img: 'airplane', route: 'top', turn: 'tangent', maxTilt: 30, base: 45 },
+        'pv-dasia': { img: 'brain', route: 'top', nodes: 6 },
+        'pv-renault': { img: 'car', route: 'bottom', turn: 'tangent', maxTilt: 12, flip: true },
+        'pv-uds': { img: 'testtube', route: 'bottom', nodes: 4 },
+        'pv-thales': { img: 'robot', route: 'zigzag', nodes: 5 },
+        'pv-eseo': { img: 'laptop', route: 'steps' },
+        'pv-digit': { img: 'bulb', route: 'steps', nodes: 4 },
+        'pv-jpa': { img: 'handshake', route: 'bottom', nodes: 5 },
+        'pv-cppe': { img: 'gear', route: 'bottom', turn: 'spin' },
     };
+    const DURATION = 4200;
     const SVG_NS = 'http://www.w3.org/2000/svg';
-    const ease = (t, accelerate) => accelerate ? t * t * (2 - t) * t + (1 - t) * t * t : (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+    // Départ lent pour bien voir l'objet quitter le logo, puis accélération
+    const ease = (t) => Math.pow(t, 2.4);
 
     const buildRoute = (route, g) => {
         const { lx, ly, x0, y0, x1, y1 } = g;
@@ -1517,7 +1521,7 @@ document.addEventListener('DOMContentLoaded', () => {
             for (let k = 0; k < waves; k++) {
                 const xa = x0 + 24 + (span * (k + 0.5)) / waves;
                 const xb = x0 + 24 + (span * (k + 1)) / waves;
-                d += ` Q ${xa} ${y1 + (k % 2 ? 9 : -9)} ${xb} ${y1}`;
+                d += ` Q ${xa} ${y1 + (k % 2 ? 7 : -7)} ${xb} ${y1}`;
             }
             return d;
         }
@@ -1574,14 +1578,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const mover = document.createElement('span');
         mover.className = 'exp-anim-icon';
-        mover.innerHTML = `<i class="fas ${scene.icon}"></i>`;
+        mover.innerHTML = `<img src="images/anim/${scene.img}.webp" alt="" width="40" height="40">`;
         layer.appendChild(mover);
         item.appendChild(layer);
 
+        // L'image passe juste à l'extérieur du bord pour ne jamais masquer le texte
+        const lift = scene.route === 'top' ? -8 : 6;
         const begin = performance.now();
         const frame = (now) => {
-            const raw = Math.min((now - begin) / scene.duration, 1);
-            const t = ease(raw, scene.accelerate);
+            const raw = Math.min((now - begin) / DURATION, 1);
+            const t = ease(raw);
             const p = trail.getPointAtLength(t * length);
             let angle = 0;
             if (scene.turn === 'tangent') {
@@ -1589,9 +1595,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const a = (Math.atan2(q.y - p.y, q.x - p.x) * 180) / Math.PI;
                 angle = Math.max(-scene.maxTilt, Math.min(scene.maxTilt, a));
             } else if (scene.turn === 'spin') angle = raw * 540;
-            mover.style.transform = `translate(${p.x}px, ${p.y}px) translate(-50%, -50%) rotate(${angle}deg)`;
+            const flip = scene.flip ? ' scaleX(-1)' : '';
+            if (scene.flip) angle = -angle; // l'image retournée s'incline dans le bon sens
+            mover.style.transform = `translate(${p.x}px, ${p.y + lift}px) translate(-50%, -50%) rotate(${(scene.base || 0) + angle}deg)${flip}`;
             // Apparition en quittant le logo, disparition en fin de course
-            mover.style.opacity = Math.min(1, raw / 0.12, (1 - raw) / 0.15);
+            mover.style.opacity = Math.min(1, raw / 0.1, (1 - raw) / 0.12);
             trail.style.strokeDashoffset = length * (1 - t);
             nodes.forEach(n => n.dot.classList.toggle('on', t >= n.at));
             if (raw < 1) requestAnimationFrame(frame);
@@ -1614,7 +1622,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!scene) return;
             const now = performance.now();
             const at = Math.max(now + 450, nextSlot);
-            nextSlot = at + 900;
+            nextSlot = at + 1200;
             setTimeout(() => play(entry.target, scene), at - now);
         });
     }, { threshold: 0.7 });
