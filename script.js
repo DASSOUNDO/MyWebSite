@@ -1488,20 +1488,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!items.length || !('IntersectionObserver' in window)) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    // Images 3D : Fluent Emoji de Microsoft (licence MIT), dans images/anim/
+    // Vraies photos détourées (Wikimedia Commons, crédits dans le README), dans images/anim/
     // route : top (bord haut), bottom (bord bas), zigzag (exploration), steps (piste de circuit)
-    // turn : orientation (tangent = suit la trajectoire, spin = tourne sur elle-même)
-    // base : rotation de l'image au repos ; flip : image retournée pour avancer vers la droite
+    // turn : tangent = l'objet s'incline selon la trajectoire ; w : largeur affichée (px)
     const SCENES = {
-        'pv-yieloo': { img: 'airplane', route: 'top', turn: 'tangent', maxTilt: 30, base: 45 },
-        'pv-dasia': { img: 'brain', route: 'top', nodes: 6 },
-        'pv-renault': { img: 'car', route: 'bottom', turn: 'tangent', maxTilt: 12, flip: true },
-        'pv-uds': { img: 'testtube', route: 'bottom', nodes: 4 },
-        'pv-thales': { img: 'robot', route: 'zigzag', nodes: 5 },
-        'pv-eseo': { img: 'laptop', route: 'steps' },
-        'pv-digit': { img: 'bulb', route: 'steps', nodes: 4 },
-        'pv-jpa': { img: 'handshake', route: 'bottom', nodes: 5 },
-        'pv-cppe': { img: 'gear', route: 'bottom', turn: 'spin' },
+        'pv-yieloo': { img: 'plane', w: 76, route: 'top', turn: 'tangent', maxTilt: 14 },
+        'pv-dasia': { img: 'gpu', w: 50, route: 'top', nodes: 6 },
+        'pv-renault': { img: 'car', w: 66, route: 'bottom', turn: 'tangent', maxTilt: 6 },
+        'pv-uds': { img: 'flask', w: 58, route: 'bottom', nodes: 4 },
+        'pv-thales': { img: 'robot', w: 62, route: 'zigzag', nodes: 5 },
+        'pv-eseo': { img: 'raspberry', w: 48, route: 'steps' },
+        'pv-digit': { img: 'arduino', w: 48, route: 'steps', nodes: 4 },
+        'pv-jpa': { img: 'handshake', w: 50, route: 'bottom', nodes: 5 },
+        'pv-cppe': { img: 'caliper', w: 66, route: 'bottom' },
     };
     const DURATION = 4200;
     const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -1578,12 +1577,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const mover = document.createElement('span');
         mover.className = 'exp-anim-icon';
-        mover.innerHTML = `<img src="images/anim/${scene.img}.webp" alt="" width="40" height="40">`;
+        mover.style.width = `${scene.w}px`;
+        mover.innerHTML = `<img src="images/anim/${scene.img}.webp" alt="">`;
         layer.appendChild(mover);
         item.appendChild(layer);
 
         // L'image passe juste à l'extérieur du bord pour ne jamais masquer le texte
-        const lift = scene.route === 'top' ? -8 : 6;
+        const lift = scene.route === 'top' ? -10 : 8;
         const begin = performance.now();
         const frame = (now) => {
             const raw = Math.min((now - begin) / DURATION, 1);
@@ -1594,10 +1594,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const q = trail.getPointAtLength(Math.min(t * length + 1, length));
                 const a = (Math.atan2(q.y - p.y, q.x - p.x) * 180) / Math.PI;
                 angle = Math.max(-scene.maxTilt, Math.min(scene.maxTilt, a));
-            } else if (scene.turn === 'spin') angle = raw * 540;
-            const flip = scene.flip ? ' scaleX(-1)' : '';
-            if (scene.flip) angle = -angle; // l'image retournée s'incline dans le bon sens
-            mover.style.transform = `translate(${p.x}px, ${p.y + lift}px) translate(-50%, -50%) rotate(${(scene.base || 0) + angle}deg)${flip}`;
+            }
+            mover.style.transform = `translate(${p.x}px, ${p.y + lift}px) translate(-50%, -50%) rotate(${angle}deg)`;
             // Apparition en quittant le logo, disparition en fin de course
             mover.style.opacity = Math.min(1, raw / 0.1, (1 - raw) / 0.12);
             trail.style.strokeDashoffset = length * (1 - t);

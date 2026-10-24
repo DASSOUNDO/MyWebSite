@@ -1514,17 +1514,15 @@ dd {
     position: absolute;
     left: 0;
     top: 0;
-    width: 40px;
-    height: 40px;
     opacity: 0;
     will-change: transform, opacity;
-    filter: drop-shadow(0 6px 8px rgba(15, 23, 42, 0.22));
+    filter: drop-shadow(0 4px 6px rgba(15, 23, 42, 0.25));
 }
 
 .exp-anim-icon img {
     display: block;
     width: 100%;
-    height: 100%;
+    height: auto;
 }
 
 .exp-body {

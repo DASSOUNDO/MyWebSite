@@ -18,7 +18,7 @@ Portfolio d'ingénieur et de chercheur en **IA agentique, systèmes multi-agents
 - **Bilingue FR / EN**, avec mémorisation du choix.
 - **Recherche intégrée** (`Ctrl + K` ou `/`) avec surlignage des résultats dans la page.
 - Thème clair par défaut, **thème sombre** au choix.
-- Aperçus visuels au survol des expériences, animation propre à chaque expérience à son arrivée à l'écran (avion, voiture, robot…), cartes de projets dépliables.
+- Aperçus visuels au survol des expériences, animation propre à chaque expérience à son arrivée à l'écran (vraies photos détourées : avion, voiture, robot…), cartes de projets dépliables.
 - Téléchargement du CV (FR / EN) et des lettres de recommandation.
 - Responsive (ordinateur, tablette, mobile) et accessible (navigation au clavier, attributs ARIA).
 
@@ -72,4 +72,20 @@ Le site est publié par GitHub Pages depuis la branche `web_5`.
 
 Code sous licence [MIT](LICENSE). Les contenus personnels (CV, lettres de recommandation, photos) ne sont pas réutilisables sans autorisation.
 
-Les images animées du Parcours (`images/anim/`) proviennent de [Fluent Emoji](https://github.com/microsoft/fluentui-emoji) de Microsoft, sous licence MIT.
+### Crédits des photos animées du Parcours (`images/anim/`)
+
+Photos de Wikimedia Commons, détourées et réduites :
+
+| Fichier | Photo d'origine | Auteur | Licence |
+| --- | --- | --- | --- |
+| plane.webp | [Airbus A350-941 Qatar Airways](https://commons.wikimedia.org/wiki/File:A7-ALN_Airbus_A350-941_A359_c_n_47_-_QTR_(32184771827).jpg) | Markus Eigenheer | CC BY-SA 2.0 |
+| car.webp | [Renault Clio IV Estate](https://commons.wikimedia.org/wiki/File:Renault_Clio_IV_Estate_(side).JPG) | Overlaet | CC BY-SA 3.0 |
+| gpu.webp | [Nvidia GeForce RTX 5060 Ti](https://commons.wikimedia.org/wiki/File:Nvidia_GeForce_RTX_5060_Ti_16GB,_PNY_Overclocked_Dual_Fan,_rear.jpg) | FreeMediaKid! | CC BY-SA 4.0 |
+| flask.webp | [Erlenmeyer flasks](https://commons.wikimedia.org/wiki/File:Erlenmeyer_flask_ben.jpg) | Maytouch L. | CC BY-SA 4.0 |
+| robot.webp | [THeMIS UGV](https://commons.wikimedia.org/wiki/File:THeMIS_5th_generation_UGV.jpg) | Milrem Robotics | CC BY-SA 4.0 |
+| raspberry.webp | [Raspberry Pi 4 B](https://commons.wikimedia.org/wiki/File:Raspberry_Pi_4_B.png) | Batocera Team | CC0 |
+| arduino.webp | [Arduino Uno](https://commons.wikimedia.org/wiki/File:Arduino_Uno_board.jpg) | JrawX | CC0 |
+| handshake.webp | [Hermandad – friendship](https://commons.wikimedia.org/wiki/File:Hermandad_-_friendship.jpg) | Rufino | CC BY-SA 2.0 |
+| caliper.webp | [Suwmiarka cyfrowa](https://commons.wikimedia.org/wiki/File:2020_Suwmiarka_cyfrowa.jpg) | Jacek Halicki | CC BY-SA 4.0 |
+
+Ces versions détourées sont diffusées sous les mêmes licences que les originaux.
