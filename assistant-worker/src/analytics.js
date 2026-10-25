@@ -240,10 +240,14 @@ export async function stats(env, days) {
                 return { at: c.at, mode: c.mode, question: c.question, provider: c.provider, ok: !!c.ok, country: s?.country || null, org: s?.org || null, ref: s?.ref || null };
             }),
         },
-        recent: sessions.slice(0, 80).map(s => ({
-            at: s.started_at, ref: s.ref, source: s.source, country: s.country, city: s.city, org: s.org, device: s.device, lang: s.lang,
+        // Détail de chaque visite (panneau du tableau de bord) : temps par section et questions posées
+        recent: sessions.slice(0, 150).map(s => ({
+            id: s.id, at: s.started_at, ref: s.ref, source: s.source, referrer: s.referrer,
+            country: s.country, city: s.city, org: s.org, device: s.device, lang: s.lang,
             duration: s.duration, maxScroll: s.max_scroll,
-            sections: SECTIONS.filter(id => (s.sections[id] || 0) >= 2), events: s.events,
+            sections: SECTIONS.filter(id => (s.sections[id] || 0) >= 2), sectionTime: s.sections, events: s.events,
+            questions: chats.filter(c => c.session === s.id).reverse()
+                .map(c => ({ at: c.at, mode: c.mode, question: c.question, provider: c.provider, ok: !!c.ok })),
         })),
     };
 }

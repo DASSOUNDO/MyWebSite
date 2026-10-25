@@ -35,6 +35,8 @@
         ? { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }
         : { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
     const pct = x => `${Math.round(x * 100)} %`;
+    // Question affichée en texte brut (anciens liens Markdown « [texte](#section) » retirés)
+    const plainQuestion = q => String(q || '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1');
     const slugify = text => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
         .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
 
@@ -71,7 +73,7 @@
         const top = max ?? Math.max(...rows.map(r => r.count), 1);
         el.innerHTML = rows.map(r => `
             <div class="bar-row">
-                <span class="name" title="${esc(r.name)} : ${esc(value ? value(r) : r.count)}">${r.icon ? `<i class="${r.icon}" aria-hidden="true"></i> ` : ''}${esc(r.name)}</span>
+                <span class="name${r.count ? '' : ' unread'}" title="${esc(r.name)} : ${esc(value ? value(r) : r.count)}">${r.icon ? `<i class="${r.icon}" aria-hidden="true"></i> ` : ''}${esc(r.name)}</span>
                 <span class="bar-track"><span class="bar-fill" style="width:${r.count > 0 ? Math.max(1.5, Math.min(100, (r.count / top) * 100)) : 0}%"></span></span>
                 <span class="value">${esc(value ? value(r) : r.count)}</span>
             </div>`).join('');
@@ -207,27 +209,159 @@
                     ${q.org ? `<span>· ${esc(q.org)}</span>` : ''}
                     <span>· ${q.ok ? esc(q.provider || '') : 'réponse hors ligne'}</span>
                 </div>
-                <p>${esc(q.question)}</p>
+                <p>${esc(plainQuestion(q.question))}</p>
             </article>`).join('');
     };
 
-    const recentTable = (recent) => {
-        if (!recent.length) { $('recent').innerHTML = '<p class="empty">Pas encore de visite enregistrée.</p>'; return; }
-        $('recent').innerHTML = `<table>
-            <thead><tr><th>Date</th><th>Origine</th><th>Lieu / réseau</th><th>Durée</th><th>Sections lues</th><th>Actions</th></tr></thead>
-            <tbody>${recent.map(v => {
-                const actions = Object.entries(v.events).filter(([k]) => EVENT_NAMES[k])
-                    .map(([k, n]) => `<span class="chip" title="${esc(EVENT_NAMES[k][0])}"><i class="${k === 'linkedin' || k === 'github' ? 'fab' : 'fas'} ${EVENT_NAMES[k][1]}"></i>${n > 1 ? ` ${n}` : ''}</span>`).join('');
-                return `<tr>
-                    <td class="num small">${fmtDate(v.at)}<div class="muted">${esc(DEVICE_NAMES[v.device] || v.device || '')} · ${esc((v.lang || '').toUpperCase())}</div></td>
-                    <td>${v.ref ? `<span class="chip ok"><i class="fas fa-paper-plane"></i> ${esc(v.ref)}</span>` : esc(v.source)}</td>
-                    <td class="small">${esc([v.city, regionName(v.country)].filter(Boolean).join(', '))}<div class="muted">${esc(v.org || '')}</div></td>
-                    <td class="num small">${fmtDuration(v.duration)}<div class="muted">${v.maxScroll} % lu</div></td>
-                    <td><div class="chips">${v.sections.map(id => `<span class="chip">${esc(SECTION_NAMES[id] || id)}</span>`).join('') || '<span class="muted small">—</span>'}</div></td>
-                    <td><div class="chips">${actions || '<span class="muted small">—</span>'}</div></td>
-                </tr>`;
-            }).join('')}</tbody></table>`;
+    // --- Dernières visites : liste lisible, détail complet au clic ---------------------------
+    const iconClass = k => `${k === 'linkedin' || k === 'github' ? 'fab' : 'fas'} ${EVENT_NAMES[k][1]}`;
+    const plural = (n, one, many) => `${n} ${n > 1 ? many : one}`;
+    const appLabel = ref => (lastData?.applications || []).find(a => a.ref === ref)?.label || ref;
+    const place = v => [v.city, v.country ? regionName(v.country) : null].filter(Boolean).join(', ') || 'Lieu inconnu';
+    const questionCount = v => Math.max(v.questions?.length || 0, (v.events.chat_question || 0) + (v.events.chat_job || 0));
+
+    // Résumé en mots de ce que la personne a fait, par ordre d'importance
+    const summary = (v) => {
+        const e = v.events;
+        const parts = [];
+        if (e.cv_fr || e.cv_en) parts.push(`CV téléchargé${e.cv_fr && e.cv_en ? ' (FR et EN)' : e.cv_en ? ' (EN)' : ''}`);
+        if (e.reco) parts.push('lettre de recommandation ouverte');
+        if (e.chat_job) parts.push(plural(e.chat_job, 'fiche de poste analysée', 'fiches de poste analysées'));
+        const q = questionCount(v) - (e.chat_job || 0);
+        if (q > 0) parts.push(plural(q, 'question à l\'assistant', 'questions à l\'assistant'));
+        else if (e.chat_open && !e.chat_job) parts.push('assistant ouvert');
+        if (e.linkedin) parts.push('LinkedIn visité');
+        if (e.email) parts.push('clic sur un e-mail');
+        if (e.demo) parts.push('démo DASIA ouverte');
+        if (e.github) parts.push('GitHub visité');
+        if (e.project_open) parts.push(plural(e.project_open, 'projet détaillé', 'projets détaillés'));
+        if (e.search) parts.push('recherche utilisée');
+        if (!parts.length) return 'Lecture seule';
+        const text = parts.slice(0, 3).join(' · ');
+        return parts.length > 3 ? `${text} · +${parts.length - 3}` : text;
     };
+
+    const FILTERS = {
+        all: () => true,
+        ref: v => !!v.ref,
+        chat: v => questionCount(v) > 0,
+        cv: v => v.events.cv_fr || v.events.cv_en || v.events.reco,
+        long: v => v.duration >= 60,
+    };
+    let visitFilter = 'all';
+    let visitLimit = 25;
+
+    const recentList = () => {
+        const visits = (lastData?.recent || []).filter(FILTERS[visitFilter]);
+        if (!visits.length) {
+            $('recent').innerHTML = `<p class="empty">${visitFilter === 'all' ? 'Pas encore de visite enregistrée.' : 'Aucune visite ne correspond à ce filtre.'}</p>`;
+            return;
+        }
+        const shown = visits.slice(0, visitLimit);
+        $('recent').innerHTML = shown.map(v => {
+            const read = v.sections.length;
+            const origin = v.ref ? `<i class="fas fa-paper-plane" style="color:var(--ok)"></i> ${esc(appLabel(v.ref))}` : esc(v.source);
+            return `<button class="visit" type="button" data-visit="${esc(v.id)}" aria-label="Voir le détail de la visite du ${esc(fmtDate(v.at))}">
+                <span class="when"><strong>${esc(fmtDate(v.at))}</strong><span>${esc(DEVICE_NAMES[v.device] || v.device || '')} · ${esc((v.lang || '').toUpperCase())}</span></span>
+                <span class="who"><strong>${origin}</strong><span>${esc(place(v))}${v.org ? ` · ${esc(v.org)}` : ''}</span></span>
+                <span class="time">${fmtDuration(v.duration)}<span>${v.maxScroll} % lu</span></span>
+                <span class="reading read-meter">${read} section${read > 1 ? 's' : ''} sur 9
+                    <span class="bar-track"><span class="bar-fill" style="width:${(read / 9) * 100}%"></span></span></span>
+                <span class="did">${esc(summary(v))}</span>
+                <i class="fas fa-chevron-right chev" aria-hidden="true"></i>
+            </button>`;
+        }).join('') + (visits.length > visitLimit
+            ? `<button class="btn btn-ghost more" type="button" id="more-visits">Afficher plus (${visits.length - visitLimit} autres)</button>` : '');
+    };
+
+    const drawer = $('drawer');
+    let lastFocus = null;
+    const openVisit = (id) => {
+        const v = (lastData?.recent || []).find(x => x.id === id);
+        if (!v) return;
+        const date = new Date(v.at);
+        $('drawer-title').textContent = `Visite du ${date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} à ${date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
+        $('drawer-sub').textContent = `${v.ref ? `Candidature : ${appLabel(v.ref)}` : v.source} · ${place(v)}`;
+
+        const maxTime = Math.max(...Object.values(v.sectionTime || {}), 1);
+        const sectionRows = Object.keys(SECTION_NAMES).map(id => {
+            const t = (v.sectionTime || {})[id] || 0;
+            return { name: SECTION_NAMES[id], count: t >= 2 ? t : 0, seconds: t };
+        });
+        const actions = Object.keys(EVENT_NAMES).filter(k => v.events[k]);
+        const questions = v.questions || [];
+
+        $('drawer-body').innerHTML = `
+            <section class="facts">
+                <div class="fact"><span>Durée</span><strong>${fmtDuration(v.duration)}</strong></div>
+                <div class="fact"><span>Page parcourue</span><strong>${v.maxScroll} %</strong></div>
+                <div class="fact"><span>Sections lues</span><strong>${v.sections.length} / 9</strong></div>
+            </section>
+            <section>
+                <h3><i class="fas fa-user"></i> Le visiteur</h3>
+                <dl class="info">
+                    ${v.ref ? `<dt>Candidature</dt><dd><span class="chip ok"><i class="fas fa-paper-plane"></i> ${esc(appLabel(v.ref))}</span></dd>` : ''}
+                    <dt>Arrivé par</dt><dd>${esc(v.ref ? `lien personnel (?ref=${v.ref})` : v.source)}${v.referrer ? ` <span class="muted">(${esc(v.referrer)})</span>` : ''}</dd>
+                    <dt>Lieu</dt><dd>${esc(place(v))}</dd>
+                    <dt>Réseau</dt><dd>${esc(v.org || 'Inconnu')}</dd>
+                    <dt>Appareil</dt><dd>${esc(DEVICE_NAMES[v.device] || v.device || 'Inconnu')}</dd>
+                    <dt>Langue</dt><dd>${v.lang === 'en' ? 'Anglais' : 'Français'}${v.events.lang_en ? ' (est passé en anglais)' : ''}</dd>
+                </dl>
+            </section>
+            <section>
+                <h3><i class="fas fa-book-open-reader"></i> Temps passé par section</h3>
+                <div class="bars" id="drawer-sections"></div>
+            </section>
+            <section>
+                <h3><i class="fas fa-hand-pointer"></i> Ce qu'il a fait</h3>
+                ${actions.length ? `<ul class="action-list">${actions.map(k => `
+                    <li><i class="${iconClass(k)}" aria-hidden="true"></i>${esc(EVENT_NAMES[k][0])}${v.events[k] > 1 ? `<span class="count">× ${v.events[k]}</span>` : ''}</li>`).join('')}</ul>`
+                    : '<p class="empty">Aucune action : il a seulement lu le portfolio.</p>'}
+            </section>
+            <section>
+                <h3><i class="fas fa-robot"></i> Questions à l'assistant</h3>
+                ${questions.length ? `<div class="questions" style="max-height:none">${questions.map(q => `
+                    <article class="question">
+                        <div class="meta">
+                            <span>${esc(new Date(q.at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }))}</span>
+                            <span class="chip ${q.mode === 'job' ? 'accent' : ''}">${q.mode === 'job' ? '<i class="fas fa-clipboard-list"></i> Fiche de poste' : '<i class="fas fa-comment"></i> Question'}</span>
+                            <span>${q.ok ? esc(q.provider || '') : 'réponse hors ligne'}</span>
+                        </div>
+                        <p>${esc(plainQuestion(q.question))}</p>
+                    </article>`).join('')}</div>`
+                    : '<p class="empty">Aucune question posée pendant cette visite.</p>'}
+            </section>`;
+        barList($('drawer-sections'), sectionRows, { max: maxTime, value: r => (r.seconds >= 2 ? fmtDuration(r.seconds) : 'non lue') });
+
+        lastFocus = document.activeElement;
+        $('drawer-backdrop').hidden = false;
+        drawer.classList.add('open');
+        drawer.setAttribute('aria-hidden', 'false');
+        $('drawer-body').scrollTop = 0;
+        drawer.focus();
+    };
+    const closeVisit = () => {
+        drawer.classList.remove('open');
+        drawer.setAttribute('aria-hidden', 'true');
+        $('drawer-backdrop').hidden = true;
+        lastFocus?.focus();
+    };
+    $('drawer-close').addEventListener('click', closeVisit);
+    $('drawer-backdrop').addEventListener('click', closeVisit);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && drawer.classList.contains('open')) closeVisit(); });
+    $('recent').addEventListener('click', (e) => {
+        if (e.target.closest('#more-visits')) { visitLimit += 25; recentList(); return; }
+        const item = e.target.closest('[data-visit]');
+        if (item) openVisit(item.dataset.visit);
+    });
+    $('visit-filters').addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-filter]');
+        if (!btn) return;
+        visitFilter = btn.dataset.filter;
+        visitLimit = 25;
+        $('visit-filters').querySelectorAll('button').forEach(b => b.classList.toggle('active', b === btn));
+        recentList();
+    });
 
     let lastData = null;
     const render = (data) => {
@@ -247,7 +381,7 @@
         barList($('devices'), data.devices.map(d => ({ name: DEVICE_NAMES[d.name] || d.name, count: d.count })));
         barList($('langs'), data.langs.map(l => ({ name: l.name === 'en' ? 'Anglais' : 'Français', count: l.count })));
         questionsList(data.chat);
-        recentTable(data.recent);
+        recentList();
     };
 
     const load = async () => {

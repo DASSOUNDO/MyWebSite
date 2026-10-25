@@ -109,6 +109,9 @@ test('les questions à l\'assistant sont enregistrées et rattachées à la visi
     assert.equal(data.totals.jobAnalyses, 1);
     assert.equal(data.chat.recent[0].ref, 'ets-c5i');
     assert.equal(data.chat.recent[0].provider, 'Gemini 3 Flash');
+    // La question apparaît aussi dans le détail de la visite
+    assert.equal(data.recent[0].questions.length, 1);
+    assert.equal(data.recent[0].questions[0].mode, 'job');
 });
 
 test('statistiques : sections atteintes, sources, suivi des candidatures', async () => {
@@ -126,6 +129,9 @@ test('statistiques : sections atteintes, sources, suivi des candidatures', async
     assert.deepEqual(data.sources.map(s => s.name).sort(), ['Google', 'LinkedIn']);
     assert.equal(data.refs[0].ref, 'ets-c5i');
     assert.deepEqual(data.refs[0].sections, ['accueil', 'axes', 'recherche']);
+    const visit = data.recent.find(v => v.id === 'visite001');
+    assert.equal(visit.sectionTime.axes, 30);
+    assert.equal(visit.source, 'LinkedIn');
     assert.equal(data.daily.reduce((n, d) => n + d.sessions, 0), 2);
 });
 

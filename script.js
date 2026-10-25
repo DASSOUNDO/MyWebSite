@@ -1054,7 +1054,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return { body: text, suggestions: [] };
         }
         const suggestions = lines[index].replace(/^[^:]*:\s*/, '').split('|')
-            .map(q => q.replace(/\*\*/g, '').trim()).filter(q => q.length > 2).slice(0, 3);
+            // Texte brut : sans gras ni lien Markdown (« [question](#section) » → « question »)
+            .map(q => q.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/\*\*/g, '').trim()).filter(q => q.length > 2).slice(0, 3);
         return { body: lines.slice(0, index).join('\n').trimEnd(), suggestions };
     };
 
