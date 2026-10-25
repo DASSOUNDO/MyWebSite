@@ -17,7 +17,7 @@
  *   event: error data: {"error":"..."}   (si tout échoue)
  */
 
-import { handleTrack, logChat, isAdmin, stats, saveApplication, deleteApplication } from './analytics.js';
+import { handleTrack, logChat, isAdmin, login, stats, saveApplication, deleteApplication } from './analytics.js';
 
 const LIMITS = {
     maxTurns: 10,            // messages d'historique conservés
@@ -238,7 +238,7 @@ export default {
         const cors = corsHeaders(env, origin);
 
         if (url.pathname === '/health') return json(200, { ok: true });
-        if (!['/chat', '/track', '/admin/stats', '/admin/applications'].includes(url.pathname)) return json(404, { error: 'not_found' });
+        if (!['/chat', '/track', '/admin/login', '/admin/stats', '/admin/applications'].includes(url.pathname)) return json(404, { error: 'not_found' });
         if (request.method === 'OPTIONS') return new Response(null, { status: cors.ok ? 204 : 403, headers: cors.headers });
         if (!cors.ok) return json(403, { error: 'origin_not_allowed' });
         const ip = request.headers.get('cf-connecting-ip') || 'inconnu';
@@ -254,14 +254,20 @@ export default {
             }
         }
 
-        // Tableau de bord admin : protégé par mot de passe, tentatives limitées
+        // Tableau de bord admin : connexion par mot de passe (verrou anti-force brute), puis jeton signé
         if (url.pathname.startsWith('/admin/')) {
             if (!env.DB) return json(503, { error: 'analytics_not_configured' }, cors.headers);
-            // Seuls les échecs sont comptés : au-delà de 8 par minute, réponse 429
-            if (!(await isAdmin(request, env))) {
-                const blocked = await isRateLimited(env, `adm:${ip}`);
-                return json(blocked ? 429 : 401, { error: blocked ? 'rate_limited' : 'unauthorized' }, cors.headers);
+            if (url.pathname === '/admin/login') {
+                if (request.method !== 'POST') return json(405, { error: 'method_not_allowed' }, cors.headers);
+                let body;
+                try { body = await request.json(); } catch { return json(400, { error: 'invalid_json' }, cors.headers); }
+                const result = await login(request, env, body);
+                const errors = { 401: 'unauthorized', 429: 'too_many_attempts', 503: 'not_configured' };
+                return result.status === 200
+                    ? json(200, { token: result.token, exp: result.exp }, { ...cors.headers, 'cache-control': 'no-store' })
+                    : json(result.status, { error: errors[result.status] }, cors.headers);
             }
+            if (!(await isAdmin(request, env))) return json(401, { error: 'unauthorized' }, cors.headers);
         }
         if (url.pathname === '/admin/applications') {
             if (request.method === 'POST') {

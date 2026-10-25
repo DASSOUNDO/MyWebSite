@@ -55,7 +55,8 @@ async function request(path, { method = 'POST', body, headers = {}, cf } = {}) {
     await Promise.all(pending);
     return { response, text };
 }
-const admin = (days = 30) => request(`/admin/stats?days=${days}`, { method: 'GET', headers: { authorization: `Bearer ${env.ADMIN_PASSWORD}` } });
+const token = async () => JSON.parse((await request('/admin/login', { body: { password: env.ADMIN_PASSWORD } })).text).token;
+const admin = async (days = 30) => request(`/admin/stats?days=${days}`, { method: 'GET', headers: { authorization: `Bearer ${await token()}` } });
 
 test('une visite est enregistrée sans IP, avec pays, organisation et lien de candidature', async () => {
     const { response } = await request('/track', {
@@ -94,10 +95,29 @@ test('une autre origine ne peut pas envoyer de mesures', async () => {
     assert.equal(response.status, 403);
 });
 
-test('le tableau de bord exige le mot de passe', async () => {
+test('le tableau de bord exige un jeton obtenu avec le mot de passe', async () => {
     assert.equal((await request('/admin/stats', { method: 'GET' })).response.status, 401);
-    assert.equal((await request('/admin/stats', { method: 'GET', headers: { authorization: 'Bearer mauvais' } })).response.status, 401);
+    // Le mot de passe seul ne sert pas de jeton, et un jeton falsifié est refusé
+    assert.equal((await request('/admin/stats', { method: 'GET', headers: { authorization: `Bearer ${env.ADMIN_PASSWORD}` } })).response.status, 401);
+    assert.equal((await request('/admin/stats', { method: 'GET', headers: { authorization: `Bearer v1.${Date.now() + 9e9}.faux` } })).response.status, 401);
+    assert.equal((await request('/admin/login', { body: { password: 'mauvais' } })).response.status, 401);
     assert.equal((await admin()).response.status, 200);
+});
+
+test('un jeton expiré ou signé avec un ancien mot de passe est refusé', async () => {
+    const valid = await token();
+    const [, , signature] = valid.split('.');
+    const expired = `v1.${Date.now() - 1000}.${signature}`;
+    assert.equal((await request('/admin/stats', { method: 'GET', headers: { authorization: `Bearer ${expired}` } })).response.status, 401);
+    env.ADMIN_PASSWORD = 'nouveau-mot-de-passe-long';
+    assert.equal((await request('/admin/stats', { method: 'GET', headers: { authorization: `Bearer ${valid}` } })).response.status, 401);
+});
+
+test('verrou : après 10 mauvais mots de passe, même le bon est refusé pendant 15 minutes', async () => {
+    for (let i = 0; i < 10; i++) assert.equal((await request('/admin/login', { body: { password: `essai${i}` } })).response.status, 401);
+    assert.equal((await request('/admin/login', { body: { password: env.ADMIN_PASSWORD } })).response.status, 429);
+    // Un autre réseau n'est pas bloqué
+    assert.equal((await request('/admin/login', { body: { password: env.ADMIN_PASSWORD }, headers: { 'cf-connecting-ip': '198.51.100.9' } })).response.status, 200);
 });
 
 test('les questions à l\'assistant sont enregistrées et rattachées à la visite', async () => {
@@ -144,7 +164,7 @@ test('origine lisible des visites', () => {
 });
 
 test('candidatures suivies : création, visites rattachées, suppression', async () => {
-    const auth = { authorization: `Bearer ${env.ADMIN_PASSWORD}`, 'content-type': 'application/json' };
+    const auth = { authorization: `Bearer ${await token()}`, 'content-type': 'application/json' };
     assert.equal((await request('/admin/applications', { body: { ref: 'ETS C5I!', label: 'ÉTS – Doctorat C5I' } })).response.status, 401);
     assert.equal((await request('/admin/applications', { body: { ref: 'ETS C5I!', label: 'ÉTS – Doctorat C5I' }, headers: auth })).response.status, 200);
     await request('/track', { body: { type: 'start', sid: 'visite003', ref: 'etsc5i' } });

@@ -17,3 +17,7 @@ CREATE INDEX IF NOT EXISTS chat_at ON chat (at);
 CREATE TABLE IF NOT EXISTS applications (
     ref TEXT PRIMARY KEY, label TEXT NOT NULL, created_at INTEGER NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS admin_failures (who TEXT NOT NULL, at INTEGER NOT NULL);
+
+CREATE INDEX IF NOT EXISTS admin_failures_who ON admin_failures (who, at);

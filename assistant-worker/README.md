@@ -55,7 +55,7 @@ Puis commite les fichiers `assistant/knowledge*.md`. Le proxy relit le profil to
 
 Le site envoie au proxy (`POST /track`) une mesure anonyme de chaque visite : sections lues et temps passé, défilement, actions (CV, LinkedIn, assistant…), origine (site référent, lien `?ref=` de candidature), pays, ville et réseau approximatifs. Aucun cookie ; l'adresse IP n'est jamais stockée (le visiteur est reconnu pour la journée par une empreinte salée). Les robots, les navigateurs qui demandent à ne pas être suivis et l'appareil de l'admin sont ignorés. Données conservées 12 mois.
 
-La page `admin.html` du site affiche le tableau de bord (`GET /admin/stats`) après saisie du mot de passe, vérifié par le proxy. Elle permet aussi de créer un lien personnel par candidature (`POST /admin/applications`) pour savoir si le recruteur l'a ouvert.
+La page `admin.html` du site affiche le tableau de bord (`GET /admin/stats`). Le mot de passe n'est envoyé qu'une fois (`POST /admin/login`) : le proxy renvoie un jeton signé (HMAC) valable 24 h, ou 30 jours avec « Rester connecté », seul conservé par le navigateur. Changer le mot de passe invalide tous les jetons. Après 10 mauvais mots de passe en 15 minutes, le réseau concerné est bloqué 15 minutes. Elle permet aussi de créer un lien personnel par candidature (`POST /admin/applications`) pour savoir si le recruteur l'a ouvert.
 
 Mise en place (une seule fois) :
 ```bash

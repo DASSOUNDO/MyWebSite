@@ -20,6 +20,12 @@ Portfolio d'ingénieur et de chercheur en **IA agentique, systèmes multi-agents
 - **Assistant IA** : questions posées, fiches de poste analysées, modèle utilisé.
 - **Vie privée** : mesure anonyme sans cookie, IP jamais stockée, accès protégé par un mot de passe vérifié côté serveur.
 
+### Sécurité
+- **Politique de sécurité (CSP)** sur le site et l'admin : seuls les scripts du site et de cdnjs sont autorisés.
+- **Intégrité (SRI)** : chaque bibliothèque externe est vérifiée par son empreinte ; un fichier modifié est refusé.
+- **Admin** : jeton signé et temporaire (jamais le mot de passe stocké), verrou après 10 échecs, page non intégrable dans un autre site.
+- **Clés API** : uniquement en secrets Cloudflare, jamais dans le dépôt.
+
 ### Site
 - Sections : Accueil, Axes de recherche, Parcours, Projets, Recherche, Compétences, Formation, Engagement, Contact.
 - **Bilingue FR / EN**, avec mémorisation du choix.

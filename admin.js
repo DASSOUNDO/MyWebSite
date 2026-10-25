@@ -1,5 +1,7 @@
 // Tableau de bord du portfolio : lit les statistiques du proxy (/admin/stats), protégées par mot de passe.
 (() => {
+    // Jamais affiché à l'intérieur d'un autre site (protection contre le « clickjacking »)
+    if (window.top !== window.self) { document.body.innerHTML = ''; return; }
     const API = (window.ASSISTANT_API_OVERRIDE || 'https://portfolio-assistant.portfolio-assistant.workers.dev/chat').replace(/\/chat$/, '');
     const SITE = 'https://dassoundo.github.io/MyWebSite/';
     const SECTION_NAMES = {
@@ -40,9 +42,15 @@
     const slugify = text => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
         .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
 
-    // Mot de passe : session (onglet) par défaut, ou appareil si « Rester connecté »
+    // Seul un jeton signé et temporaire est gardé (jamais le mot de passe) :
+    // pour l'onglet par défaut, 30 jours sur l'appareil si « Rester connecté »
     const store = {
-        get() { try { return sessionStorage.getItem('pf-admin') || localStorage.getItem('pf-admin'); } catch { return null; } },
+        get() {
+            try {
+                const value = sessionStorage.getItem('pf-admin') || localStorage.getItem('pf-admin');
+                return value && value.startsWith('v1.') ? value : null;
+            } catch { return null; }
+        },
         set(value, remember) {
             try {
                 (remember ? localStorage : sessionStorage).setItem('pf-admin', value);
@@ -54,12 +62,13 @@
     };
 
     let days = 30;
-    let password = store.get();
+    let token = store.get();
+    if (!token) store.clear(); // ancien format (mot de passe enregistré) : effacé
 
     const api = async (path, options = {}) => {
         const response = await fetch(`${API}${path}`, {
             ...options,
-            headers: { authorization: `Bearer ${password}`, ...(options.body ? { 'content-type': 'application/json' } : {}) },
+            headers: { authorization: `Bearer ${token}`, ...(options.body ? { 'content-type': 'application/json' } : {}) },
         });
         if (response.status === 401) throw new Error('unauthorized');
         if (response.status === 429) throw new Error('rate_limited');
@@ -400,21 +409,28 @@
         $('login').hidden = dashboard;
         $('dashboard').hidden = !dashboard;
     };
-    const logout = () => { store.clear(); password = null; show(false); $('password').value = ''; };
+    const logout = () => { store.clear(); token = null; show(false); $('password').value = ''; };
 
     $('login-form').addEventListener('submit', async (e) => {
         e.preventDefault();
-        password = $('password').value.trim();
         $('login-error').textContent = '';
+        const remember = $('remember').checked;
         try {
-            const data = await api(`/admin/stats?days=${days}`);
-            store.set(password, $('remember').checked);
+            const response = await fetch(`${API}/admin/login`, {
+                method: 'POST',
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify({ password: $('password').value.trim(), remember }),
+            });
+            $('password').value = '';
+            if (!response.ok) throw new Error(response.status === 401 ? 'unauthorized' : response.status === 429 ? 'rate_limited' : 'error');
+            token = (await response.json()).token;
+            store.set(token, remember);
             show(true);
-            render(data);
+            render(await api(`/admin/stats?days=${days}`));
         } catch (error) {
-            password = null;
+            token = null;
             $('login-error').textContent = error.message === 'unauthorized' ? 'Mot de passe incorrect.'
-                : error.message === 'rate_limited' ? 'Trop de tentatives : patientez une minute.' : 'Connexion impossible pour le moment.';
+                : error.message === 'rate_limited' ? 'Trop de tentatives : accès bloqué 15 minutes.' : 'Connexion impossible pour le moment.';
         }
     });
 
@@ -473,5 +489,5 @@
         resizeTimer = setTimeout(() => { if (lastData) dailyChart(lastData.daily); }, 150);
     });
 
-    if (password) { show(true); load(); } else show(false);
+    if (token) { show(true); load(); } else show(false);
 })();

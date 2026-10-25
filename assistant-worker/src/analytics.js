@@ -6,7 +6,8 @@
  * outils d'audience respectueux de la vie privée.
  *
  *   POST /track          { type: 'start' | 'update', sid, ... }   (appelé par le site)
- *   GET  /admin/stats    Authorization: Bearer <ADMIN_PASSWORD>     (page admin.html)
+ *   POST /admin/login    { password, remember } → jeton signé (le mot de passe n'est envoyé qu'ici)
+ *   GET  /admin/stats    Authorization: Bearer <jeton>              (page admin.html)
  *   POST /admin/applications  { ref, label }   DELETE /admin/applications?ref=…   (candidatures suivies)
  */
 
@@ -33,6 +34,8 @@ export const SCHEMA = [
     `CREATE TABLE IF NOT EXISTS applications (
         ref TEXT PRIMARY KEY, label TEXT NOT NULL, created_at INTEGER NOT NULL
     )`,
+    'CREATE TABLE IF NOT EXISTS admin_failures (who TEXT NOT NULL, at INTEGER NOT NULL)',
+    'CREATE INDEX IF NOT EXISTS admin_failures_who ON admin_failures (who, at)',
 ];
 
 // Candidatures suivies : chacune reçoit un lien personnel vers le portfolio (?ref=…)
@@ -114,18 +117,52 @@ export async function logChat(env, { sid, mode, question, provider, ok }) {
         .run();
 }
 
-// Mot de passe comparé en temps constant (via leurs empreintes, de même longueur)
-export async function isAdmin(request, env) {
-    const header = request.headers.get('authorization') || '';
-    const given = header.startsWith('Bearer ') ? header.slice(7) : '';
-    if (!env.ADMIN_PASSWORD || !given) return false;
-    const [a, b] = await Promise.all([sha256(given), sha256(env.ADMIN_PASSWORD)]);
+// --- Accès admin ----------------------------------------------------------------------
+// Comparaison en temps constant (via les empreintes, de même longueur)
+async function sameSecret(given, expected) {
+    const [a, b] = await Promise.all([sha256(given), sha256(expected)]);
     const ea = new TextEncoder().encode(a);
     const eb = new TextEncoder().encode(b);
     if (crypto.subtle.timingSafeEqual) return crypto.subtle.timingSafeEqual(ea, eb);
     let diff = 0;
     for (let i = 0; i < ea.length; i++) diff |= ea[i] ^ eb[i];
     return diff === 0;
+}
+
+async function sign(env, payload) {
+    const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(`${env.ADMIN_PASSWORD}|${env.ANALYTICS_SALT || ''}`),
+        { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+    const mac = new Uint8Array(await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(payload)));
+    return btoa(String.fromCharCode(...mac)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+// Verrou strict : 10 mauvais mots de passe en 15 minutes depuis un même réseau bloquent ce réseau
+const LOCK = { attempts: 10, windowMs: 15 * 60000 };
+const who = async (request, env) => (await sha256(`${request.headers.get('cf-connecting-ip') || ''}|${env.ANALYTICS_SALT || ''}`)).slice(0, 16);
+
+export async function login(request, env, body) {
+    if (!env.ADMIN_PASSWORD) return { status: 503 };
+    const id = await who(request, env);
+    const since = Date.now() - LOCK.windowMs;
+    const failures = await env.DB.prepare('SELECT COUNT(*) AS n FROM admin_failures WHERE who = ? AND at > ?').bind(id, since).first();
+    if ((failures?.n || 0) >= LOCK.attempts) return { status: 429 };
+    if (typeof body?.password !== 'string' || !(await sameSecret(body.password, env.ADMIN_PASSWORD))) {
+        await env.DB.prepare('INSERT INTO admin_failures (who, at) VALUES (?, ?)').bind(id, Date.now()).run();
+        await env.DB.prepare('DELETE FROM admin_failures WHERE at < ?').bind(since).run();
+        return { status: 401 };
+    }
+    // Jeton signé : « v1.<expiration>.<signature> », invalidé si le mot de passe change
+    const exp = Date.now() + (body.remember ? 30 : 1) * 86400000;
+    const payload = `v1.${exp}`;
+    return { status: 200, token: `${payload}.${await sign(env, payload)}`, exp };
+}
+
+export async function isAdmin(request, env) {
+    const header = request.headers.get('authorization') || '';
+    const token = header.startsWith('Bearer ') ? header.slice(7) : '';
+    const [version, exp, signature] = token.split('.');
+    if (!env.ADMIN_PASSWORD || version !== 'v1' || !signature || !(Number(exp) > Date.now())) return false;
+    return sameSecret(signature, await sign(env, `v1.${exp}`));
 }
 
 const parseJson = (text) => { try { return JSON.parse(text || '{}'); } catch { return {}; } };

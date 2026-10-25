@@ -455,8 +455,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const lang = () => (typeof getCurrentLanguage === 'function' ? getCurrentLanguage() : 'fr');
 
-    const link = (id, label) =>
-        `<a href="#${id}" class="chat-link" onclick="chatScrollTo('${id}');return false;">${label}</a>`;
+    // Lien vers une section (le défilement est géré par le clic sur a[data-section])
+    const link = (id, label) => `<a href="#${id}" class="chat-link" data-section="${id}">${label}</a>`;
 
     // --- Assistant IA (proxy Cloudflare Worker, dossier assistant-worker/) -------------------
     // URL du proxy déployé, se terminant par /chat. Vide = assistant hors ligne uniquement.
@@ -904,25 +904,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Fiche de poste jointe (PDF, Word, texte) : le texte est extrait dans le navigateur,
     // puis envoyé comme un texte collé (compatible avec tous les modèles de la chaîne).
+    // Empreintes d'intégrité (SRI) publiées par cdnjs : un fichier modifié sur le CDN est refusé
     const LIBS = {
-        pdf: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
-        pdfWorker: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',
-        docx: 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js',
+        pdf: { src: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
+            integrity: 'sha512-q+4liFwdPC/bNdhUpZx6aXDx/h77yEQtn4I1slHydcbZK34nLaR3cAeYSJshoxIOq3mjEf7xJE8YWIUHMn+oCQ==' },
+        pdfWorker: { src: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',
+            integrity: 'sha512-BbrZ76UNZq5BhH7LL7pn9A4TKQpQeNCHOo65/akfelcIBbcVvYWOFQKPXIrykE3qZxYjmDX573oa4Ywsc7rpTw==' },
+        docx: { src: 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js',
+            integrity: 'sha512-wuWo/cLB9W5BsZeyTYLuiTwr+FDlvjQC7C6atr+To7Jk92XHWI7WsImJZiruw7C9bnc8Zg7N0ncQI2Q/B4PQYw==' },
     };
     const loadedLibs = {};
-    const loadScript = (src) => loadedLibs[src] || (loadedLibs[src] = new Promise((resolve, reject) => {
+    const loadScript = (lib) => loadedLibs[lib.src] || (loadedLibs[lib.src] = new Promise((resolve, reject) => {
         const script = document.createElement('script');
-        script.src = src;
+        script.src = lib.src;
+        script.integrity = lib.integrity;
+        script.crossOrigin = 'anonymous';
         script.onload = resolve;
-        script.onerror = () => { delete loadedLibs[src]; reject(new Error('lib')); };
+        script.onerror = () => { delete loadedLibs[lib.src]; reject(new Error('lib')); };
         document.head.appendChild(script);
     }));
+    // Le « worker » de pdf.js est vérifié de la même façon, puis lancé depuis une copie locale
+    let pdfWorkerUrl = null;
+    const pdfWorker = async () => {
+        if (!pdfWorkerUrl) {
+            const response = await fetch(LIBS.pdfWorker.src, { integrity: LIBS.pdfWorker.integrity });
+            if (!response.ok) throw new Error('lib');
+            pdfWorkerUrl = URL.createObjectURL(new Blob([await response.text()], { type: 'text/javascript' }));
+        }
+        return pdfWorkerUrl;
+    };
 
     const extractText = async (file) => {
         const ext = (file.name.split('.').pop() || '').toLowerCase();
         if (ext === 'pdf' || file.type === 'application/pdf') {
             await loadScript(LIBS.pdf);
-            window.pdfjsLib.GlobalWorkerOptions.workerSrc = LIBS.pdfWorker;
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = await pdfWorker();
             const pdf = await window.pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
             let text = '';
             for (let n = 1; n <= Math.min(pdf.numPages, 10); n++) {
