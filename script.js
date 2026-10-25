@@ -260,7 +260,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'ai-how-2': 'Le proxy fournit au modèle le contenu de ce portfolio comme seule source de vérité.',
             'ai-how-3': "Gemini 3 Flash répond ; s'il est saturé, bascule automatique vers GPT-OSS 120B puis Qwen3 (Groq), chacun ayant son propre quota, et enfin vers l'assistant hors ligne.",
             'ai-how-4': 'La réponse s\'affiche en temps réel, avec des liens vers les sections sources.',
-            'ai-privacy': "Aucune conversation n'est enregistrée. Ne partagez pas d'informations personnelles.",
+            'ai-privacy': "Les questions sont enregistrées de façon anonyme pour améliorer l'assistant. Ne partagez pas d'informations personnelles.",
             'kbd-esc': 'Échap',
             'kbd-enter': 'Entrée',
             'search-nav': 'naviguer',
@@ -268,7 +268,8 @@ document.addEventListener('DOMContentLoaded', function() {
             'search-close': 'fermer',
             'footer-rights': 'Tous droits réservés.',
             'photo-credits': 'Crédits photos',
-            'footer-dev': 'Site conçu et développé par moi-même — code source sur'
+            'footer-dev': 'Site conçu et développé par moi-même — code source sur',
+            'footer-privacy': "Mesure d'audience anonyme, sans cookie ni adresse IP conservée. Les questions posées à l'assistant sont enregistrées anonymement pour l'améliorer."
         },
         en: {
             'nav-axes': 'Research axes',
@@ -327,7 +328,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'ai-how-2': 'The proxy gives the model the content of this portfolio as its only source of truth.',
             'ai-how-3': 'Gemini 3 Flash answers; if it is saturated, it automatically fails over to GPT-OSS 120B then Qwen3 (Groq), each with its own quota, and finally to the offline assistant.',
             'ai-how-4': 'The answer streams in real time, with links to the source sections.',
-            'ai-privacy': 'No conversation is stored. Please do not share personal information.',
+            'ai-privacy': 'Questions are stored anonymously to improve the assistant. Please do not share personal information.',
             'kbd-esc': 'Esc',
             'kbd-enter': 'Enter',
             'search-nav': 'navigate',
@@ -335,7 +336,8 @@ document.addEventListener('DOMContentLoaded', function() {
             'search-close': 'close',
             'footer-rights': 'All rights reserved.',
             'photo-credits': 'Photo credits',
-            'footer-dev': 'Designed and built by me — source code on'
+            'footer-dev': 'Designed and built by me — source code on',
+            'footer-privacy': 'Anonymous audience measurement, with no cookies and no stored IP address. Questions asked to the assistant are stored anonymously to improve it.'
         }
     };
 
@@ -977,6 +979,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (text.length < 80) throw new Error('empty');
             attachment = { name: file.name, text: text.slice(0, JOB_MAX_CHARS), truncated: text.length > JOB_MAX_CHARS };
             setJobMode(true); // met aussi à jour le texte du champ et l'affichage du fichier
+            window.pfTrack?.('chat_file');
         } catch (error) {
             const messages = {
                 unsupported: en ? 'Unsupported format: use PDF, Word (.docx) or text.' : 'Format non pris en charge : utilisez un PDF, un Word (.docx) ou un texte.',
@@ -1064,7 +1067,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.type = 'button';
             btn.className = 'chat-suggestion-btn';
             btn.textContent = question;
-            btn.addEventListener('click', () => { if (!busy) sendQuestion(question); });
+            btn.addEventListener('click', () => { if (!busy) { window.pfTrack?.('chat_followup'); sendQuestion(question); } });
             wrap.appendChild(btn);
         });
         chatMessages.appendChild(wrap);
@@ -1083,6 +1086,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const askAI = async (question, mode = 'chat') => {
+        window.pfTrack?.(mode === 'job' ? 'chat_job' : 'chat_question');
         busy = true;
         chatSend.disabled = true;
         history.push({ role: 'user', content: question });
@@ -1096,7 +1100,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(ASSISTANT_API, {
                 method: 'POST',
                 headers: { 'content-type': 'application/json' },
-                body: JSON.stringify({ lang: lang(), mode, messages: trimmedHistory() }),
+                body: JSON.stringify({ lang: lang(), mode, sid: window.pfSession?.id, messages: trimmedHistory() }),
                 signal: controller.signal,
             });
             if (!response.ok || !response.body) throw new Error(response.status === 429 ? 'rate_limited' : `http_${response.status}`);
@@ -1446,6 +1450,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function open() {
+        window.pfTrack?.('search');
         lastFocus = document.activeElement;
         overlay.hidden = false;
         document.body.classList.add('search-open');
@@ -1626,3 +1631,112 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { threshold: 0.7 });
     items.forEach(item => observer.observe(item));
 });
+
+// Mesure d'audience anonyme et sans cookie (proxy /track, tableau de bord admin.html) :
+// sections lues et temps passé, actions (CV, LinkedIn, assistant…), origine de la visite.
+// Rien n'est envoyé si le navigateur demande de ne pas être suivi, ni depuis l'appareil de l'admin.
+(() => {
+    const API = (window.ASSISTANT_API_OVERRIDE || 'https://portfolio-assistant.portfolio-assistant.workers.dev/chat').replace(/\/chat$/, '');
+    let optedOut = navigator.globalPrivacyControl === true || navigator.doNotTrack === '1';
+    try { optedOut = optedOut || localStorage.getItem('pf-admin-optout') === '1'; } catch { /* stockage indisponible */ }
+    window.pfTrack = () => {};
+    if (optedOut) return;
+
+    // La visite continue si l'onglet est rechargé (état conservé pour l'onglet uniquement)
+    let state = null;
+    try { state = JSON.parse(sessionStorage.getItem('pf-visit') || 'null'); } catch { /* stockage indisponible */ }
+    const fresh = !state;
+    if (fresh) {
+        const params = new URLSearchParams(location.search);
+        let referrer = '';
+        try { referrer = document.referrer && new URL(document.referrer).host !== location.host ? new URL(document.referrer).host : ''; } catch { /* référent illisible */ }
+        state = {
+            sid: Array.from(crypto.getRandomValues(new Uint8Array(10)), b => (b % 36).toString(36)).join(''),
+            ref: (params.get('ref') || params.get('utm_campaign') || params.get('utm_source') || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 60),
+            referrer,
+            duration: 0, maxScroll: 0, sections: {}, events: {},
+        };
+    }
+    window.pfSession = { id: state.sid };
+    const save = () => { try { sessionStorage.setItem('pf-visit', JSON.stringify(state)); } catch { /* stockage indisponible */ } };
+    const post = (payload, beacon = false) => {
+        const body = JSON.stringify({ sid: state.sid, ...payload });
+        // text/plain : requête « simple », sans pré-vérification CORS
+        if (beacon && navigator.sendBeacon) navigator.sendBeacon(`${API}/track`, new Blob([body], { type: 'text/plain' }));
+        else fetch(`${API}/track`, { method: 'POST', body, keepalive: true, headers: { 'content-type': 'text/plain' } }).catch(() => {});
+    };
+    const update = (beacon = false) => {
+        post({ type: 'update', duration: state.duration, maxScroll: state.maxScroll, sections: state.sections, events: state.events }, beacon);
+        save();
+    };
+
+    // Une action importante est envoyée aussitôt (sans attendre la fermeture de la page)
+    let flushTimer;
+    window.pfTrack = (name) => {
+        state.events[name] = (state.events[name] || 0) + 1;
+        save();
+        clearTimeout(flushTimer);
+        flushTimer = setTimeout(() => update(), 1500);
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (fresh) {
+            const width = window.innerWidth;
+            post({
+                type: 'start', ref: state.ref, referrer: state.referrer,
+                device: width < 700 ? 'mobile' : width < 1100 ? 'tablet' : 'desktop',
+                lang: typeof getCurrentLanguage === 'function' ? getCurrentLanguage() : 'fr',
+            });
+            save();
+        }
+
+        // Section en cours de lecture : celle qui traverse le milieu de l'écran
+        let current = 'accueil';
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => { if (entry.isIntersecting) current = entry.target.id; });
+        }, { rootMargin: '-45% 0px -45% 0px' });
+        document.querySelectorAll('main section[id]').forEach(section => observer.observe(section));
+
+        // Temps compté seulement quand la page est réellement affichée
+        let tick = 0;
+        setInterval(() => {
+            if (document.visibilityState !== 'visible') return;
+            state.duration++;
+            state.sections[current] = (state.sections[current] || 0) + 1;
+            if (++tick % 20 === 0) update();
+        }, 1000);
+
+        window.addEventListener('scroll', () => {
+            const scrolled = Math.round(((window.scrollY + window.innerHeight) / document.documentElement.scrollHeight) * 100);
+            if (scrolled > state.maxScroll) state.maxScroll = Math.min(100, scrolled);
+        }, { passive: true });
+
+        // Actions importantes pour le suivi des candidatures
+        document.addEventListener('click', (e) => {
+            const target = e.target.closest('a, button');
+            if (!target) return;
+            const href = target.getAttribute('href') || '';
+            if (href.includes('cv/') && href.includes('_EN')) window.pfTrack('cv_en');
+            else if (href.includes('cv/')) window.pfTrack('cv_fr');
+            else if (href.includes('Recommendation/')) window.pfTrack('reco');
+            else if (href.includes('linkedin.com')) window.pfTrack('linkedin');
+            else if (href.includes('github.com')) window.pfTrack('github');
+            else if (href.startsWith('mailto:')) window.pfTrack('email');
+            else if (href.includes('dasia.vercel.app')) window.pfTrack('demo');
+            else if (target.matches('.lang-btn[data-lang-code="en"]')) window.pfTrack('lang_en');
+            else if (target.matches('.theme-toggle')) window.pfTrack('theme');
+            else if (target.matches('.project-toggle') && target.getAttribute('aria-expanded') === 'true') window.pfTrack('project_open');
+            else if (target.matches('#chatbot-toggle, #chat-teaser-open') && document.body.classList.contains('chat-open')) window.pfTrack('chat_open');
+        });
+
+        // Aperçus d'entreprise consultés (survol des logos), une fois par logo
+        const seen = new Set();
+        document.querySelectorAll('.logo-wrap').forEach(wrap => wrap.addEventListener('pointerenter', () => {
+            const id = wrap.querySelector('.company-preview')?.id;
+            if (id && !seen.has(id)) { seen.add(id); window.pfTrack('preview'); }
+        }));
+
+        document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') update(true); });
+        window.addEventListener('pagehide', () => update(true));
+    });
+})();

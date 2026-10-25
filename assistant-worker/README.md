@@ -10,7 +10,8 @@ Visiteur → portfolio (GitHub Pages) → ce proxy (Cloudflare Worker) → Gemin
 - **Clés API secrètes** : stockées comme secrets Cloudflare, jamais dans le code ni dans le site.
 - **Ancrage** : le modèle ne répond qu'à partir du profil généré depuis `index.html`.
 - **Résilience** : chaîne de modèles gratuits (Gemini 3 Flash, puis GPT-OSS 120B et Qwen3 sur Groq), chacun avec son propre quota, puis l'assistant hors ligne du site.
-- **Garde-fous** : seuls les sites listés dans `ALLOWED_ORIGINS` peuvent l'appeler, 8 questions par minute et par visiteur, taille des messages limitée, aucune conversation enregistrée.
+- **Garde-fous** : seuls les sites listés dans `ALLOWED_ORIGINS` peuvent l'appeler, 8 questions par minute et par visiteur, taille des messages limitée.
+- **Tableau de bord** : mesure d'audience anonyme et questions posées à l'assistant, stockées dans une base D1 et consultables sur `admin.html` (voir plus bas).
 
 ## Déploiement (une seule fois, environ 15 minutes)
 
@@ -50,9 +51,25 @@ python3 tools/build_knowledge.py   # depuis la racine du dépôt
 ```
 Puis commite les fichiers `assistant/knowledge*.md`. Le proxy relit le profil toutes les 10 minutes, sans redéploiement.
 
+## Tableau de bord admin (mesure d'audience)
+
+Le site envoie au proxy (`POST /track`) une mesure anonyme de chaque visite : sections lues et temps passé, défilement, actions (CV, LinkedIn, assistant…), origine (site référent, lien `?ref=` de candidature), pays, ville et réseau approximatifs. Aucun cookie ; l'adresse IP n'est jamais stockée (le visiteur est reconnu pour la journée par une empreinte salée). Les robots, les navigateurs qui demandent à ne pas être suivis et l'appareil de l'admin sont ignorés. Données conservées 12 mois.
+
+La page `admin.html` du site affiche le tableau de bord (`GET /admin/stats`) après saisie du mot de passe, vérifié par le proxy. Elle permet aussi de créer un lien personnel par candidature (`POST /admin/applications`) pour savoir si le recruteur l'a ouvert.
+
+Mise en place (une seule fois) :
+```bash
+npx wrangler d1 create portfolio-analytics            # puis reporter l'identifiant dans wrangler.toml
+npx wrangler d1 execute portfolio-analytics --remote --file=migrations/0001_analytics.sql
+npx wrangler secret put ADMIN_PASSWORD                # mot de passe du tableau de bord
+npx wrangler secret put ANALYTICS_SALT                # longue valeur aléatoire (anonymisation)
+npx wrangler deploy
+```
+Pour changer de mot de passe, relancer `npx wrangler secret put ADMIN_PASSWORD`.
+
 ## Tests
 ```bash
 cd assistant-worker
 npm test
 ```
-Les tests simulent Gemini et Groq. Ils ne consomment aucun quota et ne demandent aucune clé.
+Les tests simulent Gemini et Groq, et utilisent une base SQLite en mémoire à la place de D1. Ils ne consomment aucun quota et ne demandent aucune clé.

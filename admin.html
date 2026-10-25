@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Tableau de bord – Portfolio</title>
+    <link rel="icon" type="image/jpeg" href="images/avatar.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        // Même thème que le portfolio, appliqué avant l'affichage
+        try { if (localStorage.getItem('preferred-theme') === 'dark') document.documentElement.setAttribute('data-theme', 'dark'); } catch (e) {}
+    </script>
+    <style>
+        :root {
+            --bg: #f6f8fb;
+            --surface: #ffffff;
+            --surface-2: #f3f6fb;
+            --text: #0b1220;
+            --text-2: #3c4a60;
+            --muted: #526077;
+            --border: #e1e7f0;
+            --grid: #e9eef5;
+            --accent: #1d4ed8;
+            --bar: #2563eb;
+            --bar-track: #eef2f8;
+            --accent-soft: rgba(37, 99, 235, 0.08);
+            --ok: #047857;
+            --ok-soft: rgba(5, 150, 105, 0.1);
+            --warn: #b45309;
+            --warn-soft: rgba(180, 83, 9, 0.1);
+            --danger: #b91c1c;
+            --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 14px rgba(15, 23, 42, 0.05);
+            --font-body: 'Inter', system-ui, sans-serif;
+            --font-head: 'Outfit', 'Inter', system-ui, sans-serif;
+            --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+            color-scheme: light;
+        }
+        :root[data-theme="dark"] {
+            --bg: #0a101d;
+            --surface: #121b2e;
+            --surface-2: #17223a;
+            --text: #e7ecf5;
+            --text-2: #b7c3d7;
+            --muted: #8796ae;
+            --border: #24314b;
+            --grid: #1d2940;
+            --accent: #7cb4ff;
+            --bar: #5b9bff;
+            --bar-track: #1a2640;
+            --accent-soft: rgba(124, 180, 255, 0.1);
+            --ok: #34d399;
+            --ok-soft: rgba(52, 211, 153, 0.12);
+            --warn: #fbbf24;
+            --warn-soft: rgba(251, 191, 36, 0.12);
+            --danger: #f87171;
+            --shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            color-scheme: dark;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: var(--font-body);
+            font-size: 15px;
+            line-height: 1.5;
+            color: var(--text);
+            background: var(--bg);
+        }
+        button, input { font: inherit; color: inherit; }
+        button { cursor: pointer; }
+        h1, h2, h3 { font-family: var(--font-head); margin: 0; letter-spacing: -0.01em; }
+        a { color: var(--accent); }
+        [hidden] { display: none !important; }
+
+        /* Connexion */
+        .login {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 16px;
+        }
+        .login-card {
+            width: min(400px, 100%);
+            padding: 32px 28px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        .login-card img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; }
+        .login-card h1 { margin-top: 12px; font-size: 1.4rem; }
+        .login-card p { margin: 6px 0 20px; color: var(--muted); font-size: 0.9rem; }
+        .field {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--bg);
+            outline: none;
+        }
+        .field:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+        .check { display: flex; gap: 8px; align-items: center; margin: 12px 0 16px; font-size: 0.88rem; color: var(--text-2); text-align: left; }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border: 0;
+            border-radius: 10px;
+            background: #2563eb;
+            color: #fff;
+            font-weight: 600;
+        }
+        .btn:hover { background: #1d4ed8; }
+        .btn-block { width: 100%; }
+        .btn-ghost { background: transparent; color: var(--text-2); border: 1px solid var(--border); }
+        .btn-ghost:hover { background: var(--surface-2); }
+        .error { margin-top: 12px; color: var(--danger); font-size: 0.88rem; min-height: 1.3em; }
+
+        /* Tableau de bord */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding: 12px max(16px, calc((100vw - 1240px) / 2));
+            background: color-mix(in srgb, var(--bg) 86%, transparent);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+        .topbar img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; }
+        .topbar h1 { font-size: 1.15rem; margin-right: auto; }
+        .topbar h1 small { display: block; font-family: var(--font-body); font-size: 0.75rem; font-weight: 400; color: var(--muted); }
+        .segmented { display: inline-flex; padding: 3px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; }
+        .segmented button { padding: 5px 12px; border: 0; border-radius: 7px; background: transparent; font-size: 0.85rem; color: var(--text-2); }
+        .segmented button.active { background: var(--surface); color: var(--text); font-weight: 600; box-shadow: var(--shadow); }
+        .icon-btn { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); color: var(--text-2); }
+        .icon-btn:hover { color: var(--text); }
+
+        main { max-width: 1240px; margin: 0 auto; padding: 20px 16px 60px; display: grid; gap: 16px; }
+        .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+        .card {
+            min-width: 0;
+            padding: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+        .card h2 { font-size: 1.05rem; display: flex; align-items: center; gap: 8px; }
+        .card h2 i { color: var(--accent); font-size: 0.95rem; }
+        .card .sub { margin: 2px 0 14px; color: var(--muted); font-size: 0.85rem; }
+
+        /* Indicateurs */
+        .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+        .tile { padding: 16px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); }
+        .tile-label { font-size: 0.8rem; color: var(--muted); display: flex; gap: 6px; align-items: center; }
+        .tile-value { margin-top: 4px; font-family: var(--font-head); font-size: 1.9rem; font-weight: 700; line-height: 1.1; }
+        .tile-hint { margin-top: 2px; font-size: 0.78rem; color: var(--text-2); }
+
+        /* Graphique des visites par jour */
+        .chart { position: relative; }
+        .chart svg { display: block; width: 100%; height: 220px; overflow: visible; }
+        .chart .gridline { stroke: var(--grid); stroke-width: 1; }
+        .chart .axis-label { fill: var(--muted); font-size: 11px; font-family: var(--font-mono); }
+        .chart .bar { fill: var(--bar); }
+        .chart .hit { fill: transparent; }
+        .chart .hit:hover + .bar, .chart .bar.hover { fill: var(--accent); opacity: 0.85; }
+        .tooltip {
+            position: absolute;
+            pointer-events: none;
+            padding: 8px 10px;
+            background: var(--text);
+            color: var(--bg);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            transform: translate(-50%, calc(-100% - 10px));
+            box-shadow: var(--shadow);
+        }
+        .tooltip strong { display: block; }
+
+        /* Barres horizontales (classements) */
+        /* Grille commune à toutes les lignes : noms, barres et valeurs restent alignés */
+        .bars { display: grid; grid-template-columns: minmax(90px, 34%) minmax(0, 1fr) auto; gap: 9px 10px; align-items: center; font-size: 0.88rem; }
+        .bar-row { display: contents; }
+        .bars > .empty { grid-column: 1 / -1; }
+        .bar-row .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+        .bar-track { display: block; height: 10px; background: var(--bar-track); border-radius: 4px; overflow: hidden; }
+        .bar-fill { display: block; height: 100%; background: var(--bar); border-radius: 4px; }
+        .bar-row .value { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-2); text-align: right; white-space: nowrap; }
+        .empty { color: var(--muted); font-size: 0.88rem; padding: 6px 0; }
+
+        /* Tableaux */
+        .table-wrap { overflow-x: auto; margin: 0 -4px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+        th { text-align: left; font-weight: 600; color: var(--muted); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.04em; padding: 8px 6px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+        td { padding: 9px 6px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+        tr:last-child td { border-bottom: 0; }
+        .num { font-family: var(--font-mono); white-space: nowrap; }
+        .chips { display: flex; flex-wrap: wrap; gap: 4px; }
+        .chip { display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border-radius: 999px; font-size: 0.74rem; background: var(--surface-2); border: 1px solid var(--border); color: var(--text-2); white-space: nowrap; }
+        .chip.ok { background: var(--ok-soft); border-color: transparent; color: var(--ok); }
+        .chip.wait { background: var(--warn-soft); border-color: transparent; color: var(--warn); }
+        .chip.accent { background: var(--accent-soft); border-color: transparent; color: var(--accent); }
+        .muted { color: var(--muted); }
+        .small { font-size: 0.8rem; }
+
+        /* Candidatures */
+        .app-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; margin-bottom: 14px; }
+        .link-cell { display: flex; align-items: center; gap: 6px; }
+        .link-cell code { font-family: var(--font-mono); font-size: 0.76rem; color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 260px; }
+        .mini-btn { padding: 3px 8px; border-radius: 7px; border: 1px solid var(--border); background: var(--surface); font-size: 0.76rem; color: var(--text-2); white-space: nowrap; }
+        .mini-btn:hover { color: var(--text); background: var(--surface-2); }
+
+        /* Questions posées à l'assistant */
+        .questions { display: grid; gap: 10px; max-height: 520px; overflow-y: auto; padding-right: 4px; }
+        .question { padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg); }
+        .question p { margin: 4px 0 0; font-size: 0.9rem; overflow-wrap: anywhere; }
+        .question .meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 0.76rem; color: var(--muted); }
+
+        details.data summary { cursor: pointer; margin-top: 10px; font-size: 0.82rem; color: var(--muted); }
+        .footnote { color: var(--muted); font-size: 0.8rem; text-align: center; }
+
+        @media (max-width: 1000px) {
+            .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .grid-3 { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 760px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .topbar h1 small { display: none; }
+            .tile-value { font-size: 1.55rem; }
+            .app-form { grid-template-columns: 1fr; }
+            .bars { grid-template-columns: minmax(0, 48%) minmax(40px, 1fr) auto; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Connexion : le mot de passe est vérifié par le proxy, jamais stocké dans le code -->
+    <section class="login" id="login">
+        <form class="login-card" id="login-form">
+            <img src="images/avatar.jpg" alt="">
+            <h1>Tableau de bord</h1>
+            <p>Accès réservé au propriétaire du portfolio.</p>
+            <input class="field" type="password" id="password" placeholder="Mot de passe" autocomplete="current-password" required>
+            <label class="check"><input type="checkbox" id="remember"> Rester connecté sur cet appareil</label>
+            <button class="btn btn-block" type="submit"><i class="fas fa-lock-open"></i> Se connecter</button>
+            <div class="error" id="login-error" role="alert"></div>
+        </form>
+    </section>
+
+    <div id="dashboard" hidden>
+        <header class="topbar">
+            <img src="images/avatar.jpg" alt="">
+            <h1>Tableau de bord <small id="updated">Chargement…</small></h1>
+            <div class="segmented" id="period" role="group" aria-label="Période">
+                <button type="button" data-days="7">7 j</button>
+                <button type="button" data-days="30" class="active">30 j</button>
+                <button type="button" data-days="90">90 j</button>
+                <button type="button" data-days="365">1 an</button>
+            </div>
+            <button class="icon-btn" id="refresh" type="button" title="Actualiser" aria-label="Actualiser"><i class="fas fa-rotate-right"></i></button>
+            <button class="icon-btn" id="theme" type="button" title="Thème clair / sombre" aria-label="Thème clair / sombre"><i class="fas fa-moon"></i></button>
+            <a class="icon-btn" href="./" title="Voir le portfolio" aria-label="Voir le portfolio" style="display:grid;place-items:center"><i class="fas fa-arrow-up-right-from-square"></i></a>
+            <button class="icon-btn" id="logout" type="button" title="Se déconnecter" aria-label="Se déconnecter"><i class="fas fa-right-from-bracket"></i></button>
+        </header>
+
+        <main>
+            <section class="tiles" id="tiles" aria-label="Indicateurs clés"></section>
+
+            <section class="card">
+                <h2><i class="fas fa-chart-column"></i> Visites par jour</h2>
+                <p class="sub">Nombre de visites ; survolez une barre pour le détail (visiteurs uniques compris).</p>
+                <div class="chart" id="daily"></div>
+                <details class="data"><summary>Voir les données</summary><div class="table-wrap" id="daily-table"></div></details>
+            </section>
+
+            <section class="card">
+                <h2><i class="fas fa-paper-plane"></i> Suivi des candidatures</h2>
+                <p class="sub">Créez un lien personnel par candidature et utilisez-le dans votre e-mail ou votre CV : vous saurez si le recruteur l'a ouvert, quand, et ce qu'il a consulté.</p>
+                <form class="app-form" id="app-form">
+                    <input class="field" id="app-label" placeholder="Ex. : ÉTS – Doctorat C5I (Dr Lahlou)" maxlength="120" required>
+                    <button class="btn" type="submit"><i class="fas fa-link"></i> Créer le lien</button>
+                </form>
+                <div class="table-wrap" id="applications"></div>
+            </section>
+
+            <div class="grid-2">
+                <section class="card">
+                    <h2><i class="fas fa-book-open-reader"></i> Jusqu'où lisent-ils ?</h2>
+                    <p class="sub">Part des visites ayant lu chaque section (au moins 2 s) et temps moyen passé.</p>
+                    <div class="bars" id="sections"></div>
+                </section>
+                <section class="card">
+                    <h2><i class="fas fa-hand-pointer"></i> Actions</h2>
+                    <p class="sub">Ce que les visiteurs ont fait sur le portfolio.</p>
+                    <div class="bars" id="events"></div>
+                </section>
+            </div>
+
+            <div class="grid-3">
+                <section class="card">
+                    <h2><i class="fas fa-signs-post"></i> D'où viennent-ils ?</h2>
+                    <p class="sub">Site d'origine de la visite.</p>
+                    <div class="bars" id="sources"></div>
+                </section>
+                <section class="card">
+                    <h2><i class="fas fa-building"></i> Réseaux et organisations</h2>
+                    <p class="sub">Réseau Internet utilisé : une université ou une entreprise s'y reconnaît souvent.</p>
+                    <div class="bars" id="orgs"></div>
+                </section>
+                <section class="card">
+                    <h2><i class="fas fa-earth-americas"></i> Lieux</h2>
+                    <p class="sub">Pays, puis villes (approximatives).</p>
+                    <div class="bars" id="countries"></div>
+                    <div class="bars" id="cities" style="margin-top:14px"></div>
+                </section>
+            </div>
+
+            <section class="card">
+                <h2><i class="fas fa-robot"></i> Assistant IA</h2>
+                <p class="sub">Questions posées à l'assistant (texte anonyme), les plus récentes en premier.</p>
+                <div class="grid-2" style="margin-bottom:14px">
+                    <div class="bars" id="chat-modes"></div>
+                    <div class="bars" id="chat-providers"></div>
+                </div>
+                <div class="questions" id="questions"></div>
+            </section>
+
+            <section class="card">
+                <h2><i class="fas fa-clock-rotate-left"></i> Dernières visites</h2>
+                <p class="sub">Parcours de chaque visite : sections lues et actions.</p>
+                <div class="table-wrap" id="recent"></div>
+            </section>
+
+            <div class="grid-2">
+                <section class="card">
+                    <h2><i class="fas fa-display"></i> Appareils</h2>
+                    <div class="bars" id="devices" style="margin-top:12px"></div>
+                </section>
+                <section class="card">
+                    <h2><i class="fas fa-language"></i> Langue d'arrivée</h2>
+                    <div class="bars" id="langs" style="margin-top:12px"></div>
+                </section>
+            </div>
+
+            <p class="footnote">Mesure anonyme, sans cookie ni adresse IP conservée. Vos propres visites ne sont pas comptées sur les appareils où vous êtes connecté ici. Données conservées 12 mois.</p>
+        </main>
+    </div>
+
+    <script src="admin.js?v=2"></script>
+</body>
+</html>

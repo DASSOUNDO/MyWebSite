@@ -11,7 +11,14 @@ Portfolio d'ingénieur et de chercheur en **IA agentique, systèmes multi-agents
 - **Analyse de fiche de poste** : le recruteur colle une offre, l'assistant produit une analyse d'adéquation exigence par exigence (points forts avec preuves, exigences couvertes, points à approfondir en entretien).
 - **Réponses ancrées** : le modèle ne s'appuie que sur le contenu du portfolio, avec des règles strictes contre l'invention.
 - **Résilience** : chaîne de modèles gratuits (Gemini 3 Flash, puis GPT-OSS 120B et Qwen3 via Groq), puis un assistant hors ligne par mots-clés si aucun modèle ne répond.
-- **Sécurité** : clés API conservées comme secrets côté serveur (Cloudflare Worker), origines autorisées, limitation du débit, aucune conversation enregistrée.
+- **Sécurité** : clés API conservées comme secrets côté serveur (Cloudflare Worker), origines autorisées, limitation du débit.
+
+### Tableau de bord privé (`admin.html`)
+- **Audience** : visiteurs uniques, visites par jour, durée, défilement, sections lues et temps passé sur chacune.
+- **Origine** : site référent (LinkedIn, Google, e-mail…), pays, ville et réseau (université, entreprise).
+- **Suivi des candidatures** : un lien personnel par candidature ; le tableau indique s'il a été ouvert, quand, ce qui a été lu et si le CV a été téléchargé.
+- **Assistant IA** : questions posées, fiches de poste analysées, modèle utilisé.
+- **Vie privée** : mesure anonyme sans cookie, IP jamais stockée, accès protégé par un mot de passe vérifié côté serveur.
 
 ### Site
 - Sections : Accueil, Axes de recherche, Parcours, Projets, Recherche, Compétences, Formation, Engagement, Contact.
@@ -29,6 +36,7 @@ Portfolio d'ingénieur et de chercheur en **IA agentique, systèmes multi-agents
 | Site | HTML5, CSS3 (variables, Grid, Flexbox), JavaScript ES6+ sans framework |
 | Interface | Font Awesome, Google Fonts (Inter, Outfit, JetBrains Mono) |
 | Assistant IA | Cloudflare Workers, Gemini API, Groq API, Server-Sent Events |
+| Tableau de bord | Cloudflare D1 (SQLite), graphiques SVG sans bibliothèque |
 | Outillage | Python (génération de la base de connaissances), Node.js (tests), Wrangler |
 | Hébergement | GitHub Pages |
 
@@ -37,7 +45,8 @@ Portfolio d'ingénieur et de chercheur en **IA agentique, systèmes multi-agents
 ```
 index.html              Page unique du portfolio
 style.css               Styles (thèmes clair et sombre)
-script.js               Interactions, traduction, recherche, assistant IA
+script.js               Interactions, traduction, recherche, assistant IA, mesure d'audience
+admin.html, admin.js    Tableau de bord privé (audience, candidatures, assistant)
 i18n-en.js              Traductions anglaises
 assistant/              Base de connaissances de l'assistant (générée)
 assistant-worker/       Proxy Cloudflare Worker de l'assistant IA (code, tests, guide)

@@ -7,7 +7,8 @@
  *   1. Gemini 3 Flash (Google)   2. GPT-OSS 120B (Groq)   3. Qwen3 (Groq)
  *   Le site bascule ensuite sur son assistant hors ligne si tous échouent.
  *
- * Aucune conversation n'est enregistrée.
+ * Les questions sont enregistrées de façon anonyme (sans IP) pour le tableau de bord admin,
+ * avec la mesure d'audience du site : voir analytics.js.
  *
  * Réponse : flux SSE
  *   event: meta  data: {"provider":"gemini"|"groq","label":"Gemini 3 Flash"}
@@ -15,6 +16,8 @@
  *   event: done  data: {}
  *   event: error data: {"error":"..."}   (si tout échoue)
  */
+
+import { handleTrack, logChat, isAdmin, stats, saveApplication, deleteApplication } from './analytics.js';
 
 const LIMITS = {
     maxTurns: 10,            // messages d'historique conservés
@@ -210,7 +213,7 @@ function validate(body) {
     if (messages[messages.length - 1].role !== 'user') return 'last_message_must_be_user';
     // L'historique doit commencer par une question
     while (messages.length && messages[0].role !== 'user') messages.shift();
-    return { messages, lang: body.lang === 'en' ? 'en' : 'fr', mode: body.mode === 'job' ? 'job' : 'chat' };
+    return { messages, lang: body.lang === 'en' ? 'en' : 'fr', mode: body.mode === 'job' ? 'job' : 'chat', sid: body.sid };
 }
 
 function corsHeaders(env, origin) {
@@ -219,7 +222,7 @@ function corsHeaders(env, origin) {
     return {
         ok,
         headers: ok
-            ? { 'access-control-allow-origin': origin, 'access-control-allow-methods': 'POST, OPTIONS', 'access-control-allow-headers': 'content-type', 'access-control-max-age': '86400', vary: 'Origin' }
+            ? { 'access-control-allow-origin': origin, 'access-control-allow-methods': 'GET, POST, DELETE, OPTIONS', 'access-control-allow-headers': 'content-type, authorization', 'access-control-max-age': '86400', vary: 'Origin' }
             : { vary: 'Origin' },
     };
 }
@@ -235,12 +238,50 @@ export default {
         const cors = corsHeaders(env, origin);
 
         if (url.pathname === '/health') return json(200, { ok: true });
-        if (url.pathname !== '/chat') return json(404, { error: 'not_found' });
+        if (!['/chat', '/track', '/admin/stats', '/admin/applications'].includes(url.pathname)) return json(404, { error: 'not_found' });
         if (request.method === 'OPTIONS') return new Response(null, { status: cors.ok ? 204 : 403, headers: cors.headers });
-        if (request.method !== 'POST') return json(405, { error: 'method_not_allowed' }, cors.headers);
         if (!cors.ok) return json(403, { error: 'origin_not_allowed' });
-
         const ip = request.headers.get('cf-connecting-ip') || 'inconnu';
+
+        // Mesure d'audience envoyée par le site
+        if (url.pathname === '/track') {
+            if (request.method !== 'POST') return json(405, { error: 'method_not_allowed' }, cors.headers);
+            try {
+                const response = await handleTrack(request, env, () => isRateLimited(env, `trk:${ip}`));
+                return new Response(response.body, { status: response.status, headers: cors.headers });
+            } catch {
+                return new Response(null, { status: 500, headers: cors.headers });
+            }
+        }
+
+        // Tableau de bord admin : protégé par mot de passe, tentatives limitées
+        if (url.pathname.startsWith('/admin/')) {
+            if (!env.DB) return json(503, { error: 'analytics_not_configured' }, cors.headers);
+            // Seuls les échecs sont comptés : au-delà de 8 par minute, réponse 429
+            if (!(await isAdmin(request, env))) {
+                const blocked = await isRateLimited(env, `adm:${ip}`);
+                return json(blocked ? 429 : 401, { error: blocked ? 'rate_limited' : 'unauthorized' }, cors.headers);
+            }
+        }
+        if (url.pathname === '/admin/applications') {
+            if (request.method === 'POST') {
+                let body;
+                try { body = await request.json(); } catch { return json(400, { error: 'invalid_json' }, cors.headers); }
+                return (await saveApplication(env, body)) ? json(200, { ok: true }, cors.headers) : json(400, { error: 'invalid_application' }, cors.headers);
+            }
+            if (request.method === 'DELETE') {
+                await deleteApplication(env, url.searchParams.get('ref'));
+                return json(200, { ok: true }, cors.headers);
+            }
+            return json(405, { error: 'method_not_allowed' }, cors.headers);
+        }
+        if (url.pathname === '/admin/stats') {
+            if (request.method !== 'GET') return json(405, { error: 'method_not_allowed' }, cors.headers);
+            const days = Math.max(1, Math.min(365, Number(url.searchParams.get('days')) || 30));
+            return json(200, await stats(env, days), { ...cors.headers, 'cache-control': 'no-store' });
+        }
+
+        if (request.method !== 'POST') return json(405, { error: 'method_not_allowed' }, cors.headers);
         if (await isRateLimited(env, ip)) return json(429, { error: 'rate_limited' }, cors.headers);
 
         let body;
@@ -259,6 +300,9 @@ export default {
         const encoder = new TextEncoder();
         const send = (event, data) => writer.write(encoder.encode(`${event ? `event: ${event}\n` : ''}data: ${JSON.stringify(data)}\n\n`));
 
+        const question = checked.messages[checked.messages.length - 1].content;
+        const record = (provider, ok) => logChat(env, { sid: checked.sid, mode: checked.mode, question, provider, ok }).catch(() => {});
+
         ctx.waitUntil((async () => {
             let lastError = 'unknown';
             for (const provider of providers) {
@@ -273,17 +317,18 @@ export default {
                         await send(null, { t: text });
                     }
                     clearTimeout(timer);
-                    if (started) { await send('done', {}); await writer.close(); return; }
+                    if (started) { await send('done', {}); await writer.close(); await record(provider.label, true); return; }
                     lastError = `${provider.name}_empty`;
                 } catch (error) {
                     clearTimeout(timer);
                     lastError = error.message || String(error);
                     // Une réponse déjà commencée ne peut pas basculer proprement : on la termine.
-                    if (started) { await send('done', { partial: true }); await writer.close(); return; }
+                    if (started) { await send('done', { partial: true }); await writer.close(); await record(provider.label, true); return; }
                 }
             }
             await send('error', { error: lastError });
             await writer.close();
+            await record(null, false);
         })());
 
         return new Response(readable, {

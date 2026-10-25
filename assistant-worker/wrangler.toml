@@ -23,3 +23,10 @@ name = "RATE_LIMITER"
 type = "ratelimit"
 namespace_id = "1001"
 simple = { limit = 8, period = 60 }
+
+# Mesure d'audience et tableau de bord admin (base D1 gratuite).
+# Schéma : migrations/0001_analytics.sql ; secrets : ADMIN_PASSWORD et ANALYTICS_SALT
+[[d1_databases]]
+binding = "DB"
+database_name = "portfolio-analytics"
+database_id = "cbb2d1db-ebb9-4ae9-bd12-18643ac11f1a"

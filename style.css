@@ -3751,3 +3751,9 @@ body.search-open {
         bottom: 84px;
     }
 }
+
+/* Mention de confidentialité du pied de page */
+.footer-privacy {
+    font-size: 0.8rem;
+    color: var(--muted);
+}
